@@ -1,6 +1,6 @@
 # microservice-visualization
 
-This repository contains software for analyzing and visualizing the topology of microservice systems.
+This repository contains software for analyzing and visualizing the topology of a microservice system.
 
 ## Repository structure
 
@@ -16,15 +16,6 @@ The repository is organized as a mono-repo where each directory in `sources` is 
 
 - commit changes with git
 - publish changes with lerna: `lerna publish`
-
-## Local development
-
-For local development, a local NPM registry can be used.
-
-- make sure that local npm registry is used: `npm set registry http://localhost:4873/`
-- login to npm registry: `npm adduser --registry http://localhost:4873`
-- run npm registry: `verdaccio`
-- publish as described above
 
 ## General requirements
 
