@@ -1,12 +1,12 @@
-# system-visualization
+# microservice-visualization
 
-The system-visualization repository contains different NPM packages for analyzing and visualizing the structure of large systems.
+This repository contains software for analyzing and visualizing the topology of microservice systems.
 
-## Project structure
+## Repository structure
 
-The project is organized as a mono-repo where each directory in `sources` is a yarn workspace.
+The repository is organized as a mono-repo where each directory in `sources` is a yarn workspace.
 
-- [system-structure-analyzer](sources/system-structure-analyzer) is a library for analyzing microservice systems
+- [microservice-system-analyzer](sources/microservice-system-analyzer) is a NPM library for analyzing microservice systems
 
 ## Setup
 
@@ -19,7 +19,7 @@ The project is organized as a mono-repo where each directory in `sources` is a y
 
 ## Local development
 
-For local development, a local NPM registry should be used.
+For local development, a local NPM registry can be used.
 
 - make sure that local npm registry is used: `npm set registry http://localhost:4873/`
 - login to npm registry: `npm adduser --registry http://localhost:4873`
@@ -31,3 +31,9 @@ For local development, a local NPM registry should be used.
 - node 8
 - yarn
 - lerna
+
+## License
+
+[Apache License, Version 2.0](LICENSE)
+
+Copyright 2017-2018 Andreas Blunk, MaibornWolff GmbH
