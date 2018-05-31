@@ -7,11 +7,12 @@ let nock = require('nock')
 let rabbitmq = require('../../src/importer/rabbitmqManagementImporter')
 let modelClasses = require('../../src/model/modelClasses')
 let Service = modelClasses.Service
+let Link = modelClasses.Link
 
 let rabbitMqPath = 'http://rabbitmq'
 
 describe('rabbitmq importer', function () {
-  let testQueueName = 'dataquality.do.update'
+  let testQueueName = 'diagnosticdata.trainrunevent.publish.update'
   let queuesUrl = '/api/queues/'
   let bindingsUrl = '/api/queues/' + encodeURIComponent('/') + '/' + encodeURIComponent(testQueueName) + '/bindings/'
   let queuesRequestMock
@@ -24,33 +25,35 @@ describe('rabbitmq importer', function () {
   })
 
   it('can fetch the links', async () => {
-    let queuesData = [{'name': 'dataquality.do.update'}]
+    const queuesData = [{'name': testQueueName}]
     queuesRequestMock.reply(200, queuesData)
 
-    let bindingsdata = [
+    const bindingsdata = [
       {
         source: '',
         vhost: '/',
-        destination: 'dataquality.do.update',
+        destination: 'diagnosticdata.trainrunevent.publish.update',
         destination_type: 'queue',
-        routing_key: 'dataquality.do.update',
+        routing_key: 'diagnosticdata.trainrunevent.publish.update',
         arguments: { },
-        properties_key: 'dataquality.do.update'
+        properties_key: 'diagnosticdata.trainrunevent.publish.update'
       },
       {
-        source: 'dataquality',
+        source: 'trainrunevent',
         vhost: '/',
-        destination: 'dataquality.do.update',
+        destination: 'diagnosticdata.trainrunevent.publish.update',
         destination_type: 'queue',
-        routing_key: 'dataquality.do.update',
+        routing_key: 'trainrunevent.publish.update',
         arguments: { },
-        properties_key: 'dataquality.do.update'
+        properties_key: 'trainrunevent.publish.update'
       }
     ]
     bindingsRequestMock.reply(200, bindingsdata)
 
     let system = await rabbitmq.getSystem()
 
-    expect(system.services).to.deep.contain(new Service('dataquality'))
+    expect(system.services).to.deep.contain(new Service('exchange trainrunevent'))
+    expect(system.services).to.deep.contain(new Service('diagnosticdata'))
+    expect(system.links).to.deep.contain(new Link('exchange trainrunevent', 'diagnosticdata', 'async'))
   })
 })

@@ -13,11 +13,17 @@ async function getSystem (reverseLinks) {
   let system = new System()
   let clients = await scanPathForFeignClients(configRepository.getSourceFolder())
   for (let client of clients) {
-    if (!reverseLinks) {
-      system.addLink(client.serviceName, client.feignClient, 'sync')
-    } else {
-      system.addLink(client.feignClient, client.serviceName, 'sync')
+    let source = client.serviceName
+    let target = client.feignClient
+
+    if (reverseLinks) {
+      let tmp = target
+      target = source
+      source = tmp
     }
+
+    system.addLink(source, target, 'sync')
+    log.info(logContext, 'adding link: %s -> %s', source, target)
   }
   return system
 }
@@ -31,11 +37,12 @@ async function scanPathForFeignClients (path) {
   javaFiles.forEach((file) => {
     parseFeignClients(file, (clientName) => {
       const serviceName = fileHelper.getServiceNameFromPath(path, file)
-      feignClients.push({ 'file': file, 'serviceName': serviceName, 'feignClient': clientName })
+      const client = { 'file': file, 'serviceName': serviceName, 'feignClient': clientName }
+      feignClients.push(client)
+      log.verbose(logContext, 'found feign client: %s', JSON.stringify(client, null, 2))
     })
   })
 
-  log.silly(logContext, 'found %d feign clients: %s', feignClients.length, JSON.stringify(feignClients, null, ' '))
   return feignClients
 }
 

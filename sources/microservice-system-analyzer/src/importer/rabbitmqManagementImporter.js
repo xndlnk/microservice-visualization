@@ -19,9 +19,10 @@ async function getSystem () {
 function convertBindingsToSystem (bindings) {
   let system = new System()
   bindings.forEach((binding) => {
-    let source = binding.exchange
+    let source = 'exchange ' + binding.exchange
     let target = binding.queue.substring(0, binding.queue.indexOf('.'))
     system.addLink(source, target, 'async')
+    log.info('rabbitmq', 'adding link: %s -> %s', source, target)
   })
   return system
 }
@@ -49,7 +50,7 @@ async function getBinding (queueName) {
   if (elementWithSource) {
     binding = { 'exchange': elementWithSource.source, 'queue': queueName }
   }
-  log.silly('rabbitmq', 'found binding from queue %s to exchange %s', binding.exchange, binding.queue)
+  log.info('rabbitmq', 'found binding from queue %s to exchange %s', binding.queue, binding.exchange)
 
   return binding
 }

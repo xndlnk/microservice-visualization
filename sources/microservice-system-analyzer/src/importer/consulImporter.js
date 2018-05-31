@@ -12,7 +12,7 @@ async function getSystem () {
   }
 
   let nonConsulServiceNames = consulServicesRemoved(serviceNames)
-  log.info('consul', 'found %d services', nonConsulServiceNames.length)
+  log.info('consul', 'found %d services: %s', nonConsulServiceNames.length, nonConsulServiceNames)
 
   let system = new System()
   nonConsulServiceNames.forEach((serviceName) => system.addService(serviceName))
