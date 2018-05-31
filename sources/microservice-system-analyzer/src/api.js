@@ -10,6 +10,7 @@ let model = require('./model/modelClasses')
 let serviceFilter = require('./filter/serviceFilter')
 let subSystemTransformer = require('./processor/subSystemTransformer')
 let systemMerger = require('./processor/systemMerger')
+let serviceWithSameExchangeMerger = require('./processor/serviceWithSameExchangeMerger')
 
 module.exports = {
   configRepository,
@@ -30,6 +31,7 @@ module.exports = {
   },
   processor: {
     subSystemTransformer,
-    systemMerger
+    systemMerger,
+    serviceWithSameExchangeMerger
   }
 }
