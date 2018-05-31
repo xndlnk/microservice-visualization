@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/api.js",
   "scripts": {
-    "test": "nyc --all mocha $(find test -name '*.js')"
+    "test": "standard && nyc --all mocha $(find test -name '*.js')"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "license": "Apache-2.0",
@@ -21,10 +21,15 @@
     "chai": "^4.1.2",
     "mocha": "^5.0.1",
     "nock": "^9.1.6",
-    "nyc": "^11.7.1"
+    "nyc": "^11.7.1",
+    "standard": "^11.0.1"
   },
   "nyc": {
-    "include": ["src/**/*.js"],
-    "exclude": ["src/api.js"]
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "src/api.js"
+    ]
   }
 }

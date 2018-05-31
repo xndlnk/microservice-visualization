@@ -29,11 +29,11 @@ function moveServiceToSubSystem (system, serviceName, subSystemName) {
   })
 
   getAllLinksForService(system, serviceName)
-      .filter((link) => isSourceAndTargetServiceFullyContained(subSystem, link))
-      .forEach((link) => {
-        system.removeLink(link.sourceName, link.targetName)
-        subSystem.addLink(link.sourceName, link.targetName, link.communicationType)
-      })
+    .filter((link) => isSourceAndTargetServiceFullyContained(subSystem, link))
+    .forEach((link) => {
+      system.removeLink(link.sourceName, link.targetName)
+      subSystem.addLink(link.sourceName, link.targetName, link.communicationType)
+    })
 }
 
 function isSourceAndTargetServiceFullyContained (system, link) {

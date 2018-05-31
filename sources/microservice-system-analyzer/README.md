@@ -1,5 +1,7 @@
 # microservice-system-analyzer
 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 The microservice-system-analyzer allows to analyze the communication in a system of microservices in order to visualize the topology of the system. In our approach, static information about communication links is collected by different importers and mergers which are provided as a library. This is different from APM solutions, such as AppDynamics, that can analyze dynamic communication in a running system.
 
 The analyzer collects information by
