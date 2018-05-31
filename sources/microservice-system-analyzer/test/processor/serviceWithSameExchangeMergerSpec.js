@@ -41,8 +41,6 @@ describe('service with same exchange merger', function () {
       sendToImporter
     ])
 
-    console.log(JSON.stringify(mergedSystem, null, 2))
-
     expect(mergedSystem.services).to.deep.contain(new Service('A'))
     expect(mergedSystem.services).not.to.deep.contain(new Service('exchange A'))
 
