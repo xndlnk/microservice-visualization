@@ -1,0 +1,9 @@
+.DS_Store
+node_modules
+dist
+**/output
+**/temp
+.gradle
+.env
+.nyc_output
+build
