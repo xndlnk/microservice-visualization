@@ -1,6 +1,7 @@
 # microservice-visualization
 
-[![Build Status](https://travis-ci.org/xndlnk/microservice-visualization.svg?branch=master)](https://travis-ci.org/xndlnk/microservice-visualization)
+[![Build Status](https://travis-ci.org/xndlnk/microservice-visualization.svg?branch=master)](https://travis-ci.org/xndlnk/microservice-visualization) 
+![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 
 This repository contains software for analyzing and visualizing the topology of a microservice system.
 
