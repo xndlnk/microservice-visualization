@@ -1,4 +1,4 @@
-const log = require('npmlog')
+const randomWord = require('random-word')
 
 function getSystem (originalSystem) {
   let system = originalSystem.copy()
@@ -14,6 +14,11 @@ function obfuscateSystem (system, obfuscationCache) {
 
   system.services.forEach((service) => {
     service.name = obfuscateNameOnce(service.name, obfuscationCache)
+    service.properties.forEach((prop) => {
+      if (prop.name === 'cabinet') {
+        prop.value = obfuscateNameOnce(prop.value, obfuscationCache)
+      }
+    })
   })
 
   system.links.forEach((link) => {
@@ -38,16 +43,11 @@ function obfuscateNameOnce (name, obfuscationCache) {
 }
 
 function obfuscateName (name) {
-  return name.split('').map((char) => {
-    let randomCharCode = getRandomIntInclusive(97, 122)
-    return String.fromCharCode(randomCharCode)
-  }).join('')
-}
-
-function getRandomIntInclusive (min, max) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  if (name.startsWith('exchange')) {
+    return 'exchange ' + randomWord()
+  } else {
+    return randomWord()
+  }
 }
 
 module.exports = {
