@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 // TODO: as a library, the config should be configured via an API
+// or relevant values should be provided on API calls.
 
 function getSourceFolder () {
   return process.env.SOURCE_FOLDER

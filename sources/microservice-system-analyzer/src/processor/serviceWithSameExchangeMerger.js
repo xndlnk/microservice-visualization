@@ -1,15 +1,20 @@
 const System = require('../model/modelClasses').System
 
+/** each provided systems is checked for services that are directly connected to an equally
+ * named exchange service. each pair of founds services is merged into one.
+ * an exchange service is a service whose name starts with 'exchange '.
+ * the resulting system with merged services is returned.
+ */
 function mergeSystems (systems) {
-  let result = new System()
-  let exchangeServices = getExchangeServices(systems)
+  const result = new System()
+  const exchangeServices = getExchangeServices(systems)
 
   console.log('exchangeServices: ' + exchangeServices)
 
   systems.forEach((system) => {
     system.links.forEach((link) => {
       if (isLinkTheSourceOfOneService(link, exchangeServices)) {
-        let sourceNameWithoutExchange = getNameWithoutExchangePrefix(link.sourceName)
+        const sourceNameWithoutExchange = getNameWithoutExchangePrefix(link.sourceName)
         result.addLink(sourceNameWithoutExchange, link.targetName, link.communicationType)
       } else if (!isLinkTheTargetOfOneService(link, exchangeServices)) {
         result.addLink(link.sourceName, link.targetName, link.communicationType)
@@ -41,11 +46,11 @@ function isLinkTheTargetOfOneService (link, services) {
 }
 
 function getExchangeServices (systems) {
-  let exchangeServices = []
+  const exchangeServices = []
   systems.forEach((system) => {
     system.links.forEach((link) => {
       if (hasLinkFromServiceToEquallyNamedExchange(link)) {
-        let exchangeTarget = link.targetName
+        const exchangeTarget = link.targetName
         exchangeServices.push(exchangeTarget)
       }
     })

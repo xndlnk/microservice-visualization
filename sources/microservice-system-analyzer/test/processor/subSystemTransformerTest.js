@@ -1,6 +1,6 @@
-let describe = require('mocha').describe
-let it = require('mocha').it
-let expect = require('chai').expect
+const describe = require('mocha').describe
+const it = require('mocha').it
+const expect = require('chai').expect
 
 const modelClasses = require('../../src/model/modelClasses')
 const System = modelClasses.System
@@ -12,12 +12,12 @@ const subSystemTransformer = require('../../src/processor/subSystemTransformer')
 /* eslint-disable no-unused-expressions */
 describe('sub system transformer', function () {
   it('can transform cabinet properties to sub systems', function () {
-    let system = new System([new Link('A', 'B'), new Link('A', 'C'), new Link('A', 'D')])
+    const system = new System([new Link('A', 'B'), new Link('A', 'C'), new Link('A', 'D')])
     system.getService('A').addProperty('cabinet', 'X')
     system.getService('B').addProperty('cabinet', 'X')
     system.getService('D').addProperty('cabinet', 'Y')
 
-    let transformedSystem = subSystemTransformer.transform(system)
+    const transformedSystem = subSystemTransformer.transform(system)
 
     expect(transformedSystem.services).to.deep.equal([new Service('C')])
     expect(transformedSystem.links).to.deep.equal([new Link('A', 'C'), new Link('A', 'D')])

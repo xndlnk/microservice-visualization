@@ -1,6 +1,6 @@
-let describe = require('mocha').describe
-let it = require('mocha').it
-let expect = require('chai').expect
+const describe = require('mocha').describe
+const it = require('mocha').it
+const expect = require('chai').expect
 
 const modelClasses = require('../../src/model/modelClasses')
 const System = modelClasses.System
@@ -11,7 +11,7 @@ const Property = modelClasses.Property
 /* eslint-disable no-unused-expressions */
 describe('system model', function () {
   it('adds the same service just once', function () {
-    let system = new System()
+    const system = new System()
     system.addService('A')
     system.addService('B')
     system.addService('B')
@@ -24,14 +24,14 @@ describe('system model', function () {
   })
 
   it('can create services from links', function () {
-    let system = new System([new Link('A', 'B')])
+    const system = new System([new Link('A', 'B')])
 
     expect(system.links.length).to.equal(1)
     expect(system.services.length).to.equal(2)
   })
 
   it('adds services from added links', function () {
-    let system = new System()
+    const system = new System()
 
     system.addLink('A', 'B')
 
@@ -41,7 +41,7 @@ describe('system model', function () {
   })
 
   it('adds the same link only once', function () {
-    let system = new System()
+    const system = new System()
 
     system.addLink('A', 'B')
     system.addLink('A', 'B')
@@ -50,7 +50,7 @@ describe('system model', function () {
   })
 
   it('adds the same link with communiction only once', function () {
-    let system = new System()
+    const system = new System()
 
     system.addLink('A', 'B', 'sync')
     system.addLink('A', 'B', 'sync')
@@ -59,7 +59,7 @@ describe('system model', function () {
   })
 
   it('can remove services and their links', function () {
-    let system = new System([new Link('A', 'B'), new Link('B', 'C')])
+    const system = new System([new Link('A', 'B'), new Link('B', 'C')])
 
     system.removeServiceAndLinks('A')
 
@@ -72,7 +72,7 @@ describe('system model', function () {
   })
 
   it('can remove links but not their services', function () {
-    let system = new System([new Link('A', 'B'), new Link('B', 'C')])
+    const system = new System([new Link('A', 'B'), new Link('B', 'C')])
 
     system.removeLink('A', 'B')
 
@@ -85,7 +85,7 @@ describe('system model', function () {
   })
 
   it('can remove isolated services', function () {
-    let system = new System([new Link('A', 'B'), new Link('B', 'C')])
+    const system = new System([new Link('A', 'B'), new Link('B', 'C')])
 
     system.removeLink('A', 'B')
     system.removeIsolatedServices()
@@ -96,12 +96,12 @@ describe('system model', function () {
   })
 
   it('can copy a system deeply', function () {
-    let system = new System([new Link('A', 'B'), new Link('B', 'C')])
+    const system = new System([new Link('A', 'B'), new Link('B', 'C')])
     system.getService('A').addProperty('p', 1)
     system.addSubSystem('X')
     system.getSubSystem('X').addLink('A', 'B')
 
-    let copy = system.copy()
+    const copy = system.copy()
 
     expect(system.services).to.deep.equal(copy.services)
     expect(system.getService('A').properties).to.deep.equal(copy.getService('A').properties)
@@ -115,7 +115,7 @@ describe('system model', function () {
   })
 
   it('can rename services', function () {
-    let system = new System([new Link('A', 'B'), new Link('B', 'C')])
+    const system = new System([new Link('A', 'B'), new Link('B', 'C')])
 
     system.renameService('A', 'X')
 
@@ -126,7 +126,7 @@ describe('system model', function () {
   })
 
   it('can add properties', function () {
-    let system = new System([new Link('A', 'B'), new Link('B', 'C')])
+    const system = new System([new Link('A', 'B'), new Link('B', 'C')])
 
     system.getService('A').addProperty('p', 1)
 

@@ -1,20 +1,20 @@
-let describe = require('mocha').describe
-let it = require('mocha').it
-let beforeEach = require('mocha').beforeEach
-let expect = require('chai').expect
-let nock = require('nock')
+const describe = require('mocha').describe
+const it = require('mocha').it
+const beforeEach = require('mocha').beforeEach
+const expect = require('chai').expect
+const nock = require('nock')
 
-let rabbitmq = require('../../src/importer/rabbitmqManagementImporter')
-let modelClasses = require('../../src/model/modelClasses')
-let Service = modelClasses.Service
-let Link = modelClasses.Link
+const rabbitmq = require('../../src/importer/rabbitmqManagementImporter')
+const modelClasses = require('../../src/model/modelClasses')
+const Service = modelClasses.Service
+const Link = modelClasses.Link
 
-let rabbitMqPath = 'http://rabbitmq'
+const rabbitMqPath = 'http://rabbitmq'
 
 describe('rabbitmq importer', function () {
-  let testQueueName = 'diagnosticdata.trainrunevent.publish.update'
-  let queuesUrl = '/api/queues/'
-  let bindingsUrl = '/api/queues/' + encodeURIComponent('/') + '/' + encodeURIComponent(testQueueName) + '/bindings/'
+  const testQueueName = 'diagnosticdata.trainrunevent.publish.update'
+  const queuesUrl = '/api/queues/'
+  const bindingsUrl = '/api/queues/' + encodeURIComponent('/') + '/' + encodeURIComponent(testQueueName) + '/bindings/'
   let queuesRequestMock
   let bindingsRequestMock
 
@@ -50,7 +50,7 @@ describe('rabbitmq importer', function () {
     ]
     bindingsRequestMock.reply(200, bindingsdata)
 
-    let system = await rabbitmq.getSystem()
+    const system = await rabbitmq.getSystem()
 
     expect(system.services).to.deep.contain(new Service('exchange trainrunevent'))
     expect(system.services).to.deep.contain(new Service('diagnosticdata'))

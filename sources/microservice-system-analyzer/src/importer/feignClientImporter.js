@@ -5,14 +5,25 @@ const fs = require('fs')
 const configRepository = require('../config/configRepository')
 const fileHelper = require('./fileHelper')
 
+/** returns the result of getSystem with reverseLinks flag set to true.
+ * @see {@link getSystem}  */
 async function getSystemWithLinksInReverse () {
   return getSystem(true)
 }
 
+/** analyzes all source code for feign client annotations and returns a system of services and links.
+ * links are created with communication type 'sync.
+ * requires environment variable SOURCE_FOLDER to be set to a path where the source code can be found.
+ *
+ * @param {boolean} reverseLinks - When the source code of a service A includes a feign annotation
+ * to a service B, the communication takes place from A to B. If reverseLinks is true then all links
+ * are reversed, i.e. the link in the example will be from B to A. This flag can be used to show
+ * information flow instead of call flow.
+ */
 async function getSystem (reverseLinks) {
-  let system = new System()
-  let clients = await scanPathForFeignClients(configRepository.getSourceFolder())
-  for (let client of clients) {
+  const system = new System()
+  const clients = await scanPathForFeignClients(configRepository.getSourceFolder())
+  for (const client of clients) {
     let source = client.serviceName
     let target = client.feignClient
 

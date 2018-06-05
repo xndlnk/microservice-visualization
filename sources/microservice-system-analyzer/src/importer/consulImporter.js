@@ -3,18 +3,21 @@ const System = require('../model/modelClasses').System
 const request = require('request-promise-native')
 const configRepository = require('../config/configRepository')
 
+/** returns a system which contains all services imported from consul.
+ * requires the variable environment variable CONSUL_PATH to be set to the base path of a consul.
+ */
 async function getSystem () {
-  let services = await getCatalogServices(configRepository.getConsulPath())
+  const services = await getCatalogServices(configRepository.getConsulPath())
 
-  let serviceNames = []
+  const serviceNames = []
   for (let serviceName in services) {
     serviceNames.push(serviceName)
   }
 
-  let nonConsulServiceNames = consulServicesRemoved(serviceNames)
+  const nonConsulServiceNames = consulServicesRemoved(serviceNames)
   log.info('consul', 'found %d services: %s', nonConsulServiceNames.length, nonConsulServiceNames)
 
-  let system = new System()
+  const system = new System()
   nonConsulServiceNames.forEach((serviceName) => system.addService(serviceName))
 
   return system
@@ -25,8 +28,8 @@ function consulServicesRemoved (services) {
 }
 
 async function getCatalogServices (consulPath) {
-  let url = consulPath + '/v1/catalog/services'
-  let services = sendRequest(url, 'GET')
+  const url = consulPath + '/v1/catalog/services'
+  const services = sendRequest(url, 'GET')
   if (!services) return []
   else return services
 }

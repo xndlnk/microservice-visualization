@@ -1,7 +1,8 @@
 const xmlBuilder = require('xmlbuilder')
 
+/** returns the provided system as a string in GraphML format */
 function getGraphML (system) {
-  let graphml = xmlBuilder.create('graphml')
+  const graphml = xmlBuilder.create('graphml')
   graphml.att('xmlns', 'http://graphml.graphdrawing.org/xmlns')
 
   graphml.ele('key', { 'id': 'nodeLabel', 'for': 'node', 'attr.name': 'label', 'attr.type': 'string' })
@@ -12,7 +13,7 @@ function getGraphML (system) {
   graphml.ele('key', { 'id': 'nodeCabinet', 'for': 'node', 'attr.name': 'cabinet', 'attr.type': 'string' })
   graphml.ele('key', { 'id': 'nodeCabinetColor', 'for': 'node', 'attr.name': 'cabinetColor', 'attr.type': 'string' })
 
-  let graph = graphml.ele('graph')
+  const graph = graphml.ele('graph')
   graph.att('edgedefault', 'directed')
 
   addServices(graph, system)
@@ -24,11 +25,11 @@ function getGraphML (system) {
 
 function addSubSystems (parentGraph, system) {
   system.subSystems.forEach((subSystem) => {
-    let node = parentGraph.ele('node')
+    const node = parentGraph.ele('node')
     node.att('id', 'subsystem::' + subSystem.name)
     node.ele('data', { 'key': 'nodeLabel' }, subSystem.name)
 
-    let subGraph = node.ele('graph')
+    const subGraph = node.ele('graph')
     subGraph.att('edgedefault', 'directed')
 
     addServices(subGraph, subSystem)
@@ -38,10 +39,11 @@ function addSubSystems (parentGraph, system) {
 
 function addServices (graph, system) {
   system.services.forEach((service) => {
-    let node = graph.ele('node')
+    const node = graph.ele('node')
     node.att('id', service.name)
     node.ele('data', { 'key': 'nodeLabel' }, service.name)
-    // TODO: add values for any properties found
+    // TODO: the exporter has to be independent of specific properties added during
+    // system transformation. better add values for any properties found.
     if (service.hasProperty('cabinet')) {
       node.ele('data', { 'key': 'nodeCabinet' }, service.getPropertyValue('cabinet'))
       node.ele('data', { 'key': 'nodeCabinetColor' }, service.getPropertyValue('cabinetColor'))
@@ -51,8 +53,8 @@ function addServices (graph, system) {
 
 function addLinks (graph, system) {
   system.links.forEach((link) => {
-    let edge = graph.ele('edge')
-    let edgeId = link.sourceName + '-' + link.targetName + ':' + link.communicationType
+    const edge = graph.ele('edge')
+    const edgeId = link.sourceName + '-' + link.targetName + ':' + link.communicationType
     edge.att('id', edgeId)
     edge.att('source', link.sourceName)
     edge.att('target', link.targetName)

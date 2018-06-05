@@ -3,13 +3,15 @@ const log = require('npmlog')
 const System = require('../model/modelClasses').System
 const configRepository = require('../config/configRepository')
 
+// TODO: describe required naming pattern in docs
+/** extracts binding information of queues and exchanges via RabbitMQ management api. */
 async function getSystem () {
-  let queues = await getQueues()
+  const queues = await getQueues()
 
-  let bindingPromises = queues.map((queue) => getBinding(queue))
-  let bindings = await Promise.all(bindingPromises)
+  const bindingPromises = queues.map((queue) => getBinding(queue))
+  const bindings = await Promise.all(bindingPromises)
 
-  let system = convertBindingsToSystem(bindings)
+  const system = convertBindingsToSystem(bindings)
   log.verbose('rabbitmq', 'found %d async links.', system.links.length)
   system.links.forEach((link) => { log.verbose('rabbitmq', 'found link: %s => %s', link.source, link.target) })
 
@@ -17,10 +19,10 @@ async function getSystem () {
 }
 
 function convertBindingsToSystem (bindings) {
-  let system = new System()
+  const system = new System()
   bindings.forEach((binding) => {
-    let source = 'exchange ' + binding.exchange
-    let target = binding.queue.substring(0, binding.queue.indexOf('.'))
+    const source = 'exchange ' + binding.exchange
+    const target = binding.queue.substring(0, binding.queue.indexOf('.'))
     system.addLink(source, target, 'async')
     log.info('rabbitmq', 'adding link: %s -> %s', source, target)
   })
@@ -28,9 +30,9 @@ function convertBindingsToSystem (bindings) {
 }
 
 async function getQueues () {
-  let url = getBaseUrl() + '/api/queues/'
+  const url = getBaseUrl() + '/api/queues/'
 
-  let queues = await sendRequest(url, 'GET')
+  const queues = await sendRequest(url, 'GET')
   if (!queues) return []
 
   return queues.map((queue) => { return queue.name })
@@ -41,14 +43,14 @@ function getBaseUrl () {
 }
 
 async function getBinding (queueName) {
-  let vhost = '/'
-  let url = getBaseUrl() + '/api/queues/' + encodeURIComponent(vhost) + '/' + encodeURIComponent(queueName) + '/bindings/'
-  let data = await sendRequest(url, 'GET')
+  const vhost = '/'
+  const url = getBaseUrl() + '/api/queues/' + encodeURIComponent(vhost) + '/' + encodeURIComponent(queueName) + '/bindings/'
+  const bindingsData = await sendRequest(url, 'GET')
 
   let binding = { 'exchange': '', 'queue': queueName }
-  const elementWithSource = data.find((element) => { return element.source !== '' })
-  if (elementWithSource) {
-    binding = { 'exchange': elementWithSource.source, 'queue': queueName }
+  const firstBindingHavingSource = bindingsData.find((element) => { return element.source !== '' })
+  if (firstBindingHavingSource) {
+    binding = { 'exchange': firstBindingHavingSource.source, 'queue': queueName }
   }
   log.info('rabbitmq', 'found binding from queue %s to exchange %s', binding.queue, binding.exchange)
 

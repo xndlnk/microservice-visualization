@@ -1,8 +1,9 @@
 const randomWord = require('random-word')
 
+/** returns a system where all service names are changed to random words. */
 function getSystem (originalSystem) {
-  let system = originalSystem.copy()
-  let obfuscationCache = new Map()
+  const system = originalSystem.copy()
+  const obfuscationCache = new Map()
 
   obfuscateSystem(system, obfuscationCache)
 
@@ -32,11 +33,11 @@ function obfuscateSystem (system, obfuscationCache) {
 }
 
 function obfuscateNameOnce (name, obfuscationCache) {
-  let existingObfuscatedName = obfuscationCache.get(name)
+  const existingObfuscatedName = obfuscationCache.get(name)
   if (existingObfuscatedName) {
     return existingObfuscatedName
   } else {
-    let obfuscatedName = obfuscateName(name)
+    const obfuscatedName = obfuscateName(name)
     obfuscationCache.set(name, obfuscatedName)
     return obfuscatedName
   }

@@ -1,14 +1,16 @@
 const log = require('npmlog')
 const logContext = 'subsystem-transformer'
 
-// looks for a certain property and transforms services with the same property value into a sub system
+/** returns a new system where each service of the provided system is contained in a parent service
+ * named after the service property 'cabinet'.
+*/
 function transform (originalSystem) {
-  let system = originalSystem.copy()
+  const system = originalSystem.copy()
 
   system.services.forEach((service) => {
     const CABINET_PROPERTY = 'cabinet'
     if (service.hasProperty(CABINET_PROPERTY)) {
-      let cabinet = service.getPropertyValue(CABINET_PROPERTY)
+      const cabinet = service.getPropertyValue(CABINET_PROPERTY)
       system.addSubSystem(cabinet)
       moveServiceToSubSystem(system, service.name, cabinet)
       log.info(logContext, 'moving service ' + service.name + ' to subsystem ' + cabinet)
@@ -19,9 +21,9 @@ function transform (originalSystem) {
 }
 
 function moveServiceToSubSystem (system, serviceName, subSystemName) {
-  let service = system.getService(serviceName)
+  const service = system.getService(serviceName)
   system.removeService(serviceName)
-  let subSystem = system.getSubSystem(subSystemName)
+  const subSystem = system.getSubSystem(subSystemName)
   subSystem.addService(service.name)
   // TODO: reactoring needed -> this code should not be concerned with copying properties
   service.properties.forEach((property) => {

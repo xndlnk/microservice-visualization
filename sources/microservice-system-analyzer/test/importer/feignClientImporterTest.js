@@ -1,12 +1,12 @@
-let describe = require('mocha').describe
-let it = require('mocha').it
-let beforeEach = require('mocha').beforeEach
-let expect = require('chai').expect
+const describe = require('mocha').describe
+const it = require('mocha').it
+const beforeEach = require('mocha').beforeEach
+const expect = require('chai').expect
 
-let feignClientImporter = require('../../src/importer/feignClientImporter')
-let modelClasses = require('../../src/model/modelClasses')
-let Service = modelClasses.Service
-let Link = modelClasses.Link
+const feignClientImporter = require('../../src/importer/feignClientImporter')
+const modelClasses = require('../../src/model/modelClasses')
+const Service = modelClasses.Service
+const Link = modelClasses.Link
 
 describe('feign client importer', function () {
   beforeEach(function () {
@@ -14,7 +14,7 @@ describe('feign client importer', function () {
   })
 
   it('can import', async () => {
-    let system = await feignClientImporter.getSystem()
+    const system = await feignClientImporter.getSystem()
 
     expect(system.services.length).to.equal(4)
     expect(system.services).to.deep.contain(new Service('service1'))
@@ -25,7 +25,7 @@ describe('feign client importer', function () {
   })
 
   it('can import with links in reverse', async () => {
-    let system = await feignClientImporter.getSystemWithLinksInReverse()
+    const system = await feignClientImporter.getSystemWithLinksInReverse()
 
     expect(system.links).to.deep.contain(new Link('service3', 'service1', 'sync'))
     expect(system.links).to.deep.contain(new Link('service4', 'service2', 'sync'))

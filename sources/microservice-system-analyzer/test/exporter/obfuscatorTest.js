@@ -1,21 +1,21 @@
-let describe = require('mocha').describe
-let it = require('mocha').it
-let expect = require('chai').expect
+const describe = require('mocha').describe
+const it = require('mocha').it
+const expect = require('chai').expect
 
-let obfuscator = require('../../src/exporter/obfuscator')
+const obfuscator = require('../../src/exporter/obfuscator')
 
-let modelClasses = require('../../src/model/modelClasses')
-let System = modelClasses.System
-let Link = modelClasses.Link
+const modelClasses = require('../../src/model/modelClasses')
+const System = modelClasses.System
+const Link = modelClasses.Link
 
 /* eslint-disable no-unused-expressions */
 describe('obfuscator exporter', function () {
   it('can obfuscate all the names', function () {
-    let system = new System([new Link('ABC', 'BDE', 'sync')])
-    let subSystemX = system.addSubSystem('X')
+    const system = new System([new Link('ABC', 'BDE', 'sync')])
+    const subSystemX = system.addSubSystem('X')
     subSystemX.addLink('C', 'D')
 
-    let obfuscatedSystem = obfuscator.getSystem(system)
+    const obfuscatedSystem = obfuscator.getSystem(system)
 
     expect(obfuscatedSystem.hasService('ABC')).to.be.false
     expect(obfuscatedSystem.hasService('BDE')).to.be.false

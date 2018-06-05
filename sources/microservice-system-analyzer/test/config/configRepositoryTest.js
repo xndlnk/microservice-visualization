@@ -1,9 +1,9 @@
-let describe = require('mocha').describe
-let beforeEach = require('mocha').beforeEach
-let it = require('mocha').it
-let expect = require('chai').expect
+const describe = require('mocha').describe
+const beforeEach = require('mocha').beforeEach
+const it = require('mocha').it
+const expect = require('chai').expect
 
-let configRepository = require('../../src/config/configRepository')
+const configRepository = require('../../src/config/configRepository')
 
 describe('config repository', function () {
   beforeEach(function () {
@@ -11,7 +11,7 @@ describe('config repository', function () {
   })
 
   it('parses ignored services', function () {
-    let ignoredServices = configRepository.getIgnoredServices()
+    const ignoredServices = configRepository.getIgnoredServices()
     expect(ignoredServices.length).to.equal(4)
     expect(ignoredServices).to.eql(['a', 'b', 'c', 'd'])
   })

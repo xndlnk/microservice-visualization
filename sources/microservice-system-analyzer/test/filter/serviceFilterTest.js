@@ -1,13 +1,13 @@
-let describe = require('mocha').describe
-let beforeEach = require('mocha').beforeEach
-let it = require('mocha').it
-let expect = require('chai').expect
+const describe = require('mocha').describe
+const beforeEach = require('mocha').beforeEach
+const it = require('mocha').it
+const expect = require('chai').expect
 
-let serviceFilter = require('../../src/filter/serviceFilter')
-let modelClasses = require('../../src/model/modelClasses')
-let System = modelClasses.System
-let Service = modelClasses.Service
-let Link = modelClasses.Link
+const serviceFilter = require('../../src/filter/serviceFilter')
+const modelClasses = require('../../src/model/modelClasses')
+const System = modelClasses.System
+const Service = modelClasses.Service
+const Link = modelClasses.Link
 
 describe('service filter', function () {
   beforeEach(function () {
@@ -15,11 +15,11 @@ describe('service filter', function () {
   })
 
   it('removes services which contain configured names', function () {
-    let system = new System([
+    const system = new System([
       new Link('A', 'B'), new Link('xA', 'B'), new Link('Ax', 'B'), new Link('', 'B')
     ])
 
-    let filteredSystem = serviceFilter.filterSystem(system)
+    const filteredSystem = serviceFilter.filterSystem(system)
 
     expect(filteredSystem.services).to.not.deep.contain(new Service('A'))
     expect(filteredSystem.services).to.not.deep.contain(new Service('xA'))
@@ -29,7 +29,7 @@ describe('service filter', function () {
   })
 
   it('removes by full name', function () {
-    let system = new System([new Link('A', 'B')])
+    const system = new System([new Link('A', 'B')])
 
     serviceFilter.removeServicesByName(system, ['A'])
 
@@ -38,7 +38,7 @@ describe('service filter', function () {
   })
 
   it('removes by name beginning', function () {
-    let system = new System([new Link('Axx', 'Bxx')])
+    const system = new System([new Link('Axx', 'Bxx')])
 
     serviceFilter.removeServicesByNameStartsWith(system, ['A'])
 
@@ -47,7 +47,7 @@ describe('service filter', function () {
   })
 
   it('removes by name ending', function () {
-    let system = new System([new Link('xxA', 'xxB')])
+    const system = new System([new Link('xxA', 'xxB')])
 
     serviceFilter.removeServicesByNameEndsWith(system, ['A'])
 

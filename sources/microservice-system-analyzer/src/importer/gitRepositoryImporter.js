@@ -5,8 +5,10 @@ const log = require('npmlog')
 const rimraf = require('rimraf')
 const configRepository = require('../config/configRepository')
 
-// imports the repository of the given service by clone or fetch.
-// returns a local path to the repository.
+/** imports the repository of a service by shallow clone or fetch.
+ * requires environment variable SOURCE_FOLDER to be set to a path where the repositories will be put.
+ * returns a local path to the imported repository.
+*/
 function importRepository (serviceName, repositoryUrl) {
   if (isNoValidRepository(repositoryUrl)) {
     log.info('git', 'cannot import because repository is NOT valid: %s', repositoryUrl)
@@ -66,6 +68,7 @@ function getLocalServicePath (serviceName) {
   return getSourceFolder() + '/' + serviceName
 }
 
+/** deletes all contents of the source folder. */
 function clearAll () {
   rimraf.sync(getSourceFolder())
 }
@@ -74,6 +77,7 @@ function getSourceFolder () {
   return configRepository.getSourceFolder()
 }
 
+/** deletes the previously imported respository of the given service. */
 function clearRepository (serviceName) {
   rimraf.sync(getLocalServicePath(serviceName))
 }
