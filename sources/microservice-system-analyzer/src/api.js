@@ -4,7 +4,6 @@ const rabbitmqManagementImporter = require('./importer/rabbitmqManagementImporte
 const consulImporter = require('./importer/consulImporter')
 const gitRepositoryImporter = require('./importer/gitRepositoryImporter')
 const graphMLExporter = require('./exporter/graphMLExporter')
-const obfuscator = require('./exporter/obfuscator')
 const configRepository = require('./config/configRepository')
 const model = require('./model/modelClasses')
 const serviceFilter = require('./filter/serviceFilter')
@@ -23,8 +22,7 @@ module.exports = {
     gitRepositoryImporter
   },
   exporter: {
-    graphMLExporter,
-    obfuscator
+    graphMLExporter
   },
   filter: {
     serviceFilter

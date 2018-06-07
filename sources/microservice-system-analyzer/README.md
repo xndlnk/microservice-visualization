@@ -2,20 +2,22 @@
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-The microservice-system-analyzer allows to analyze the communication in a system of microservices in order to visualize the topology of the system. In our approach, static information about communication links is collected by different importers and mergers which are provided as a library. This is different from APM solutions, such as AppDynamics, that can analyze dynamic communication in a running system.
+This software determines the communication links in a system of microservices in order to visualize the topology of the system. The approach is based on analyzing static resources, e.g. REST APIs of infrastucture services and the source code of the microservices. For each source of information, a dedicated importer is responsible. Finally, all information is merged into a complete picture of the system. The approach is more lightweight as it does analyze dynamic communication. This is in contrast to APM solutions suchs as AppDynamics.
 
 The analyzer collects information by
 
-  1. accessing infrastructure services via standard REST APIs (e.g. Consul and RabbitMQ) and by
+  1. accessing infrastructure services via REST APIs (e.g. Consul and RabbitMQ) and by
   2. parsing the source code of microservices.
 
-[Example Topology](./example-graph.png) created using the layouting tool [yEd](https://www.yworks.com/yed) on the GraphML which was exported by analyzing a large microservice system (see GraphML exporter below).
+## Example
 
-## Data processing
+[This is an example topology](./example-graph.png) created from analyzing a real system. It was created by using the layouting tool [yEd](https://www.yworks.com/yed) on the GraphML export (see GraphML exporter below).
 
-The analyzer aggregates data from a set of importers into a unified system model. Exporters operate on this model and create concrete analysis results.
+## Architecture
 
-![analyzer architecture](docs/architecture.jpeg "analyzer architecture")
+Each importer collects information that provides a view of the system. This information is merged into a complete structure of the system. Exporters can transform the system to different formats. In each component, a unified system model is used to simplify integration.
+
+![analyzer architecture](docs/architecture.png "analyzer architecture")
 
 ### Importers
 
@@ -30,12 +32,11 @@ The analyzer aggregates data from a set of importers into a unified system model
 
 - JSON
 - GraphML
-- Obfuscator for demos
 
 ## Requirements
 
 - Node.js 8
-- Git
+- Git CLI
 
 ## Getting started
 
@@ -45,13 +46,13 @@ Tests can be run via `npm run test`.
 
 ### Configuration
 
-The library must be configured by the following environment variables:
+The library is configured by the following environment variables:
 
   - CONSUL_PATH: URL to Consul HTTP API
   - RABBITMQ_PATH: URL to RabbitMQ Management HTTP API
   - GIT_REPOSITORY_PREFIX: Prefix for Git Repositories, e.g. `git@gitlab.yourOrganisation.de:group/`
-  - IGNORED_SERVICES: comma separated list of services to ignore in analysis
-  - SOURCE_FOLDER: location of source files in local file system which are imported with the Git importer
+  - IGNORED_SERVICES: comma separated list of services or part of service names to ignore in analysis
+  - SOURCE_FOLDER: location of source files in the local file system which are imported with the Git importer
 
 ### Example usage of importers and merger
 
