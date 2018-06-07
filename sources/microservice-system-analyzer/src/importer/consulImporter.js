@@ -37,7 +37,6 @@ async function getCatalogServices (consulPath) {
 async function sendRequest (url, method) {
   const options = {
     method: method,
-    rejectUnauthorized: false, // TODO: please get rid of this dirty solution
     url: url
   }
 
