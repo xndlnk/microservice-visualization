@@ -1,0 +1,4 @@
+{
+  "standard.autoFixOnSave": true,
+  "tslint.autoFixOnSave": true,
+}

@@ -17,7 +17,7 @@ export interface Props {
 
 export class Node {
   public readonly id: string
-  
+
   private kind?: string
   private nodes: Node[]
   private edges: Edge[]
