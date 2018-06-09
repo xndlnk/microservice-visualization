@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/api.js",
   "scripts": {
-    "test": "standard && nyc --all mocha $(find test -name '*.js')"
+    "test": "standard src test && nyc --all mocha $(find test -name '*.js')",
+    "test-ts": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "license": "Apache-2.0",
@@ -17,11 +18,19 @@
     "xmlbuilder": "^9.0.7"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.3",
+    "@types/mocha": "^5.2.1",
+    "@types/node": "^10.3.2",
     "chai": "^4.1.2",
     "mocha": "^5.0.1",
     "nock": "^9.1.6",
     "nyc": "^11.7.1",
-    "standard": "^11.0.1"
+    "standard": "^11.0.1",
+    "ts-node": "^6.1.0",
+    "tsconfig-paths": "^3.3.2",
+    "tslint": "^5.10.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.9.1"
   },
   "nyc": {
     "include": [
