@@ -1,13 +1,13 @@
 export declare interface System {
   name: string
-  services: Service[]
-  links: Link[]
-  subSystems: System[]
+  services?: Service[]
+  links?: Link[]
+  subSystems?: System[]
 }
 
 export declare interface Service {
   name: string
-  properties: Property[]
+  properties?: Property[]
 }
 
 export declare interface Property {
