@@ -1,52 +1,57 @@
-export interface NodeTO {
-  id: string
-  nodes?: NodeTO[]
-  edges?: EdgeTO[]
-  props?: Props
-}
+abstract class StructuredElement {
+  protected props: Props
 
-export interface EdgeTO {
-  sourceId: string
-  targetId: string
-  props?: Props
+  constructor(props?: Props) {
+    this.props = props
+  }
+
+  getProps(): Props {
+    return this.props
+  }
+
+  getProp(propName: string, alternativeValue: any): any {
+    const value = this.props ? this.props[propName] : undefined
+    return value ? value : alternativeValue
+  }
 }
 
 export interface Props {
   [key: string]: any
 }
 
-export class Node {
+export class Node extends StructuredElement {
   public readonly id: string
 
-  private kind?: string
   private nodes: Node[]
   private edges: Edge[]
-  private props: Props
 
   constructor(id: string, nodes?: Node[], edges?: Edge[], props?: Props) {
+    super(props)
     this.id = id
     this.nodes = nodes ? nodes : []
     this.edges = edges ? edges : []
-    this.props = props
-  }
-
-  static ofNodeTO(nodeTO: NodeTO): Node {
-    let nodes = nodeTO.nodes ? nodeTO.nodes.map(node => Node.ofNodeTO(node)) : []
-    let edges = nodeTO.edges ? nodeTO.edges.map(edge => Edge.ofEdgeTO(edge)) : []
-    let props = nodeTO.props ? JSON.parse(JSON.stringify(nodeTO.props)) : undefined
-    return new Node(nodeTO.id, nodes, edges, props)
-  }
-
-  deepResolveNodeReferences() {
-    // TODO:
   }
 
   sameId(otherId: string): boolean {
     return this.id === otherId
   }
 
+  // TODO: getters for specific props should move to specific users
+  // and not be part of generic model
+  getKind(): string {
+    return this.getProp('kind', 'node')
+  }
+
   getLabel(): string {
-    return this.props.label ? this.props.label : this.id
+    return this.getProp('label', this.id)
+  }
+
+  findNode(id: string): Node {
+    return this.nodes.find(node => node.id === id)
+  }
+
+  findEdge(sourceId: string, targetId: string): Edge {
+    return this.edges.find(edge => edge.sourceId === sourceId && edge.targetId === targetId)
   }
 
   getNodes(): Node[] {
@@ -70,29 +75,18 @@ export class Node {
   }
 
   getProp(propName: string, alternativeValue: any): any {
-    let value = this.props ? this.props[propName] : undefined
+    const value = this.props ? this.props[propName] : undefined
     return value ? value : alternativeValue
   }
 }
 
-export class Edge {
+export class Edge extends StructuredElement {
   public readonly sourceId: string
   public readonly targetId: string
 
-  private source: Node = null
-  private target: Node = null
-  private kind?: string
-
-  private props: Props
-
   constructor(sourceId: string, targetId: string, props?: Props) {
+    super(props)
     this.sourceId = sourceId
     this.targetId = targetId
-    this.props = props
-  }
-
-  static ofEdgeTO(edgeTO: EdgeTO): Edge {
-    let props = edgeTO.props ? JSON.parse(JSON.stringify(edgeTO.props)) : undefined
-    return new Edge(edgeTO.sourceId, edgeTO.targetId, props)
   }
 }

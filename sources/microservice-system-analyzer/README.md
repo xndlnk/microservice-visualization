@@ -59,27 +59,27 @@ The library is configured by the following environment variables:
 The library offers importers, exporters and a merger that have to be combined. The following code shows an example usage for merging the resulting systems of several importers.
 
 ```javascript
-let analyzer = require('microservice-system-analyzer')
+const analyzer = require('microservice-system-analyzer')
 
-let consulImporter = analyzer.importer.consulImporter
-let feignImporter = analyzer.importer.feignClientImporter
-let rabbitmqImporter = analyzer.importer.rabbitmqManagementImporter
+const consulImporter = analyzer.importer.consulImporter
+const feignImporter = analyzer.importer.feignClientImporter
+const rabbitmqImporter = analyzer.importer.rabbitmqManagementImporter
 
-let systemMerger = analyzer.processor.systemMerger
-let subSystemTransformer = analyzer.processor.subSystemTransformer
+const systemMerger = analyzer.processor.systemMerger
+const subSystemTransformer = analyzer.processor.subSystemTransformer
 
 async function getSystem () {
-  let consulSystem = await consulImporter.getSystem()
-  let rabbitmqSystem = await rabbitmqImporter.getSystem()
-  let feignSystem = await feignImporter.getSystemWithLinksInReverse()
-  let mergedSystem = systemMerger.mergeSystems([consulSystem, rabbitmqSystem, feignSystem])
+  const consulSystem = await consulImporter.getSystem()
+  const rabbitmqSystem = await rabbitmqImporter.getSystem()
+  const feignSystem = await feignImporter.getSystemWithLinksInReverse()
+  const mergedSystem = systemMerger.mergeSystems([consulSystem, rabbitmqSystem, feignSystem])
 
   return mergedSystem
 }
 
 async function getSystemWithSubSystems () {
-  let flatSystem = await getSystem()
-  let structuredSystem = subSystemTransformer.transform(flatSystem)
+  const flatSystem = await getSystem()
+  const structuredSystem = subSystemTransformer.transform(flatSystem)
 
   return structuredSystem
 }
@@ -90,12 +90,12 @@ async function getSystemWithSubSystems () {
 Some importers require source code that is usually available via Git repositories. The following example shows how to use the Git importer to get the source code.
 
 ```javascript
-let analyzer = require('microservice-system-analyzer')
+const analyzer = require('microservice-system-analyzer')
 
-let gitImporter = analyzer.importer.gitRepositoryImporter
-let configRepository = analyzer.configRepository
+const gitImporter = analyzer.importer.gitRepositoryImporter
+const configRepository = analyzer.configRepository
 
-let sourcePath = gitImporter.importRepository(serviceName, getRepositoryName(serviceName))
+const sourcePath = gitImporter.importRepository(serviceName, getRepositoryName(serviceName))
 // import is successfull if sourcePath is not null
 
 function getRepositoryName (serviceName) {
@@ -108,11 +108,11 @@ function getRepositoryName (serviceName) {
 The code below shows how to use the GraphML exporter on a system returned by a merger or an importer.
 
 ```javascript
-let analyzer = require('microservice-system-analyzer')
+const analyzer = require('microservice-system-analyzer')
 
-let graphMLExporter = analyzer.exporter.graphMLExporter
+const graphMLExporter = analyzer.exporter.graphMLExporter
 
-let xml = graphMLExporter.getGraphML(system)
+const xml = graphMLExporter.getGraphML(system)
 ```
 
 ## License
