@@ -1,4 +1,4 @@
-import { describe, it } from 'mocha'
+import { describe, it, test } from 'mocha'
 import { expect } from 'chai'
 
 import { Node, Edge } from '~/model/nodeModel'
@@ -7,7 +7,7 @@ import { RawNode, RawEdge, RawModelConverter } from '~/model/rawNodeModel'
 /* tslint:disable:no-unused-expression */
 describe('node model', function() {
 
-  it('can be created', function() {
+  test('basic operations', function() {
     const emptySystem = new Node('system')
     expect(emptySystem.hasNodes()).to.be.false
     expect(emptySystem.hasEdges()).to.be.false
@@ -32,7 +32,7 @@ describe('node model', function() {
     expect(system.findEdge('A', 'B')).to.deep.equal(new Edge('A', 'B'))
   })
 
-  it('can always access props', function() {
+  test('props are always accessible', function() {
     const node = new Node('system')
 
     expect(node.getProps()).not.to.be.undefined
