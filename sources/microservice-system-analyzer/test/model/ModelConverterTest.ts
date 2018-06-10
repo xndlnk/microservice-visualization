@@ -7,6 +7,7 @@ import { ModelConverter } from '~/model/ModelConverter'
 
 /* tslint:disable:no-unused-expression */
 describe('model converter', function() {
+
   it('can convert services and links', function() {
     const system: System = {
       name: 'system',
@@ -28,7 +29,7 @@ describe('model converter', function() {
         { id: 'B' }
       ],
       edges: [
-        { sourceId: 'A', targetId: 'B' }
+        { sourceId: 'A', targetId: 'B', props: { communicationType: 'async' } }
       ]
     })
 

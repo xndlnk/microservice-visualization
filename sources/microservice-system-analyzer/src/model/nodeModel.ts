@@ -2,7 +2,7 @@ abstract class StructuredElement {
   protected props: Props
 
   constructor(props?: Props) {
-    this.props = props
+    this.props = props ? props : {}
   }
 
   getProps(): Props {

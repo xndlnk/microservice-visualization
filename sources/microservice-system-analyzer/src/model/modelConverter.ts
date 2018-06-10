@@ -17,6 +17,11 @@ export class ModelConverter {
   private convertLinksToEdges(links: Link[]): Edge[] {
     if (!links) return []
 
-    return links.map(link => new Edge(link.sourceName, link.targetName))
+    return links.map(link => {
+      const props: Props = {
+        communicationType: link.communicationType
+      }
+      return new Edge(link.sourceName, link.targetName, props)
+    })
   }
 }
