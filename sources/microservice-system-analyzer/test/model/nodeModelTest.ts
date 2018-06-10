@@ -35,10 +35,10 @@ describe('node model', function() {
   test('props are always accessible', function() {
     const node = new Node('system')
 
-    expect(node.getProps()).not.to.be.undefined
-    expect(node.getProps().x).to.be.undefined
+    expect(node.props).not.to.be.undefined
+    expect(node.props.x).to.be.undefined
 
-    node.getProps().x = 'x'
-    expect(node.getProps().x).to.equal('x')
+    node.props.x = 'x'
+    expect(node.props.x).to.equal('x')
   })
 })
