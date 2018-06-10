@@ -11,7 +11,17 @@ export class ModelConverter {
   private convertServicesToNodes(services: Service[]): Node[] {
     if (!services) return []
 
-    return services.map(service => new Node(service.name))
+    return services.map(service => new Node(service.name, null, null, this.convertProperties(service.properties)))
+  }
+
+  private convertProperties(properties: Property[]): Props {
+    if (!properties) return {}
+
+    const props: Props = {}
+    properties.forEach(property => {
+      props[property.name] = property.value
+    })
+    return props
   }
 
   private convertLinksToEdges(links: Link[]): Edge[] {

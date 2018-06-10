@@ -35,4 +35,34 @@ describe('model converter', function() {
 
     expect(node).to.deep.equal(expectedNode)
   })
+
+  it('can convert properties', function() {
+    const system: System = {
+      name: 'system',
+      services: [
+        {
+          name: 'A',
+          properties: [
+            { name: 'p1', value: 'v1' }
+          ]
+        }
+      ]
+    }
+
+    const node = new ModelConverter().convertSystemToNode(system)
+
+    const expectedNode: Node = RawModelConverter.convertToNode({
+      id: 'system',
+      nodes: [
+        {
+          id: 'A',
+          props: {
+            p1: 'v1'
+          }
+        }
+      ]
+    })
+
+    expect(node).to.deep.equal(expectedNode)
+  })
 })
