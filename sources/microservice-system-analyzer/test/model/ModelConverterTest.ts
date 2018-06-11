@@ -65,4 +65,52 @@ describe('model converter', function() {
 
     expect(node).to.deep.equal(expectedNode)
   })
+
+  it('can convert subsystems', function() {
+    const system: System = {
+      name: 'system',
+      services: [
+        { name: 'A' }
+      ],
+      links: [
+        { sourceName: 'A', targetName: 'M', communicationType: 'async' }
+      ],
+      subSystems: [
+        {
+          name: 'subsystem',
+          services: [
+            { name: 'M' },
+            { name: 'N' }
+          ],
+          links: [
+            { sourceName: 'M', targetName: 'N', communicationType: 'async' }
+          ]
+        }
+      ]
+    }
+
+    const node = new ModelConverter().convertSystemToNode(system)
+
+    const expectedNode: Node = RawModelConverter.convertToNode({
+      id: 'system',
+      nodes: [
+        { id: 'A' },
+        {
+          id: 'subsystem',
+          nodes: [
+            { id: 'M' },
+            { id: 'N' }
+          ],
+          edges: [
+            { sourceId: 'M', targetId: 'N', props: { communicationType: 'async' } }
+          ]
+        }
+      ],
+      edges: [
+        { sourceId: 'A', targetId: 'M', props: { communicationType: 'async' } }
+      ]
+    })
+
+    expect(node).to.deep.equal(expectedNode)
+  })
 })

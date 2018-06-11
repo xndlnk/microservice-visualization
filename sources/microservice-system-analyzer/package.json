@@ -11,7 +11,9 @@
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/lodash": "^4.14.109",
     "dotenv": "^5.0.0",
+    "lodash": "^4.17.10",
     "npmlog": "^4.1.2",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
