@@ -1,5 +1,4 @@
 import * as _ from 'lodash'
-import { constants } from 'http2'
 
 export interface Element {
   getProperties(): Properties
@@ -20,17 +19,36 @@ export interface Edge extends Element {
   getTarget(): Node
 }
 
-abstract class LeafNode implements Node {
-  private properties: Properties
+abstract class BasicNode implements Node {
+  private name: string
+  private nodes: Node[] = []
+  private edges: Edge[] = []
+  private properties: Properties = {}
+  private type: string
 
-  abstract getId(): string
+  constructor(name: string) {
+    this.name = name
+    this.type = this.constructor.toString().match(/\w+/g)[1]
+  }
+
+  getName(): string {
+    return this.name
+  }
+
+  getId(): string {
+    return this.getType() + '_' + this.name
+  }
+
+  getType(): string {
+    return this.type
+  }
 
   getNodes(): Node[] {
-    return []
+    return this.nodes
   }
 
   getEdges(): Edge[] {
-    return []
+    return this.edges
   }
 
   getProperties(): Properties {
@@ -38,27 +56,14 @@ abstract class LeafNode implements Node {
   }
 }
 
-abstract class NamedElement {
-  private name: string
-
-  getName(): string {
-    return this.name
-  }
-}
-
-export class System implements Node {
-  private name: string
+export class System extends BasicNode {
   private services: Microservice[] = []
   private exchanges: MessageExchange[] = []
-  private links: Link[]
-  private subSystems: System[]
+  private infoFlows: InfoFlow[] = []
+  private subSystems: System[] = []
 
   constructor(name: string) {
-    this.name = name
-  }
-
-  getId(): string {
-    return 'system_' + this.name
+    super(name)
   }
 
   getNodes(): Node[] {
@@ -66,11 +71,7 @@ export class System implements Node {
   }
 
   getEdges(): Edge[] {
-    return []
-  }
-
-  getProperties(): Properties {
-    return []
+    return this.infoFlows
   }
 
   getMicroservices(): Microservice[] {
@@ -80,44 +81,55 @@ export class System implements Node {
   getMessageExchanges(): MessageExchange[] {
     return this.exchanges
   }
+
+  getSubSystems(): System[] {
+    return this.subSystems
+  }
+
+  getInfoFlows(): InfoFlow[] {
+    return this.infoFlows
+  }
 }
 
-export class Microservice extends LeafNode {
-  private name: string
-
+export class Microservice extends BasicNode {
   constructor(name: string) {
-    super()
-    this.name = name
-  }
-
-  getName(): string {
-    return this.name
-  }
-
-  getId(): string {
-    return 'Microservice_' + this.name
+    super(name)
   }
 }
 
-export class MessageExchange extends LeafNode {
-  private name: string
-
+export class MessageExchange extends BasicNode {
   constructor(name: string) {
-    super()
-    this.name = name
-  }
-
-  getName(): string {
-    return this.name
-  }
-
-  getId(): string {
-    return 'MessageExchange_' + this.name
+    super(name)
   }
 }
 
-export declare interface Link {
-  sourceName: string
-  targetName: string
-  communicationType: string
+abstract class BasicEdge implements Edge {
+  private properties: Properties = {}
+  private source: Node
+  private target: Node
+  private sourceId: string
+  private targetId: string
+  private type: string
+
+  constructor(source: Node, target: Node) {
+    this.sourceId = source.getId()
+    this.targetId = target.getId()
+    this.type = this.constructor.toString().match(/\w+/g)[1]
+  }
+
+  getSource() {
+    return this.source
+  }
+
+  getTarget() {
+    return this.target
+  }
+
+  getProperties(): Properties {
+    return this.properties
+  }
 }
+
+export class InfoFlow extends BasicEdge {}
+export class AsyncInfoFlow extends InfoFlow {}
+export class SyncInfoFlow extends InfoFlow {}
