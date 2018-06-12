@@ -8,37 +8,31 @@ import { RawNode, RawEdge, RawModelConverter } from '~/model/rawNodeModel'
 describe('node model', function() {
 
   test('basic operations', function() {
-    const emptySystem = new Node('system')
+    const emptySystem = new Node('S', 'system')
     expect(emptySystem.hasNodes()).to.be.false
     expect(emptySystem.hasEdges()).to.be.false
 
-    const system: Node = RawModelConverter.convertToNode({
-      id: 'system',
-      nodes: [
-        { id: 'A' },
-        { id: 'B' }
-      ],
-      edges: [
-        { sourceId: 'A', targetId: 'B' }
-      ]
-    })
+    const nodeA = new Node('A', 'microservice')
+    const nodeB = new Node('B', 'microservice')
+    const system: Node = new Node('S', 'system',
+      [ nodeA, nodeB ],
+      [ new Edge(nodeA, nodeB) ])
 
     expect(system.getNodes().length).to.equal(2)
     expect(system.hasNodes()).to.be.true
-    expect(system.findNode('A')).to.deep.equal(new Node('A'))
+    expect(system.deepFindNodeByNameAndKind('A', 'microservice')).to.deep.equal(new Node('A', 'microservice'))
 
     expect(system.getEdges().length).to.equal(1)
     expect(system.hasEdges()).to.be.true
-    expect(system.findEdge('A', 'B')).to.deep.equal(new Edge('A', 'B'))
   })
 
   test('props are always accessible', function() {
-    const node = new Node('system')
+    const node = new Node('S', 'system')
 
-    expect(node.props).not.to.be.undefined
-    expect(node.props.x).to.be.undefined
+    expect(node.getProps()).not.to.be.undefined
+    expect(node.getProps().x).to.be.undefined
 
-    node.props.x = 'x'
-    expect(node.props.x).to.equal('x')
+    node.getProps().x = 'x'
+    expect(node.getProps().x).to.equal('x')
   })
 })

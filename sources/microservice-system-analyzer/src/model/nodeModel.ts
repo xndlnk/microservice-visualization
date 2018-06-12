@@ -3,14 +3,19 @@ export interface Props {
 }
 
 export class Node {
-  public readonly id: string
-  public props: Props
+  public readonly props: Props
+
+  private readonly id: string
+  private readonly name: string
+  private readonly kind: string
 
   private nodes: Node[]
   private edges: Edge[]
 
-  constructor(id: string, nodes?: Node[], edges?: Edge[], props?: Props) {
-    this.id = id
+  constructor(name: string, kind: string, nodes?: Node[], edges?: Edge[], props?: Props) {
+    this.id = `${kind}_${name}`
+    this.name = name
+    this.kind = kind
     this.props = props ? props : {}
     this.nodes = nodes ? nodes : []
     this.edges = edges ? edges : []
@@ -18,20 +23,51 @@ export class Node {
 
   // TODO: getters for specific props should move to specific users
   // and not be part of generic model
-  getKind(): string {
-    return this.getPropOrElse('kind', 'node')
-  }
-
   getLabel(): string {
-    return this.getPropOrElse('label', this.id)
+    return this.getPropOrElse('label', `${this.kind} ${this.name}`)
   }
 
-  findNode(id: string): Node {
+  addNodeIfNew(name: string, kind: string): Node {
+    const existingNode = this.deepFindNodeByNameAndKind(name, kind)
+    if (existingNode) return existingNode
+
+    const newNode = new Node(name, kind)
+    this.nodes.push(newNode)
+    return newNode
+  }
+
+  addEdge(edge: Edge) {
+    this.edges.push(edge)
+  }
+
+  findNodeById(id: string): Node {
     return this.nodes.find(node => node.id === id)
   }
 
-  findEdge(sourceId: string, targetId: string): Edge {
-    return this.edges.find(edge => edge.sourceId === sourceId && edge.targetId === targetId)
+  deepFindNodeById(id: string): Node {
+    const node = this.nodes.find(node => node.id === id)
+    if (node) {
+      return node
+    } else {
+      return this.nodes.map(node => node.deepFindNodeById(id)).find(node => node !== undefined)
+    }
+  }
+
+  deepFindNodeByNameAndKind(name: string, kind: string): Node {
+    const node = this.nodes.find(node => node.name === name && node.kind === kind)
+    if (node) {
+      return node
+    } else {
+      return this.nodes.map(node => node.deepFindNodeByNameAndKind(name, kind)).find(node => node !== undefined)
+    }
+  }
+
+  getProps(): Props {
+    return this.props
+  }
+
+  getId(): string {
+    return this.id
   }
 
   getNodes(): Node[] {
@@ -57,13 +93,22 @@ export class Node {
 }
 
 export class Edge {
-  public readonly sourceId: string
-  public readonly targetId: string
   public props: Props
 
-  constructor(sourceId: string, targetId: string, props?: Props) {
-    this.sourceId = sourceId
-    this.targetId = targetId
+  private source: Node
+  private target: Node
+
+  constructor(source: Node, target: Node, props?: Props) {
+    this.source = source
+    this.target = target
     this.props = props ? props : {}
+  }
+
+  getSource() {
+    return this.source
+  }
+
+  getTarget() {
+    return this.target
   }
 }

@@ -4,15 +4,25 @@ import * as _ from 'lodash'
 
 export class ModelConverter {
   convertSystemToNode(system: System): Node {
-    return new Node(system.name,
-      _.union(this.convertServicesToNodes(system.services), this.convertSubSystemsToNodes(system.subSystems)),
-      this.convertLinksToEdges(system.links))
+    const containedNodes = _.union(this.convertServicesToNodes(system.services), this.convertSubSystemsToNodes(system.subSystems))
+    const systemNode = new Node(system.name, 'system', containedNodes)
+    this.convertLinksToEdges(system.links, systemNode)
+    return systemNode
   }
 
-  private convertServicesToNodes(services: Service[], subSystems?: System[]): Node[] {
+  private convertServicesToNodes(services: Service[]): Node[] {
     if (!services) return []
 
-    return services.map(service => new Node(service.name, null, null, this.convertProperties(service.properties)))
+    return services.map(service => this.convertServiceToNode(service))
+  }
+
+  private convertServiceToNode(service: Service): Node {
+    if (service.name.startsWith('exchange ')) {
+      const name = service.name.substring('exchange '.length)
+      return new Node(name, 'exchange', null, null, this.convertProperties(service.properties))
+    } else {
+      return new Node(service.name, 'microservice', null, null, this.convertProperties(service.properties))
+    }
   }
 
   private convertSubSystemsToNodes(subSystems: System[]): Node[] {
@@ -31,14 +41,17 @@ export class ModelConverter {
     return props
   }
 
-  private convertLinksToEdges(links: Link[]): Edge[] {
+  private convertLinksToEdges(links: Link[], ownerNode: Node) {
     if (!links) return []
 
     return links.map(link => {
       const props: Props = {
         communicationType: link.communicationType
       }
-      return new Edge(link.sourceName, link.targetName, props)
+      const source = ownerNode.addNodeIfNew(link.sourceName, 'microservice') // TODO: exchange
+      const target = ownerNode.addNodeIfNew(link.targetName, 'microservice')
+
+      ownerNode.addEdge(new Edge(source, target, props))
     })
   }
 }

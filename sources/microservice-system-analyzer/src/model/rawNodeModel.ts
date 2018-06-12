@@ -1,7 +1,8 @@
 import { Node, Edge, Props } from './nodeModel'
 
 export interface RawNode {
-  id: string
+  name: string,
+  kind: string,
   nodes?: RawNode[]
   edges?: RawEdge[]
   props?: Props
@@ -17,13 +18,18 @@ export class RawModelConverter {
 
   static convertToNode(rawNode: RawNode): Node {
     const nodes = rawNode.nodes ? rawNode.nodes.map(node => RawModelConverter.convertToNode(node)) : []
-    const edges = rawNode.edges ? rawNode.edges.map(edge => RawModelConverter.convertToEdge(edge)) : []
     const props = rawNode.props ? JSON.parse(JSON.stringify(rawNode.props)) : undefined
-    return new Node(rawNode.id, nodes, edges, props)
+    const node = new Node(rawNode.name, rawNode.kind, nodes, null, props)
+    if (rawNode.edges) {
+      rawNode.edges.forEach(rawEdge => RawModelConverter.addAsEdge(rawEdge, node))
+    }
+    return node
   }
 
-  static convertToEdge(rawEdge: RawEdge): Edge {
+  private static addAsEdge(rawEdge: RawEdge, ownerNode: Node) {
     const props = rawEdge.props ? JSON.parse(JSON.stringify(rawEdge.props)) : undefined
-    return new Edge(rawEdge.sourceId, rawEdge.targetId, props)
+    const source = ownerNode.deepFindNodeById(rawEdge.sourceId)
+    const target = ownerNode.deepFindNodeById(rawEdge.targetId)
+    ownerNode.addEdge(new Edge(source, target, props))
   }
 }
