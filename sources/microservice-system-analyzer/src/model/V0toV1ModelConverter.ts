@@ -7,9 +7,9 @@ export class V0toV1ModelConverter {
   convertSystem(v0system: v0.System): v1.System {
     const systemNode = new v1.System(v0system.name)
 
-    this.convertServices(v0system.services).forEach(service => systemNode.getMicroservices().push(service))
-    this.convertExchanges(v0system.services).forEach(exchange => systemNode.getMessageExchanges().push(exchange))
-    this.convertSubSystems(v0system.subSystems).forEach(subSystem => systemNode.getSubSystems().push(subSystem))
+    this.convertServices(v0system.services).forEach(service => systemNode.getNodes().push(service))
+    this.convertExchanges(v0system.services).forEach(exchange => systemNode.getNodes().push(exchange))
+    this.convertSubSystems(v0system.subSystems).forEach(subSystem => systemNode.getNodes().push(subSystem))
 
     this.convertAndAddLinks(v0system.links, systemNode)
     return systemNode
@@ -49,7 +49,6 @@ export class V0toV1ModelConverter {
     if (!links) return []
 
     return links.map(link => {
-      // TODO: source and target can also be exchanges
       const source = this.deepFindNodeById(owner, this.getServiceId(link.sourceName))
       const target = this.deepFindNodeById(owner, this.getServiceId(link.targetName))
 
@@ -81,14 +80,14 @@ export class V0toV1ModelConverter {
     }
   }
 
-  private deepFindNodeById(system: v1.System, id: string): v1.Node {
-    const node = system.getNodes().find(node => node.getId() === id)
-    if (node) {
-      return node
+  private deepFindNodeById(node: v1.Node, id: string): v1.Node {
+    const subNode = node.getNodes().find(subNode => subNode.getId() === id)
+    if (subNode) {
+      return subNode
     } else {
-      return system.getSubSystems()
-        .map(subSystem => this.deepFindNodeById(subSystem, id))
-        .find(node => node !== undefined)
+      return node.getNodes()
+        .map(subNode => this.deepFindNodeById(subNode, id))
+        .find(subNode => subNode !== undefined)
     }
   }
 }

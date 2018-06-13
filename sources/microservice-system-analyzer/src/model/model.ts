@@ -2,28 +2,11 @@ import * as _ from 'lodash'
 
 // INFO: this model will replace the old one in modelClasses.js
 
-export interface Element {
-  getProperties(): Properties
-  addProperty(name: string, value: any)
-}
-
 export interface Properties {
   [key: string]: any
 }
 
-export interface Node extends Element {
-  getId(): string
-  getNodes(): Node[]
-  getEdges(): Edge[]
-  deepFindNodeById(id: string): Node
-}
-
-export interface Edge extends Element {
-  getSource(): Node
-  getTarget(): Node
-}
-
-abstract class BasicNode implements Node {
+export class Node {
   private name: string
   private nodes: Node[]
   private edges: Edge[]
@@ -38,10 +21,10 @@ abstract class BasicNode implements Node {
     this.properties = properties || {}
   }
 
-  addNodeUniquely(node: Node, addNode: (n: Node) => void) {
+  addNodeUniquely(node: Node) {
     const existing = this.deepFindNodeById(node.getId())
     if (!existing) {
-      addNode(node)
+      this.nodes.push(node)
     }
   }
 
@@ -83,62 +66,25 @@ abstract class BasicNode implements Node {
   }
 }
 
-export class System extends BasicNode {
-  private services: Microservice[] = []
-  private exchanges: MessageExchange[] = []
-  private infoFlows: InfoFlow[] = []
-  private subSystems: System[] = []
-
-  constructor(name: string) {
-    super(name)
-  }
-
-  addMicroserviceUniquely(microservice: Microservice) {
-    this.addNodeUniquely(microservice, (m: Microservice) => this.services.push(m))
-  }
-
-  addMessageExchangeUniquely(exchange: MessageExchange) {
-    this.addNodeUniquely(exchange, (e: MessageExchange) => this.exchanges.push(e))
-  }
-
-  getNodes(): Node[] {
-    return _.union(this.services as Node[], this.exchanges as Node[], this.subSystems as Node[])
-  }
-
-  getEdges(): Edge[] {
-    return this.infoFlows
-  }
-
-  getMicroservices(): Microservice[] {
-    return this.services
-  }
-
-  getMessageExchanges(): MessageExchange[] {
-    return this.exchanges
-  }
-
-  getSubSystems(): System[] {
-    return this.subSystems
-  }
-
-  getInfoFlows(): InfoFlow[] {
-    return this.infoFlows
+export class System extends Node {
+  constructor(name: string, nodes?: Node[], edges?: Edge[], properties?: Properties) {
+    super(name, nodes, edges, properties)
   }
 }
 
-export class Microservice extends BasicNode {
+export class Microservice extends Node {
   constructor(name: string, properties?: Properties) {
     super(name, null, null, properties)
   }
 }
 
-export class MessageExchange extends BasicNode {
+export class MessageExchange extends Node {
   constructor(name: string, properties?: Properties) {
     super(name, null, null, properties)
   }
 }
 
-abstract class BasicEdge implements Edge {
+export class Edge {
   private properties: Properties = {}
   private source: Node
   private target: Node
@@ -169,6 +115,6 @@ abstract class BasicEdge implements Edge {
   }
 }
 
-export class InfoFlow extends BasicEdge {}
+export class InfoFlow extends Edge {}
 export class AsyncInfoFlow extends InfoFlow {}
 export class SyncInfoFlow extends InfoFlow {}

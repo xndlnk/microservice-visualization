@@ -9,11 +9,7 @@ describe('model', function() {
   test('basic operations', function() {
     const a = new Microservice('A')
     const b = new MessageExchange('B')
-    const ab = new AsyncInfoFlow(a, b)
-    const system = new System('S')
-    system.getMicroservices().push(a)
-    system.getMessageExchanges().push(b)
-    system.getInfoFlows().push(ab)
+    const system = new System('S', [ a, b ], [ new AsyncInfoFlow(a, b) ])
 
     expect(system.getNodes().length).to.equal(2)
     expect(system.getNodes().map(node => node.getId())).to.eql([ 'Microservice_A', 'MessageExchange_B' ])
@@ -23,12 +19,12 @@ describe('model', function() {
   test('unique additions', function() {
     const system = new System('S')
 
-    system.addMicroserviceUniquely(new Microservice('A'))
-    system.addMicroserviceUniquely(new Microservice('A'))
+    system.addNodeUniquely(new Microservice('A'))
+    system.addNodeUniquely(new Microservice('A'))
     expect(system.getNodes().length).to.equal(1)
 
-    system.addMessageExchangeUniquely(new MessageExchange('A'))
-    system.addMessageExchangeUniquely(new MessageExchange('A'))
+    system.addNodeUniquely(new MessageExchange('A'))
+    system.addNodeUniquely(new MessageExchange('A'))
     expect(system.getNodes().length).to.equal(2)
   })
 })
