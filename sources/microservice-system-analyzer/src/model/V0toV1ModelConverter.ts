@@ -2,7 +2,7 @@ import * as v1 from '~/model/model'
 import * as v0 from './modelClasses'
 import * as _ from 'lodash'
 
-export class ModelConverter {
+export class V0toV1ModelConverter {
 
   convertSystem(v0system: v0.System): v1.System {
     const systemNode = new v1.System(v0system.name)

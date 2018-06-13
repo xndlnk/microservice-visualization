@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import * as v1 from '~/model/model'
 import * as v0 from './modelClasses'
-import { ModelConverter } from '~/model/ModelConverter'
+import { V0toV1ModelConverter } from '~/model/V0toV1ModelConverter'
 
 /* tslint:disable:no-unused-expression */
 describe('model converter', function() {
@@ -23,7 +23,7 @@ describe('model converter', function() {
       ]
     }
 
-    const v1system = new ModelConverter().convertSystem(system)
+    const v1system = new V0toV1ModelConverter().convertSystem(system)
 
     const expectedv1system = new v1.System('S')
 
@@ -57,7 +57,7 @@ describe('model converter', function() {
       ]
     }
 
-    const v1system = new ModelConverter().convertSystem(system)
+    const v1system = new V0toV1ModelConverter().convertSystem(system)
 
     const expectedv1system = new v1.System('S')
     const msA = new v1.Microservice('A')
@@ -90,7 +90,7 @@ describe('model converter', function() {
       ]
     }
 
-    const v1system = new ModelConverter().convertSystem(system)
+    const v1system = new V0toV1ModelConverter().convertSystem(system)
 
     const expectedv1system = new v1.System('S')
     const msA = new v1.Microservice('A')

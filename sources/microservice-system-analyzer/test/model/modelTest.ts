@@ -19,4 +19,16 @@ describe('model', function() {
     expect(system.getNodes().map(node => node.getId())).to.eql([ 'Microservice_A', 'MessageExchange_B' ])
     expect(system.getEdges()).to.deep.equal([ new AsyncInfoFlow(a, b) ])
   })
+
+  test('unique additions', function() {
+    const system = new System('S')
+
+    system.addMicroserviceUniquely(new Microservice('A'))
+    system.addMicroserviceUniquely(new Microservice('A'))
+    expect(system.getNodes().length).to.equal(1)
+
+    system.addMessageExchangeUniquely(new MessageExchange('A'))
+    system.addMessageExchangeUniquely(new MessageExchange('A'))
+    expect(system.getNodes().length).to.equal(2)
+  })
 })

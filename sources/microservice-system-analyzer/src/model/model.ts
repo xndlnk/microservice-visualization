@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 
 export interface Element {
   getProperties(): Properties
+  addProperty(name: string, value: any)
 }
 
 export interface Properties {
@@ -14,6 +15,7 @@ export interface Node extends Element {
   getId(): string
   getNodes(): Node[]
   getEdges(): Edge[]
+  deepFindNodeById(id: string): Node
 }
 
 export interface Edge extends Element {
@@ -34,6 +36,22 @@ abstract class BasicNode implements Node {
     this.nodes = nodes || []
     this.edges = edges || []
     this.properties = properties || {}
+  }
+
+  addNodeUniquely(node: Node, addNode: (n: Node) => void) {
+    const existing = this.deepFindNodeById(node.getId())
+    if (!existing) {
+      addNode(node)
+    }
+  }
+
+  deepFindNodeById(id: string): Node {
+    const node = this.getNodes().find(node => node.getId() === id)
+    if (node) {
+      return node
+    } else {
+      return this.getNodes().map(node => node.deepFindNodeById(id)).find(node => node !== undefined)
+    }
   }
 
   getName(): string {
@@ -59,6 +77,10 @@ abstract class BasicNode implements Node {
   getProperties(): Properties {
     return this.properties
   }
+
+  addProperty(name: string, value: any) {
+    this.properties[name] = value
+  }
 }
 
 export class System extends BasicNode {
@@ -71,8 +93,16 @@ export class System extends BasicNode {
     super(name)
   }
 
+  addMicroserviceUniquely(microservice: Microservice) {
+    this.addNodeUniquely(microservice, (m: Microservice) => this.services.push(m))
+  }
+
+  addMessageExchangeUniquely(exchange: MessageExchange) {
+    this.addNodeUniquely(exchange, (e: MessageExchange) => this.exchanges.push(e))
+  }
+
   getNodes(): Node[] {
-    return _.union(this.services as Node[], this.exchanges as Node[])
+    return _.union(this.services as Node[], this.exchanges as Node[], this.subSystems as Node[])
   }
 
   getEdges(): Edge[] {
@@ -132,6 +162,10 @@ abstract class BasicEdge implements Edge {
 
   getProperties(): Properties {
     return this.properties
+  }
+
+  addProperty(name: string, value: any) {
+    this.properties[name] = value
   }
 }
 
