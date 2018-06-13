@@ -1,3 +1,5 @@
+// DEPRECATED: this module is part of a prototype and might be removed again.
+
 export interface Props {
   [key: string]: any
 }

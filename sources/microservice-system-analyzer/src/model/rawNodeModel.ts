@@ -1,3 +1,5 @@
+// DEPRECATED: this module is part of a prototype and might be removed again.
+
 import { Node, Edge, Props } from './nodeModel'
 
 export interface RawNode {

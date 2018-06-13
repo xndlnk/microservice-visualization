@@ -1,57 +1,94 @@
-import { Node, Edge, Props } from './nodeModel'
-import { System, Service, Link, Property } from './modelClasses'
+import * as v1 from '~/model/model'
+import * as v0 from './modelClasses'
 import * as _ from 'lodash'
 
 export class ModelConverter {
-  convertSystemToNode(system: System): Node {
-    const containedNodes = _.union(this.convertServicesToNodes(system.services), this.convertSubSystemsToNodes(system.subSystems))
-    const systemNode = new Node(system.name, 'system', containedNodes)
-    this.convertLinksToEdges(system.links, systemNode)
+
+  convertSystem(v0system: v0.System): v1.System {
+    const systemNode = new v1.System(v0system.name)
+
+    this.convertServices(v0system.services).forEach(service => systemNode.getMicroservices().push(service))
+    this.convertExchanges(v0system.services).forEach(exchange => systemNode.getMessageExchanges().push(exchange))
+    this.convertSubSystems(v0system.subSystems).forEach(subSystem => systemNode.getSubSystems().push(subSystem))
+
+    this.convertAndAddLinks(v0system.links, systemNode)
     return systemNode
   }
 
-  private convertServicesToNodes(services: Service[]): Node[] {
-    if (!services) return []
+  private convertServices(v0services: v0.Service[]): v1.Microservice[] {
+    if (!v0services) return []
 
-    return services.map(service => this.convertServiceToNode(service))
+    return v0services.filter(v0service => !v0service.name.startsWith('exchange '))
+      .map(v0service => new v1.Microservice(v0service.name, this.convertProperties(v0service.properties)))
   }
 
-  private convertServiceToNode(service: Service): Node {
-    if (service.name.startsWith('exchange ')) {
-      const name = service.name.substring('exchange '.length)
-      return new Node(name, 'exchange', null, null, this.convertProperties(service.properties))
-    } else {
-      return new Node(service.name, 'microservice', null, null, this.convertProperties(service.properties))
-    }
+  private convertExchanges(v0services: v0.Service[]): v1.MessageExchange[] {
+    if (!v0services) return []
+
+    return v0services.filter(v0service => v0service.name.startsWith('exchange '))
+      .map(v0service => new v1.MessageExchange(v0service.name.substring('exchange '.length), this.convertProperties(v0service.properties)))
   }
 
-  private convertSubSystemsToNodes(subSystems: System[]): Node[] {
-    if (!subSystems) return []
+  private convertSubSystems(v0subSystems: v0.System[]): v1.System[] {
+    if (!v0subSystems) return []
 
-    return subSystems.map(subSystem => this.convertSystemToNode(subSystem))
+    return v0subSystems.map(v0subSystem => this.convertSystem(v0subSystem))
   }
 
-  private convertProperties(properties: Property[]): Props {
-    if (!properties) return {}
+  private convertProperties(v0properties: v0.Property[]): v1.Properties {
+    if (!v0properties) return {}
 
-    const props: Props = {}
-    properties.forEach(property => {
-      props[property.name] = property.value
+    const v1properties: v1.Properties = {}
+    v0properties.forEach(property => {
+      v1properties[property.name] = property.value
     })
-    return props
+    return v1properties
   }
 
-  private convertLinksToEdges(links: Link[], ownerNode: Node) {
+  private convertAndAddLinks(links: v0.Link[], owner: v1.System) {
     if (!links) return []
 
     return links.map(link => {
-      const props: Props = {
-        communicationType: link.communicationType
-      }
-      const source = ownerNode.addNodeIfNew(link.sourceName, 'microservice') // TODO: exchange
-      const target = ownerNode.addNodeIfNew(link.targetName, 'microservice')
+      // TODO: source and target can also be exchanges
+      const source = this.deepFindNodeById(owner, this.getServiceId(link.sourceName))
+      const target = this.deepFindNodeById(owner, this.getServiceId(link.targetName))
 
-      ownerNode.addEdge(new Edge(source, target, props))
+      if (source == null) {
+        console.log('WARN: could not find source ' + this.getServiceId(link.sourceName))
+        return {}
+      }
+
+      if (target == null) {
+        console.log('WARN: could not find target ' + this.getServiceId(link.targetName))
+        return {}
+      }
+
+      if (link.communicationType === 'async') {
+        owner.getEdges().push(new v1.AsyncInfoFlow(source, target))
+      } else if (link.communicationType === 'sync') {
+        owner.getEdges().push(new v1.SyncInfoFlow(source, target))
+      } else {
+        console.log('WARN: unknown communicationType ' + link.communicationType)
+      }
     })
+  }
+
+  private getServiceId(v0serviceId: string): string {
+    if (v0serviceId.startsWith('exchange ')) {
+      return 'MessageExchange_' + v0serviceId.substring('exchange '.length)
+    } else {
+      return 'Microservice_' + v0serviceId
+    }
+  }
+
+  private deepFindNodeById(system: v1.System, id: string): v1.Node {
+    const node = system.getNodes().find(node => node.getId() === id)
+    if (node) {
+      return node
+    } else {
+      return system.getSubSystems()
+        .map(subSystem => this.deepFindNodeById(subSystem, id))
+        .find(node => node !== undefined)
+    }
   }
 }

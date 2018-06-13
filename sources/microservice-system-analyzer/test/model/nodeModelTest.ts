@@ -1,3 +1,5 @@
+// DEPRECATED: this module is part of a prototype and might be removed again.
+
 import { describe, it, test } from 'mocha'
 import { expect } from 'chai'
 

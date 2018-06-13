@@ -1,5 +1,7 @@
 import * as _ from 'lodash'
 
+// INFO: this model will replace the old one in modelClasses.js
+
 export interface Element {
   getProperties(): Properties
 }
@@ -21,14 +23,17 @@ export interface Edge extends Element {
 
 abstract class BasicNode implements Node {
   private name: string
-  private nodes: Node[] = []
-  private edges: Edge[] = []
-  private properties: Properties = {}
+  private nodes: Node[]
+  private edges: Edge[]
+  private properties: Properties
   private type: string
 
-  constructor(name: string) {
+  constructor(name: string, nodes?: Node[], edges?: Edge[], properties?: Properties) {
     this.name = name
     this.type = this.constructor.toString().match(/\w+/g)[1]
+    this.nodes = nodes || []
+    this.edges = edges || []
+    this.properties = properties || {}
   }
 
   getName(): string {
@@ -92,14 +97,14 @@ export class System extends BasicNode {
 }
 
 export class Microservice extends BasicNode {
-  constructor(name: string) {
-    super(name)
+  constructor(name: string, properties?: Properties) {
+    super(name, null, null, properties)
   }
 }
 
 export class MessageExchange extends BasicNode {
-  constructor(name: string) {
-    super(name)
+  constructor(name: string, properties?: Properties) {
+    super(name, null, null, properties)
   }
 }
 
