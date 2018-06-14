@@ -28,6 +28,13 @@ export class Node {
     }
   }
 
+  addEdgeUniquely(newEdge: Edge) {
+    const existing = this.edges.find(edge => edge.getSource().getId() === newEdge.getSource().getId() && edge.getTarget().getId() === newEdge.getTarget().getId())
+    if (!existing) {
+      this.edges.push(newEdge)
+    }
+  }
+
   deepFindNodeById(id: string): Node {
     const node = this.getNodes().find(node => node.getId() === id)
     if (node) {
@@ -93,6 +100,8 @@ export class Edge {
   private type: string
 
   constructor(source: Node, target: Node) {
+    this.source = source
+    this.target = target
     this.sourceId = source.getId()
     this.targetId = target.getId()
     this.type = this.constructor.toString().match(/\w+/g)[1]

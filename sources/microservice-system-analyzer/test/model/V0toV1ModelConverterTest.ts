@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import * as v1 from '~/model/model'
-import * as v0 from './modelClasses'
+import * as v0 from '~/model/modelClasses'
 import { V0toV1ModelConverter } from '~/model/V0toV1ModelConverter'
 
 /* tslint:disable:no-unused-expression */
