@@ -6,12 +6,10 @@ import { createLogger } from '~/logging'
 
 const logger = createLogger('merger')
 
-/** merges many v0 and many v1 systems into one v1 system.
- * it will not merge nodes of nodes, i.e. subsystems will not be merged.
- */
+/** merges many v0 and many v1 systems into one v1 system. */
 export class V1SystemMerger {
 
-  merge(v0systems: v0.System[], v1systems: v1.System[]): v1.System {
+  mergeWithoutSubSystems(v0systems: v0.System[], v1systems: v1.System[]): v1.System {
     const systemNames = this.getSystemNames(v0systems, v1systems)
     if (!this.allSystemsHaveTheSameName(systemNames)) {
       logger.error('can only merge sytems of the same name')
@@ -25,20 +23,24 @@ export class V1SystemMerger {
     const v0systemsAsV1systems = v0systems.map(v0system => modelConverter.convertSystem(v0system))
 
     _.union(v1systems, v0systemsAsV1systems).forEach(v1system => {
-      v1system.getNodes().forEach(node => {
-        if (node instanceof v1.System) {
-          logger.warn('cannot merge subsystems')
-        }
-
-        if (!mergedSystem.addNodeUniquely(node)) {
-          const existingNode = mergedSystem.deepFindNodeById(node.getId())
-          Object.keys(node.getProperties()).forEach(propName => existingNode.addProperty(propName, node.getProperties()[propName]))
-        }
-      })
+      this.mergeIntoNodesOfParentNode(v1system.getNodes(), mergedSystem)
       v1system.getEdges().forEach(edge => mergedSystem.addEdgeUniquely(edge))
     })
 
     return mergedSystem
+  }
+
+  mergeIntoNodesOfParentNode(nodes: v1.Node[], parentNode: v1.Node) {
+    nodes.forEach(node => {
+      if (node instanceof v1.System) {
+        logger.warn('cannot merge subsystem ' + node.getName())
+      }
+
+      if (!parentNode.addNodeUniquely(node)) {
+        const existingNode = parentNode.deepFindNodeById(node.getId())
+        Object.keys(node.getProperties()).forEach(propName => existingNode.addProperty(propName, node.getProperties()[propName]))
+      }
+    })
   }
 
   getSystemNames(v0systems: v0.System[], v1systems: v1.System[]): string[] {

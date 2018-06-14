@@ -33,7 +33,7 @@ describe('system merger', function() {
         new v1.AsyncInfoFlow(msB, exC)
       ])
 
-    const mergedSystem = new V1SystemMerger().merge([ v0system ], [ v1system ])
+    const mergedSystem = new V1SystemMerger().mergeWithoutSubSystems([ v0system ], [ v1system ])
 
     const msA = new v1.Microservice('A')
     const msBexpected = new v1.Microservice('B')
