@@ -21,11 +21,11 @@ export class Node {
     this.properties = properties || {}
   }
 
-  addNodeUniquely(node: Node) {
-    const existing = this.deepFindNodeById(node.getId())
-    if (!existing) {
-      this.nodes.push(node)
-    }
+  addNodeUniquely(node: Node): boolean {
+    if (this.deepFindNodeById(node.getId())) return false
+
+    this.nodes.push(node)
+    return true
   }
 
   addEdgeUniquely(newEdge: Edge) {

@@ -7,12 +7,17 @@ import { V1SystemMerger } from '~/processor/V1SystemMerger'
 /* tslint:disable:no-unused-expression */
 describe('system merger', function() {
 
-  it('can merge two systems of the same name', function() {
+  it('can merge two systems of the same name with their properties', function() {
     const v0system: v0.System = {
       name: 'S',
       services: [
         { name: 'A' },
-        { name: 'B' }
+        {
+          name: 'B',
+          properties: [
+            { name: 'p1', value: 'v1' }
+          ]
+        }
       ],
       links: [
         { sourceName: 'A', targetName: 'B', communicationType: 'sync' }
@@ -31,9 +36,11 @@ describe('system merger', function() {
     const mergedSystem = new V1SystemMerger().merge([ v0system ], [ v1system ])
 
     const msA = new v1.Microservice('A')
+    const msBexpected = new v1.Microservice('B')
+    msBexpected.addProperty('p1', 'v1')
 
     const expectedMergedSystem = new v1.System('S',
-      [ msA, msB, exC ],
+      [ msA, msBexpected, exC ],
       [
         new v1.SyncInfoFlow(msA, msB),
         new v1.AsyncInfoFlow(msB, exC)

@@ -6,7 +6,11 @@ import { createLogger } from '~/logging'
 
 const logger = createLogger('merger')
 
+/** merges many v0 and many v1 systems into one v1 system.
+ * it will not merge nodes of nodes, i.e. subsystems will not be merged.
+ */
 export class V1SystemMerger {
+
   merge(v0systems: v0.System[], v1systems: v1.System[]): v1.System {
     const systemNames = this.getSystemNames(v0systems, v1systems)
     if (!this.allSystemsHaveTheSameName(systemNames)) {
@@ -21,7 +25,16 @@ export class V1SystemMerger {
     const v0systemsAsV1systems = v0systems.map(v0system => modelConverter.convertSystem(v0system))
 
     _.union(v1systems, v0systemsAsV1systems).forEach(v1system => {
-      v1system.getNodes().forEach(node => mergedSystem.addNodeUniquely(node))
+      v1system.getNodes().forEach(node => {
+        if (node instanceof v1.System) {
+          logger.warn('cannot merge subsystems')
+        }
+
+        if (!mergedSystem.addNodeUniquely(node)) {
+          const existingNode = mergedSystem.deepFindNodeById(node.getId())
+          Object.keys(node.getProperties()).forEach(propName => existingNode.addProperty(propName, node.getProperties()[propName]))
+        }
+      })
       v1system.getEdges().forEach(edge => mergedSystem.addEdgeUniquely(edge))
     })
 
