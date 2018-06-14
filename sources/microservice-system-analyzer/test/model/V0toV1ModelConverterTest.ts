@@ -38,11 +38,10 @@ describe('model converter', function() {
         new v1.AsyncInfoFlow(exC, msD)
       ])
 
-    // TODO: nodes can be in any order
     expect(v1system).to.deep.equal(expectedv1system)
   })
 
-  /*it('can convert properties', function() {
+  it('can convert properties', function() {
     const system: v0.System = {
       name: 'S',
       services: [
@@ -57,10 +56,9 @@ describe('model converter', function() {
 
     const v1system = new V0toV1ModelConverter().convertSystem(system)
 
-    const expectedv1system = new v1.System('S')
     const msA = new v1.Microservice('A')
-    msA.getProperties().p1 = 'v1'
-    expectedv1system.getMicroservices().push(msA)
+    msA.addProperty('p1', 'v1')
+    const expectedv1system = new v1.System('S', [ msA ])
 
     expect(v1system).to.deep.equal(expectedv1system)
   })
@@ -90,21 +88,17 @@ describe('model converter', function() {
 
     const v1system = new V0toV1ModelConverter().convertSystem(system)
 
-    const expectedv1system = new v1.System('S')
-    const msA = new v1.Microservice('A')
-    expectedv1system.getMicroservices().push(msA)
-
-    const sP = new v1.System('P')
-    expectedv1system.getSubSystems().push(sP)
-
     const msM = new v1.Microservice('M')
     const msN = new v1.Microservice('N')
-    sP.getMicroservices().push(msM)
-    sP.getMicroservices().push(msN)
-    sP.getLinks().push(new v1.AsyncInfoFlow(msM, msN))
+    const sP = new v1.System('P',
+      [ msM, msN ],
+      [ new v1.AsyncInfoFlow(msM, msN) ])
 
-    expectedv1system.getLinks().push(new v1.AsyncInfoFlow(msA, msM))
+    const msA = new v1.Microservice('A')
+    const expectedv1system = new v1.System('S',
+      [ msA, sP ],
+      [ new v1.AsyncInfoFlow(msA, msM) ])
 
     expect(v1system).to.deep.equal(expectedv1system)
-  })*/
+  })
 })
