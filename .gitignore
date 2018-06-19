@@ -7,3 +7,4 @@ dist
 .env
 .nyc_output
 build
+*error.log

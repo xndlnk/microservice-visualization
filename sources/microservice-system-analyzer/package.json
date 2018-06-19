@@ -1,21 +1,26 @@
 {
   "name": "microservice-system-analyzer",
-  "version": "0.3.0",
+  "version": "0.4.0-0",
   "description": "",
-  "main": "src/api.js",
+  "main": "build/src/api.js",
   "scripts": {
+    "build": "tsc",
     "test": "standard src test && nyc --all mocha $(find test -name '*.js')",
     "lint": "standard src test && tslint --project tsconfig.json --config tslint.json 'src/**/*.ts' 'test/**/*.ts'",
-    "test-ts": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
+    "test-ts": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts test/*.ts"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/lodash": "^4.14.109",
+    "@types/winston": "^2.3.9",
     "dotenv": "^5.0.0",
+    "lodash": "^4.17.10",
     "npmlog": "^4.1.2",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
     "rimraf": "^2.6.2",
+    "winston": "^3.0.0",
     "xmlbuilder": "^9.0.7"
   },
   "devDependencies": {

@@ -8,6 +8,8 @@ const Service = modelClasses.Service
 const Link = modelClasses.Link
 const Property = modelClasses.Property
 
+// DEPRECATED: these tests will be replaced
+
 /* eslint-disable no-unused-expressions */
 describe('system model', function () {
   it('adds the same service just once', function () {
