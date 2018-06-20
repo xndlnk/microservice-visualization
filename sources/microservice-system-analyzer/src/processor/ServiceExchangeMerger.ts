@@ -16,18 +16,8 @@ export class ServiceExchangeMerger {
 
     logger.info('services and exchanges to be merged: ', exchangesToMerge.map(exchange => exchange.getId()))
 
-    this.getAllEdges(systems).map(edge => {
-      if (this.isOutgoingEdgeOfAnyExchange(edge, exchangesToMerge)) {
-        logger.info('merging service ' + edge.getSource().getName() + ' with exchange ' + edge.getSource().getName())
-        return new AsyncInfoFlow(new Microservice(edge.getSource().getName()), edge.getTarget())
-      } else if (!this.isIncomingEdgeOfAnyExchange(edge, exchangesToMerge)) {
-        return edge
-      } else {
-        return null
-      }
-    })
-    .filter(edge => edge != null)
-    .forEach(edge => result.addEdgeWithNodesUniquely(edge))
+    this.mergeEdges(systems, exchangesToMerge)
+      .forEach(edge => result.addEdgeWithNodesUniquely(edge))
 
     systems.forEach(system => {
       system.getNodes().forEach(node => {
@@ -38,6 +28,20 @@ export class ServiceExchangeMerger {
     })
 
     return result
+  }
+
+  private mergeEdges(systems: System[], exchangesToMerge: MessageExchange[]): Edge[] {
+    return this.getAllEdges(systems).map(edge => {
+      if (this.isOutgoingEdgeOfAnyExchange(edge, exchangesToMerge)) {
+        logger.info('merging service ' + edge.getSource().getName() + ' with exchange ' + edge.getSource().getName())
+        return new AsyncInfoFlow(new Microservice(edge.getSource().getName()), edge.getTarget())
+      } else if (!this.isIncomingEdgeOfAnyExchange(edge, exchangesToMerge)) {
+        return edge
+      } else {
+        return null
+      }
+    })
+    .filter(edge => edge != null)
   }
 
   private isOutgoingEdgeOfAnyExchange(edge: Edge, exchanges: MessageExchange[]) {
