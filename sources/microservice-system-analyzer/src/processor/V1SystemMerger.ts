@@ -10,14 +10,8 @@ const logger = createLogger('merger')
 export class V1SystemMerger {
 
   mergeWithoutSubSystems(v0systems: v0.System[], v1systems: v1.System[]): v1.System {
-    const systemNames = this.getSystemNames(v0systems, v1systems)
-    if (!this.allSystemsHaveTheSameName(systemNames)) {
-      logger.error('can only merge sytems of the same name')
-      return null
-    }
-
     logger.info('merging ' + (v0systems.length + v1systems.length) + ' systems')
-    const mergedSystem = new v1.System(systemNames[0])
+    const mergedSystem = new v1.System(this.mergeSystemNames(v0systems, v1systems))
 
     const modelConverter = new V0toV1ModelConverter()
     const v0systemsAsV1systems = v0systems.map(v0system => modelConverter.convertSystem(v0system))
@@ -28,6 +22,15 @@ export class V1SystemMerger {
     })
 
     return mergedSystem
+  }
+
+  mergeSystemNames(v0systems: v0.System[], v1systems: v1.System[]): string {
+    const systemNames = this.getSystemNames(v0systems, v1systems)
+    if (this.allSystemsHaveTheSameName(systemNames)) {
+      return systemNames[0]
+    } else {
+      return systemNames.join('-')
+    }
   }
 
   mergeIntoNodesOfParentNode(nodes: v1.Node[], parentNode: v1.Node) {

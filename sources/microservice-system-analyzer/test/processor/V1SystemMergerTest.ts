@@ -7,7 +7,7 @@ import { V1SystemMerger } from '~/processor/V1SystemMerger'
 /* tslint:disable:no-unused-expression */
 describe('system merger', function() {
 
-  it('can merge two systems of the same name with their properties', function() {
+  it('can merge two systems with their properties', function() {
     const v0system: v0.System = {
       name: 'S',
       services: [
@@ -50,5 +50,25 @@ describe('system merger', function() {
     expect(mergedSystem.getName()).to.eql('S')
     expect(mergedSystem.getNodes()).to.have.deep.members(expectedMergedSystem.getNodes())
     expect(mergedSystem.getEdges()).to.have.deep.members(expectedMergedSystem.getEdges())
+  })
+
+  it('can merge two systems of different names', function() {
+    const v0system: v0.System = {
+      name: 'S1',
+      services: [
+        { name: 'A' }
+      ]
+    }
+
+    const v1system = new v1.System('S2', [ new v1.Microservice('B') ])
+
+    const mergedSystem = new V1SystemMerger().mergeWithoutSubSystems([ v0system ], [ v1system ])
+
+    const expectedMergedSystem = new v1.System('S',
+      [ new v1.Microservice('A'), new v1.Microservice('B') ])
+
+    expect(mergedSystem).to.be.not.null
+    expect(mergedSystem.getName()).to.eql('S1-S2')
+    expect(mergedSystem.getNodes()).to.have.deep.members(expectedMergedSystem.getNodes())
   })
 })

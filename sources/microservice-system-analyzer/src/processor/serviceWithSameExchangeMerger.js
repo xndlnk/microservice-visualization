@@ -1,5 +1,7 @@
 const System = require('../model/modelClasses').System
 
+// TODO: convert this service to ts next
+
 /** each provided systems is checked for services that are directly connected to an equally
  * named exchange service. each pair of founds services is merged into one.
  * an exchange service is a service whose name starts with 'exchange '.
