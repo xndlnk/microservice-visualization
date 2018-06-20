@@ -21,6 +21,12 @@ export class Node {
     this.properties = properties || {}
   }
 
+  static ofEdgesWithNodes(name: string, edges: Edge[]): Node {
+    const node = new Node(name)
+    edges.forEach(edge => node.addEdgeWithNodesUniquely(edge))
+    return node
+  }
+
   addNodeUniquely(node: Node): boolean {
     if (this.deepFindNodeById(node.getId())) return false
 
@@ -33,6 +39,12 @@ export class Node {
     if (!existing) {
       this.edges.push(newEdge)
     }
+  }
+
+  addEdgeWithNodesUniquely(newEdge: Edge) {
+    this.addNodeUniquely(newEdge.getSource())
+    this.addNodeUniquely(newEdge.getTarget())
+    this.addEdgeUniquely(newEdge)
   }
 
   deepFindNodeById(id: string): Node {

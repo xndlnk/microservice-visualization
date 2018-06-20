@@ -41,6 +41,16 @@ describe('model converter', function() {
     expect(v1system).to.deep.equal(expectedv1system)
   })
 
+  it('can convert empty systems', function() {
+    const system: v0.System = {
+      name: 'S'
+    }
+
+    const v1system = new V0toV1ModelConverter().convertSystem(system)
+
+    expect(v1system).to.deep.equal(new v1.System('S'))
+  })
+
   it('can convert properties', function() {
     const system: v0.System = {
       name: 'S',
