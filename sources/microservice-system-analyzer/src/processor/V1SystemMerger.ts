@@ -4,7 +4,7 @@ import { V0toV1ModelConverter } from '~/model/V0toV1ModelConverter'
 import * as _ from 'lodash'
 import { createLogger } from '~/logging'
 
-const logger = createLogger('merger')
+const logger = createLogger('system-merger')
 
 /** merges many v0 and many v1 systems into one v1 system. */
 export class V1SystemMerger {

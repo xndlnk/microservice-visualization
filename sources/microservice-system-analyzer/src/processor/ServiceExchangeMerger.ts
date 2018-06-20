@@ -1,5 +1,8 @@
 import { System, Microservice, MessageExchange, AsyncInfoFlow, Node, Edge } from '~/model/model'
 import { V1SystemMerger } from '~/processor/V1SystemMerger'
+import { createLogger } from '~/logging'
+
+const logger = createLogger('service-exchange-merger')
 
 /** each provided systems is checked for microservices that are directly connected to an equally
  * named message exchange. each pair of such nodes is merged into one microservice node.
@@ -8,14 +11,15 @@ export function mergeSystems(systems: System[]) {
   const result = new System(new V1SystemMerger().mergeSystemNames([], systems))
   const exchangesToMerge = getExchangesToMerge(systems)
 
-  console.log('exchangeServices: ' + exchangesToMerge)
+  logger.info('services and exchanges to be merged: ', exchangesToMerge.map(exchange => exchange.getId()))
 
-  systems.forEach((system) => {
+  systems.forEach(system => {
     system.getEdges().forEach(edge => {
-      if (isEdgeTheSourceOfOneExchange(edge, exchangesToMerge)) {
+      if (isOutgoingEdgeOfAnyExchange(edge, exchangesToMerge)) {
+        logger.info('merging service ' + edge.getSource().getName() + ' with exchange ' + edge.getSource().getName())
         result.addEdgeWithNodesUniquely(
           new AsyncInfoFlow(new Microservice(edge.getSource().getName()), edge.getTarget()))
-      } else if (!isEdgeTheTargetOfOneExchange(edge, exchangesToMerge)) {
+      } else if (!isIncomingEdgeOfAnyExchange(edge, exchangesToMerge)) {
         result.addEdgeWithNodesUniquely(edge)
       }
     })
@@ -32,20 +36,12 @@ export function mergeSystems(systems: System[]) {
   return result
 }
 
-function isEdgeTheSourceOfOneExchange(edge: Edge, exchanges: MessageExchange[]) {
+function isOutgoingEdgeOfAnyExchange(edge: Edge, exchanges: MessageExchange[]) {
   return exchanges.some(exchange => exchange.getId() === edge.getSource().getId())
 }
 
-function isEdgeTheTargetOfOneExchange(edge: Edge, exchanges: MessageExchange[]) {
+function isIncomingEdgeOfAnyExchange(edge: Edge, exchanges: MessageExchange[]) {
   return exchanges.some(exchange => exchange.getId() === edge.getTarget().getId())
-}
-
-function isLinkTheSourceOfOneService(link, services) {
-  return services.includes(link.sourceName)
-}
-
-function isLinkTheTargetOfOneService(link, services) {
-  return services.includes(link.targetName)
 }
 
 function getExchangesToMerge(systems: System[]): MessageExchange[] {
@@ -65,12 +61,4 @@ function connectsMicroserviceAndExchangeOfSameName(edge: Edge) {
   return edge.getSource().getName() === edge.getTarget().getName()
     && edge.getSource().getType() === 'Microservice'
     && edge.getTarget().getType() === 'MessageExchange'
-}
-
-function hasLinkFromServiceToEquallyNamedExchange(link) {
-  return 'exchange ' + link.sourceName === link.targetName
-}
-
-module.exports = {
-  mergeSystems
 }
