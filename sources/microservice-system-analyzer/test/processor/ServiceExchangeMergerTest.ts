@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { expect } from 'chai'
 import * as _ from 'lodash'
 import { Node, System, Microservice, MessageExchange, AsyncInfoFlow, SyncInfoFlow } from '~/model/model'
-import { mergeSystems } from '~/processor/ServiceExchangeMerger'
+import { ServiceExchangeMerger } from '~/processor/ServiceExchangeMerger'
 
 /* tslint:disable:no-unused-expression */
 describe('service exchange merger', function() {
@@ -24,7 +24,7 @@ describe('service exchange merger', function() {
       new AsyncInfoFlow(new Microservice('D'), new MessageExchange('B'))
     ])
 
-    const mergedSystem = mergeSystems([
+    const mergedSystem = new ServiceExchangeMerger().mergeSystems([
       consulSystem,
       rabbitImporter,
       Node.ofEdgesWithNodes('S', [
