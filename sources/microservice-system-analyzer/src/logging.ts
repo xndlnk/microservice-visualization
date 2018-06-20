@@ -3,7 +3,9 @@ import * as winston from 'winston'
 export function createLogger(label: string): winston.Logger {
   const alignedWithColorsAndTime = winston.format.combine(
     winston.format.colorize(),
-    winston.format.timestamp(),
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
     winston.format.align(),
     winston.format.label({ label: label }),
     winston.format.printf((info) => {
