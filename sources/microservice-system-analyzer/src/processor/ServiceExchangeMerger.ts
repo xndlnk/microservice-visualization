@@ -1,6 +1,7 @@
 import { System, Microservice, MessageExchange, AsyncInfoFlow, Node, Edge } from '~/model/model'
 import { V1SystemMerger } from '~/processor/V1SystemMerger'
 import { createLogger } from '~/logging'
+import * as _ from 'lodash'
 
 const logger = createLogger('service-exchange-merger')
 
@@ -45,16 +46,10 @@ function isIncomingEdgeOfAnyExchange(edge: Edge, exchanges: MessageExchange[]) {
 }
 
 function getExchangesToMerge(systems: System[]): MessageExchange[] {
-  const exchangeServices: MessageExchange[] = []
-  systems.forEach((system) => {
-    system.getEdges().forEach(edge => {
-      if (connectsMicroserviceAndExchangeOfSameName(edge)) {
-        // TODO: refactor: use map
-        exchangeServices.push(edge.getTarget() as MessageExchange)
-      }
-    })
-  })
-  return exchangeServices
+  const allEdges = _.flatMap(systems, system => system.getEdges())
+
+  return allEdges.filter(edge => connectsMicroserviceAndExchangeOfSameName(edge))
+    .map(edge => edge.getTarget() as MessageExchange)
 }
 
 function connectsMicroserviceAndExchangeOfSameName(edge: Edge) {
