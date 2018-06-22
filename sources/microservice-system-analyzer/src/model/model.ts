@@ -13,9 +13,9 @@ export class Node {
   private properties: Properties
   private type: string
 
-  constructor(name: string, nodes?: Node[], edges?: Edge[], properties?: Properties) {
+  constructor(name: string, type?: string, nodes?: Node[], edges?: Edge[], properties?: Properties) {
     this.name = name
-    this.type = this.constructor.toString().match(/\w+/g)[1]
+    this.type = type || 'Node'
     this.nodes = nodes || []
     this.edges = edges || []
     this.properties = properties || {}
@@ -87,19 +87,19 @@ export class Node {
 
 export class System extends Node {
   constructor(name: string, nodes?: Node[], edges?: Edge[], properties?: Properties) {
-    super(name, nodes, edges, properties)
+    super(name, 'System', nodes, edges, properties)
   }
 }
 
 export class Microservice extends Node {
   constructor(name: string, properties?: Properties) {
-    super(name, null, null, properties)
+    super(name, 'Microservice', null, null, properties)
   }
 }
 
 export class MessageExchange extends Node {
   constructor(name: string, properties?: Properties) {
-    super(name, null, null, properties)
+    super(name, 'MessageExchange', null, null, properties)
   }
 }
 
@@ -111,12 +111,12 @@ export class Edge {
   private targetId: string
   private type: string
 
-  constructor(source: Node, target: Node) {
+  constructor(source: Node, target: Node, type?: string) {
     this.source = source
     this.target = target
     this.sourceId = source.getId()
     this.targetId = target.getId()
-    this.type = this.constructor.toString().match(/\w+/g)[1]
+    this.type = type || 'Edge'
   }
 
   getSource() {
@@ -136,6 +136,20 @@ export class Edge {
   }
 }
 
-export class InfoFlow extends Edge {}
-export class AsyncInfoFlow extends InfoFlow {}
-export class SyncInfoFlow extends InfoFlow {}
+export class InfoFlow extends Edge {
+  constructor(source: Node, target: Node, type?: string) {
+    super(source, target, type || 'InfoFlow')
+  }
+}
+
+export class AsyncInfoFlow extends InfoFlow {
+  constructor(source: Node, target: Node) {
+    super(source, target, 'AsyncInfoFlow')
+  }
+}
+
+export class SyncInfoFlow extends InfoFlow {
+  constructor(source: Node, target: Node) {
+    super(source, target, 'SyncInfoFlow')
+  }
+}
