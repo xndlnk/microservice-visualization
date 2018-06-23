@@ -13,6 +13,10 @@ The analyzer collects information by
 
 [This is an example topology](./example-graph.png) created from analyzing a real system. It was created by using the layouting tool [yEd](https://www.yworks.com/yed) on the GraphML export (see GraphML exporter below).
 
+## Current Status
+
+The project was initially developed in Node.js 8 and with a [system model](src/model/modelClasses.d.ts) (referred to as v0 model) that turned out to be not flexible enough. At the moment, the code is being transitioned to TypeScript in small steps and the model is replaced by a more flexible [v1 system model](src/model/model.ts). The old v0 system model API that is described in the following sections will remain available until version 1.0 is released.
+
 ## Architecture
 
 Each importer collects information that provides a view of the system. This information is merged into a complete structure of the system. Exporters can transform the system to different formats. In each component, a unified system model is used to simplify integration.
