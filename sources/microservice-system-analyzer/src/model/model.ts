@@ -34,9 +34,22 @@ export class Node {
     return true
   }
 
+  addNodeUniquelyAndReturn(node: Node): Node {
+    const existingNode = this.deepFindNodeById(node.getId())
+    if (existingNode) return existingNode
+
+    this.nodes.push(node)
+    return node
+  }
+
   addEdgeUniquely(newEdge: Edge) {
-    const existing = this.edges.find(edge => edge.getSource().getId() === newEdge.getSource().getId() && edge.getTarget().getId() === newEdge.getTarget().getId())
+    const existing = this.edges.find(edge => edge.getSource().getId() === newEdge.getSource().getId()
+      && edge.getTarget().getId() === newEdge.getTarget().getId())
     if (!existing) {
+      const actualSource = this.deepFindNodeById(newEdge.getSource().getId()) || newEdge.getSource()
+      const actualTarget = this.deepFindNodeById(newEdge.getTarget().getId()) || newEdge.getTarget()
+      newEdge.setSource(actualSource)
+      newEdge.setTarget(actualTarget)
       this.edges.push(newEdge)
     }
   }
@@ -48,12 +61,20 @@ export class Node {
   }
 
   deepFindNodeById(id: string): Node {
-    const node = this.getNodes().find(node => node.getId() === id)
+    const node = this.findNodeById(id)
     if (node) {
       return node
     } else {
       return this.getNodes().map(node => node.deepFindNodeById(id)).find(node => node !== undefined)
     }
+  }
+
+  findNodeById(id: string): Node {
+    return this.getNodes().find(node => node.getId() === id)
+  }
+
+  containsNode(id: string): boolean {
+    return this.findNodeById(id) !== undefined
   }
 
   getName(): string {
@@ -107,24 +128,33 @@ export class Edge {
   private properties: Properties = {}
   private source: Node
   private target: Node
-  private sourceId: string
-  private targetId: string
   private type: string
 
-  constructor(source: Node, target: Node, type?: string) {
+  constructor(source: Node, target: Node, type?: string, properties?: Properties) {
     this.source = source
     this.target = target
-    this.sourceId = source.getId()
-    this.targetId = target.getId()
     this.type = type || 'Edge'
+    this.properties = properties
+  }
+
+  setSource(source: Node) {
+    this.source = source
   }
 
   getSource() {
     return this.source
   }
 
+  setTarget(target: Node) {
+    this.target = target
+  }
+
   getTarget() {
     return this.target
+  }
+
+  getType() {
+    return this.type
   }
 
   getProperties(): Properties {

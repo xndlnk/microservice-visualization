@@ -40,10 +40,10 @@ describe('system merger', function() {
     msBexpected.addProperty('p1', 'v1')
 
     const expectedMergedSystem = new v1.System('S',
-      [ msA, msBexpected, exC ],
+      [ msBexpected, exC, msA ],
       [
-        new v1.SyncInfoFlow(msA, msB),
-        new v1.AsyncInfoFlow(msB, exC)
+        new v1.AsyncInfoFlow(msB, exC),
+        new v1.SyncInfoFlow(msA, msB)
       ])
 
     expect(mergedSystem).to.be.not.null
