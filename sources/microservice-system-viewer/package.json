@@ -1,0 +1,43 @@
+{
+  "name": "microservice-system-viewer",
+  "version": "0.4.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "tsc && node dist/server.js",
+    "server-prod": "tsc && NODE_ENV=production node dist/src/server/server.js",
+    "test": "echo \"no tests specified :(\"",
+    "dev": "webpack-dev-server",
+    "build": "tsc && webpack",
+    "watch": "webpack --watch"
+  },
+  "author": "Andreas Blunk, MaibornWolff GmbH",
+  "private": true,
+  "dependencies": {
+    "@pnkbrn/cat-names": "^1.0.3",
+    "axios": "^0.18.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "lodash": "^4.17.5",
+    "node-cache": "^4.2.0",
+    "path": "^0.12.7",
+    "random-word": "^2.0.0",
+    "viz.js": "1.8.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/express": "^4.11.1",
+    "@types/lodash": "^4.14.104",
+    "@types/node": "^10.0.8",
+    "@types/dotenv": "^4.0.3",
+    "@types/node-cache": "^4.1.1",
+    "awesome-typescript-loader": "^3.4.1",
+    "source-map-loader": "^0.2.3",
+    "tslint": "^5.10.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "2.8.1",
+    "webpack": "^4.8.2",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4"
+  }
+}
