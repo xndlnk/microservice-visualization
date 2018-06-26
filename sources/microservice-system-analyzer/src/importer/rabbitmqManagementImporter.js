@@ -48,6 +48,7 @@ async function getBinding (queueName) {
   const bindingsData = await sendRequest(url, 'GET')
 
   let binding = { 'exchange': '', 'queue': queueName }
+  // TODO: prevent bindings where exchange === '' to be returned as regular bindings
   const firstBindingHavingSource = bindingsData.find((element) => { return element.source !== '' })
   if (firstBindingHavingSource) {
     binding = { 'exchange': firstBindingHavingSource.source, 'queue': queueName }
