@@ -9,7 +9,9 @@
     "test": "echo \"no tests specified :(\"",
     "dev": "webpack-dev-server",
     "build": "tsc && webpack",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "docker-build-image": "docker build -t microservice-system-viewer .",
+    "docker-run": "docker run -p 8080:8080 -d microservice-system-viewer"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "private": true,
