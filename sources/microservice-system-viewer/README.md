@@ -32,7 +32,12 @@ Further configuration:
 
 ### Running the HTTP server
 
-- just execute: `npm run server`
+- local execution:
+  - `npm run server`
+- execution via docker container:
+  - `npm run docker-build`
+  - `npm run docker-run`
+    (expects `.env` file with environment variables in current directory)
 
 ### Accessing output
 

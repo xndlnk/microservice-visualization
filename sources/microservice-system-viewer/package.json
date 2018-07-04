@@ -10,10 +10,11 @@
     "dev": "webpack-dev-server",
     "build": "tsc && webpack",
     "watch": "webpack --watch",
-    "docker-build-image": "docker build -t microservice-system-viewer .",
-    "docker-run": "docker run -p 8080:8080 -d microservice-system-viewer"
+    "docker-build": "node docker-build.js",
+    "docker-run": "node docker-run.js"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "@pnkbrn/cat-names": "^1.0.3",
