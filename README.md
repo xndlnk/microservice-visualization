@@ -22,8 +22,8 @@ The repository is organized as a mono-repo where each directory in `sources` is 
 
 ## Publishing a new version
 
-- commit changes with git
-- publish changes with lerna: `lerna publish`
+- commit changes
+- execute `npm run publish` to build distribution libraries and publish
 
 ## License
 
