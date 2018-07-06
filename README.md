@@ -10,6 +10,7 @@ This repository contains software for analyzing and visualizing the topology of 
 The repository is organized as a mono-repo where each directory in `sources` is a yarn workspace.
 
 - [microservice-system-analyzer](sources/microservice-system-analyzer) is a Node.js library for analyzing microservice systems
+- [microservice-system-viewer](sources/microservice-system-viewer) is a Docker-based microservice for visualizing systems which are analyzed by the microservice-system-analyzer in a web-based frontend
 
 ## Setup
 
