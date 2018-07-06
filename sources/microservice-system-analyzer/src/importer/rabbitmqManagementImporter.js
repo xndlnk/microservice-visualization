@@ -20,12 +20,13 @@ async function getSystem () {
 
 function convertBindingsToSystem (bindings) {
   const system = new System()
-  bindings.forEach((binding) => {
-    const source = 'exchange ' + binding.exchange
-    const target = binding.queue.substring(0, binding.queue.indexOf('.'))
-    system.addLink(source, target, 'async')
-    log.info('rabbitmq', 'adding link: %s -> %s', source, target)
-  })
+  bindings.filter(binding => binding.exchange !== '')
+    .forEach((binding) => {
+      const source = 'exchange ' + binding.exchange
+      const target = binding.queue.substring(0, binding.queue.indexOf('.'))
+      system.addLink(source, target, 'async')
+      log.info('rabbitmq', 'adding link: %s -> %s', source, target)
+    })
   return system
 }
 
@@ -48,7 +49,6 @@ async function getBinding (queueName) {
   const bindingsData = await sendRequest(url, 'GET')
 
   let binding = { 'exchange': '', 'queue': queueName }
-  // TODO: prevent bindings where exchange === '' to be returned as regular bindings
   const firstBindingHavingSource = bindingsData.find((element) => { return element.source !== '' })
   if (firstBindingHavingSource) {
     binding = { 'exchange': firstBindingHavingSource.source, 'queue': queueName }
