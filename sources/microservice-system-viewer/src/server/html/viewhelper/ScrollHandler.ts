@@ -22,7 +22,12 @@ export class ScrollHandler {
 
     let viewPortRelative = edgeElement.getBoundingClientRect()
 
-    this.scroll2origin(coords, viewPortRelative)
+    if (this.event.srcElement.tagName === 'ellipse') {
+      this.scroll2target(coords, viewPortRelative)
+    } else {
+      this.scroll2origin(coords, viewPortRelative)
+    }
+
   }
 
   private parseCommands(command) {
@@ -110,11 +115,37 @@ export class ScrollHandler {
       targetPosition.left += viewPortRelative.right - VIEW_PORT_MARGIN
     }
     window.scroll(targetPosition)
+  }
 
-    // would be much better + more simple, but got no reliable information about node/edge relationship in DOM
-    //
-    //  document.querySelector('#some-node').scrollIntoView({
-    //      behavior: 'smooth'
-    //  });
+  private scroll2target(coords, viewPortRelative) {
+
+    let targetPosition: ScrollToOptions = {
+      top: window.pageYOffset,
+      left: window.pageXOffset,
+      behavior: 'smooth'
+    }
+
+    let direction = this.detectArrowDirection(coords.path)
+
+    // target is above of view port
+    if (direction.y === ArrowDirection.Up && viewPortRelative.top < VIEW_PORT_MARGIN) {
+      targetPosition.top += viewPortRelative.top - VIEW_PORT_MARGIN
+    }
+
+    // target is beyond of view port
+    if (direction.y === ArrowDirection.Down && viewPortRelative.bottom > document.body.clientHeight - VIEW_PORT_MARGIN) {
+      targetPosition.top += viewPortRelative.bottom - VIEW_PORT_MARGIN
+    }
+
+    // target is left of view port
+    if (direction.x === ArrowDirection.Left && viewPortRelative.left < VIEW_PORT_MARGIN) {
+      targetPosition.left += viewPortRelative.left - VIEW_PORT_MARGIN
+    }
+
+    // target is right of view port
+    if (direction.x === ArrowDirection.Right && viewPortRelative.right > document.body.clientWidth - VIEW_PORT_MARGIN) {
+      targetPosition.left += viewPortRelative.right - VIEW_PORT_MARGIN
+    }
+    window.scroll(targetPosition)
   }
 }

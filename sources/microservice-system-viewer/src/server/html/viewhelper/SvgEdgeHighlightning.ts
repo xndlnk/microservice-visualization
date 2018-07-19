@@ -3,7 +3,6 @@ export class SvgEdgeHighlightning {
 
   static markAsHighlightedHandler(e: MouseEvent) {
     e.srcElement.parentElement.classList.add(CLASS_NAME)
-    console.log(e.srcElement.parentElement.classList)
   }
 
   static markAsNotHighlightedHandler(e: MouseEvent) {

@@ -18,6 +18,6 @@ export class EventRegistrator {
    * @returns {NodeListOf<Element>}
    */
   private static getRelevantNodes(): NodeListOf<Element> {
-    return document.querySelectorAll('g.edge>polygon')
+    return document.querySelectorAll('g.edge>polygon,g.edge>ellipse')
   }
 }

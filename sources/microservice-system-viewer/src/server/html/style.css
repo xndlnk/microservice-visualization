@@ -3,21 +3,20 @@ g a {
 }
 
 g.node polygon {
-    transition: stroke 0.2s, fill 0.2s;
+    transition: stroke 0.2s ease-out , fill 0.2s ease-out;
 }
 
 g.node:hover polygon {
-    transition: stroke 0.2s, fill 0.2s;
     stroke: rgb(69, 153, 248) !important
 }
 
 g.edge polygon,
-g.edge path {
-    transition: stroke 0.2s, fill 0.2s;
+g.edge path,
+g.edge ellipse{
+    transition: stroke 0.2s ease-out 0.75s, fill 0.2s ease-out 0.75s;
 }
 
-g.edge polygon {
-    stroke-width: 2px;
+g.edge polygon, g.edge ellipse {
     cursor: pointer;
 }
 
@@ -25,11 +24,15 @@ g.edge path {
     stroke-width: 2px !important;
 }
 
-g.edge.highlight polygon {
+g.edge.highlight polygon,
+g.edge.highlight ellipse {
+    transition: stroke 0.2s ease-out 0s, fill 0.2s ease-out 0s;
     fill: rgb(69, 153, 248) !important
 }
 
 g.edge.highlight path,
-g.edge.highlight polygon {
+g.edge.highlight polygon,
+g.edge.highlight ellipse {
+    transition: stroke 0.2s ease-out 0s, fill 0.2s ease-out 0s;
     stroke: rgb(69, 153, 248) !important
 }
