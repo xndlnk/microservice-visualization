@@ -1,20 +1,182 @@
 <html>
-  <head>
+
+<head>
     <title>system structure</title>
     <link rel="icon" type="image/png" href="logo.png">
-    <style>g a { cursor: pointer }</style>
-  </head>
-  <body>
+    <style>
+        g a {
+            cursor: pointer
+        }
+
+        g.node polygon {
+            transition: stroke 0.2s, fill 0.2s;
+        }
+
+        g.node:hover polygon {
+            transition: stroke 0.2s, fill 0.2s;
+            stroke: rgb(69, 153, 248) !important
+        }
+
+        g.edge polygon,
+        g.edge path {
+            transition: stroke 0.2s, fill 0.2s;
+        }
+
+        g.edge polygon {
+            stroke-width: 2px;
+            cursor: pointer;
+        }
+
+        g.edge path {
+            stroke-width: 2px !important;
+        }
+
+        g.edge.highlight polygon {
+            fill: rgb(69, 153, 248) !important
+        }
+
+
+        g.edge.highlight path,
+        g.edge.highlight polygon {
+            stroke: rgb(69, 153, 248) !important
+        }
+    </style>
+</head>
+
+<body>
     <p>
-      Explanation of symbols:
-      <ul>
-        <li>a rectangular box represents a microservice</li>
-        <li>a cylinder represents a RabbitMQ exchange</li>
-        <li>a black link represents an asynchronous information flow</li>
-        <li>a red link represents a synchronous information flow (the actual synchronous call takes place in the opposite direction)</li>
-      </ul>
+        Explanation of symbols:
+        <ul>
+            <li>a rectangular box represents a microservice</li>
+            <li>a cylinder represents a RabbitMQ exchange</li>
+            <li>a black link represents an asynchronous information flow</li>
+            <li>a red link represents a synchronous information flow (the actual synchronous call takes place in the opposite
+                direction)</li>
+        </ul>
     </p>
     <hr>
     <script src="bundle.js"></script>
-  </body>
+    <script>
+        var ArrowXDirectionEnum = Object.freeze({ "right": "RIGHT", "left": "LEFT" });
+        var ArrowYDirectionEnum = Object.freeze({ "up": "UP", "down": "DOWN" });
+        var viewPortMargin = 300;
+        (function () {
+            //register Eventhandler
+            document.querySelectorAll('g.edge>polygon').forEach((e) => {
+                e.onmouseover = function (e) {
+                    e.target.parentElement.classList.add("highlight")
+                }
+                e.onmouseout = function (e) {
+                    e.target.parentElement.classList.remove("highlight")
+                }
+                e.onclick = function (e) {
+                    moveViewPort(e.target.parentElement);
+                }
+            })
+
+            function moveViewPort(edgeElement) {
+                var dAttr = edgeElement.querySelector("path").getAttribute("d");
+                var coords = parseCommands(dAttr);
+
+                var viewPortRelative = edgeElement.getBoundingClientRect()
+
+                scroll2origin(coords, viewPortRelative);
+            }
+            function parseCommands(command) {
+                var commands = command.split(/(?=[LMC])/);
+                //remove commando chars
+                var charlessCommands = commands.map(e => {
+                    return e.replace(/L|M|C|/gi, '')
+                });
+
+
+                //pair coords
+                var coordPairs = [];
+                charlessCommands.forEach((commandGroups, groupIndex) => {
+                    coordPairs[groupIndex] = []
+                    commandGroups.split(" ").forEach((e, i) => {
+                        var coords = e.split(",").map(parseFloat);
+                        coordPairs[groupIndex].push(coords);
+                    });
+                    return coordPairs;
+                });
+
+                var offsetCoords = coordPairs[0][0]; // only one tupel available
+                var pathCoords = coordPairs[1]
+
+                return {
+                    offset: offsetCoords,
+                    path: pathCoords.map(e => {
+                        return [e[0] - offsetCoords[0], e[1] - offsetCoords[1]]
+                    })
+                }
+
+            }
+            function detectArrowDirection(pathCoords) {
+                var size = pathCoords.length;
+                //0 is x, 1 is y
+                var horizontalDiff = pathCoords[0][0] - pathCoords[size - 1][0]
+                var verticalDiff = pathCoords[0][1] - pathCoords[size - 1][1]
+
+                var verticalDirection = null;
+                if (verticalDiff > 0) {
+                    verticalDirection = ArrowYDirectionEnum.up
+                } else if (verticalDiff < 0) {
+                    verticalDirection = ArrowYDirectionEnum.down
+                }
+
+                var horizontalDirection = null;
+                if (horizontalDiff > 0) {
+                    horizontalDirection = ArrowXDirectionEnum.left
+                } else if (horizontalDiff < 0) {
+                    horizontalDirection = ArrowXDirectionEnum.right
+                }
+
+                return {
+                    x: horizontalDirection,
+                    y: verticalDirection
+                }
+            }
+            function scroll2origin(coords, viewPortRelative) {
+
+                var targetPosition = {
+                    top: window.pageYOffset,
+                    left: window.pageXOffset,
+                    behavior: 'smooth'
+                }
+
+                var direction = detectArrowDirection(coords.path);
+
+                // target is above of view port
+                if (direction.y == ArrowYDirectionEnum.down && viewPortRelative.top < viewPortMargin) {
+                    targetPosition.top += viewPortRelative.top - viewPortMargin
+                }
+
+                // target is beyond of view port
+                if (direction.y == ArrowYDirectionEnum.up && viewPortRelative.bottom > document.body.clientHeight - viewPortMargin) {
+                    targetPosition.top += viewPortRelative.bottom - viewPortMargin
+                }
+
+                // target is left of view port
+                if (direction.x == ArrowXDirectionEnum.right && viewPortRelative.left < viewPortMargin) {
+                    targetPosition.left += viewPortRelative.left - viewPortMargin
+                }
+
+                // target is right of view port
+                if (direction.x == ArrowXDirectionEnum.left && viewPortRelative.right > document.body.clientWidth - viewPortMargin) {
+                    targetPosition.left += viewPortRelative.right - viewPortMargin
+                }
+
+                window.scroll(targetPosition);
+
+                //would be much better + more simple, but got no reliable information about node/edge relationship in DOM
+                //
+                //  document.querySelector('#some-node').scrollIntoView({ 
+                //      behavior: 'smooth' 
+                //  });
+            }
+        })()
+    </script>
+</body>
+
 </html>
