@@ -20,12 +20,13 @@ async function getSystem () {
 
 function convertBindingsToSystem (bindings) {
   const system = new System()
-  bindings.forEach((binding) => {
-    const source = 'exchange ' + binding.exchange
-    const target = binding.queue.substring(0, binding.queue.indexOf('.'))
-    system.addLink(source, target, 'async')
-    log.info('rabbitmq', 'adding link: %s -> %s', source, target)
-  })
+  bindings.filter(binding => binding.exchange !== '')
+    .forEach((binding) => {
+      const source = 'exchange ' + binding.exchange
+      const target = binding.queue.substring(0, binding.queue.indexOf('.'))
+      system.addLink(source, target, 'async')
+      log.info('rabbitmq', 'adding link: %s -> %s', source, target)
+    })
   return system
 }
 

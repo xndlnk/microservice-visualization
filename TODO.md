@@ -1,7 +1,0 @@
-- refactor step-by-step to more flexible node-model (see graph-viewer) and use typescript
-  - add system-to-node-converter in typescript
-  - start from bottom with subsystem-transformer or system-merger
-  - provide node-based system via REST
-- add importer that allows to manually extend the model
-- add generic system-viewer which accesses the new node-model
-- try to extract layouting information from graphviz to use it in a d3- or react-based graph (see pegjs for parsing)

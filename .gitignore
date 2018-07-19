@@ -6,4 +6,7 @@ dist
 .gradle
 .env
 .nyc_output
+.cache
 build
+*error.log
+*debug.log

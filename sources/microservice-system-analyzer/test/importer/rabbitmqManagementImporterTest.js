@@ -11,6 +11,7 @@ const Link = modelClasses.Link
 
 const rabbitMqPath = 'http://rabbitmq'
 
+/* eslint-disable no-unused-expressions */
 describe('rabbitmq importer', function () {
   const testQueueName = 'diagnosticdata.trainrunevent.publish.update'
   const queuesUrl = '/api/queues/'
@@ -55,5 +56,28 @@ describe('rabbitmq importer', function () {
     expect(system.services).to.deep.contain(new Service('exchange trainrunevent'))
     expect(system.services).to.deep.contain(new Service('diagnosticdata'))
     expect(system.links).to.deep.contain(new Link('exchange trainrunevent', 'diagnosticdata', 'async'))
+  })
+
+  it('does not create empty exchanges when there are only empty source properties in bindings', async () => {
+    const queuesData = [{'name': testQueueName}]
+    queuesRequestMock.reply(200, queuesData)
+
+    const bindingsdata = [
+      {
+        source: '',
+        vhost: '/',
+        destination: 'diagnosticdata.trainrunevent.publish.update',
+        destination_type: 'queue',
+        routing_key: 'diagnosticdata.trainrunevent.publish.update',
+        arguments: { },
+        properties_key: 'diagnosticdata.trainrunevent.publish.update'
+      }
+    ]
+    bindingsRequestMock.reply(200, bindingsdata)
+
+    const system = await rabbitmq.getSystem()
+
+    expect(system.services).to.be.empty
+    expect(system.links).to.be.empty
   })
 })
