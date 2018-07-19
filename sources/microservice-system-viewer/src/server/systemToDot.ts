@@ -16,6 +16,7 @@ export function convertSystemToDot(system: System): string {
     ranksep=2;
     newrank=true;
     splines=polyline;
+    edge[dir=both, arrowhead="normal", arrowtail="dot"];
   ${dotServices}
 ${dotSubGraphs}
   ${dotLinks}
