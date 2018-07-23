@@ -10,3 +10,4 @@ dist
 build
 *error.log
 *debug.log
+.idea
