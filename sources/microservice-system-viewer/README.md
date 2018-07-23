@@ -33,6 +33,7 @@ Further configuration:
 ### Running the HTTP server
 
 - local execution:
+  - `npm run build`
   - `npm run server`
 - execution via docker container:
   - `npm run docker-build`
