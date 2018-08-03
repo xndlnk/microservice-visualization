@@ -1,12 +1,12 @@
-FROM node:8-alpine
+# stage: build
+FROM node:8-alpine as build
 
 RUN npm config list
 
-# TODO: maybe try multi-stage build: https://ueberdosis.io/artikel/schlanke-docker-images-mit-multi-stage-builds/
 COPY package.json /tmp/package.json
 # TODO: use yarn
 RUN cd /tmp && npm install
-RUN mkdir -p /viewer && cp -a /tmp/node_modules /viewer/
+RUN mkdir -p /viewer && mv /tmp/node_modules /viewer/
 
 RUN mkdir -p /viewer/src
 COPY src /viewer/src/
@@ -18,5 +18,15 @@ RUN ls -l
 
 RUN npm run build
 
+# stage: run
+FROM node:8-alpine
+RUN mkdir -p /viewer/dist
+COPY --from=build /viewer/dist /viewer/dist/
+COPY --from=build /viewer/*.json /viewer/
+COPY --from=build /viewer/*.js /viewer/
+COPY --from=build /viewer/*.lock /viewer/
+WORKDIR /viewer
+RUN npm install --production
+
 EXPOSE 8080
-CMD [ "npm", "run", "server" ]
+CMD [ "npm", "run", "server-prod" ]
