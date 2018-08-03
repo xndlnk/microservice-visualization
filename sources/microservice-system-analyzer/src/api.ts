@@ -29,5 +29,13 @@ export { V0toV1ModelConverter } from '~/model/V0toV1ModelConverter'
 export { ManualAdditionsMarker } from '~/importer/ManualAdditionsMarker'
 export { V1SystemMerger } from '~/processor/V1SystemMerger'
 export { ServiceExchangeMerger } from '~/processor/ServiceExchangeMerger'
-export * from '~/model/interfaceModel'
-export { InterfaceModelConverter } from '~/model/InterfaceModelConverter'
+
+import * as presentationModel from '~/presentation/model'
+import * as presentationModelConverter from '~/presentation/ModelConverter'
+export const presentation = {
+  model: presentationModel,
+  ModelConverter: presentationModelConverter.ModelConverter
+}
+
+// export * from '~/presentation/model'
+// export {  } from '~/model/InterfaceModelConverter'

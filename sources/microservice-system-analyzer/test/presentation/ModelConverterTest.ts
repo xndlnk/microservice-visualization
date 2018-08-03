@@ -2,7 +2,7 @@ import { describe, test } from 'mocha'
 import { expect } from 'chai'
 
 import { System, Microservice, MessageExchange, AsyncInfoFlow } from '~/model/model'
-import { InterfaceModelConverter } from '~/model/InterfaceModelConverter'
+import { ModelConverter } from '~/presentation/ModelConverter'
 
 /* tslint:disable:no-unused-expression */
 describe('model serializer', function() {
@@ -12,7 +12,7 @@ describe('model serializer', function() {
     const b = new MessageExchange('B')
     const system = new System('S', [ a, b ], [ new AsyncInfoFlow(a, b) ])
 
-    const interfaceSystem = new InterfaceModelConverter().convertNode(system)
+    const interfaceSystem = new ModelConverter().convertNode(system)
 
     expect(interfaceSystem).to.eql({
       id: system.getId(),

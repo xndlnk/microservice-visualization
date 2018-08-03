@@ -16,4 +16,13 @@ describe('api', function() {
 
     expect(mergedSystem).to.be.not.null
   })
+
+  it('can convert models', function() {
+    const v1system = new api.System('S', [ new api.Microservice('A') ])
+    const modelConverter = new api.presentation.ModelConverter()
+
+    const convertedSystem = modelConverter.convertNode(v1system)
+
+    expect(convertedSystem).to.be.not.null
+  })
 })
