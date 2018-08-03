@@ -7,18 +7,18 @@ This repository contains software for analyzing and visualizing the topology of 
 
 ## Repository structure
 
-The repository is organized as a mono-repo where each directory in `sources` is a yarn workspace.
+The repository is organized as a mono-repo with Yarn and Lerna. Each directory in `sources` is a Yarn workspace.
 
-- [microservice-system-analyzer](sources/microservice-system-analyzer) is a Node.js library for analyzing microservice systems
-- [microservice-system-viewer](sources/microservice-system-viewer) is a Docker-based microservice for visualizing systems which are analyzed by the microservice-system-analyzer in a web-based frontend
+- [microservice-system-analyzer](sources/microservice-system-analyzer) - a Node.js library for analyzing microservice systems
+- [microservice-system-viewer](sources/microservice-system-viewer) - a Docker-based microservice for visualizing systems in a web browser
 
 ## Setup
 
-- first, you need a global installation of the following packages:
-  - Node.js 8
-  - yarn
-  - lerna
-- after that, bootstrap the node package structure with `yarn install`
+- You need a global installation of the following:
+  - Node.js v8,
+  - Yarn,
+  - Lerna.
+- After that, bootstrap the node package structure with `yarn install`.
 
 ## Publishing a new version
 
