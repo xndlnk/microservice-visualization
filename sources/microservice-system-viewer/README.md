@@ -8,6 +8,10 @@ Supported outputs:
 - SVG
 - DOT
 
+## Example Visualization
+
+![Example Visualization](docs/exampleSystemView.png "Example Visualization")
+
 ## Usage
 
 ### Configuration
