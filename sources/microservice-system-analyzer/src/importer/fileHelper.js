@@ -2,9 +2,9 @@ const log = require('npmlog')
 const fs = require('fs')
 
 /** returns an array of java files found in the given path with their full paths. */
-async function findJavaFiles (path) {
+async function findFiles (path, fileEnding) {
   const files = []
-  await getFilesRecursive(path, files, '.java')
+  await getFilesRecursive(path, files, fileEnding)
   return files
 }
 
@@ -48,6 +48,6 @@ function getServiceNameFromPath (sourcePath, file) {
 }
 
 module.exports = {
-  findJavaFiles,
+  findFiles,
   getServiceNameFromPath
 }

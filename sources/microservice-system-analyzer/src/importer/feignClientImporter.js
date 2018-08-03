@@ -41,7 +41,7 @@ async function getSystem (reverseLinks) {
 
 async function scanPathForFeignClients (path) {
   log.info(logContext, 'scanning for feign clients in ' + path)
-  const javaFiles = await fileHelper.findJavaFiles(path)
+  const javaFiles = await fileHelper.findFiles(path, '.java')
   log.info(logContext, 'found ' + javaFiles.length + ' java files')
 
   const feignClients = []
