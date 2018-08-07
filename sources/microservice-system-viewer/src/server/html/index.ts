@@ -1,8 +1,9 @@
 import * as axios from 'axios'
 import { appBaseUrl } from '../appBaseUrl'
-import { EventRegistrator } from './viewhelper/EventRegistrator';
+import { EventRegistrator } from './viewhelper/EventRegistrator'
 
-const svgSystemUrl = getBaseUrlInCurrentEnvironment() + '/svg/wikilinks'
+const queryPart = window.location.href.substr(window.location.href.lastIndexOf('?'))
+const svgSystemUrl = getBaseUrlInCurrentEnvironment() + '/svg/wikilinks' + queryPart
 console.log('fetching svg system from url ' + svgSystemUrl)
 
 // can also use: axios.defaults.baseURL
@@ -10,13 +11,13 @@ axios.default
   .get(svgSystemUrl)
   .then(function(response) {
     append(response.data)
-    EventRegistrator.init();
+    EventRegistrator.init()
   })
   .catch(function(error) {
     let element: HTMLElement = document.createElement('div')
     element.innerHTML = error
     document.body.appendChild(element)
-  });
+  })
 
 function getBaseUrlInCurrentEnvironment() {
   let appBaseUrlStart = window.location.href.lastIndexOf(appBaseUrl)
