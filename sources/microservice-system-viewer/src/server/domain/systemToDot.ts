@@ -20,6 +20,7 @@ export class SystemToDotConverter {
     // splines=ortho;
     // splines=polyline;
     let dotGraph: string = `strict digraph {
+    size="40"
     ranksep=2;
     newrank=true;
     splines=polyline;
