@@ -49,7 +49,12 @@ function addRestHandlers(app: express.Express) {
 
         if (req.query.interactive) {
           options = {
-            urlExtractor: (node: Node) => req.url + '&focusId=' + node.id
+            urlExtractor: (node: Node) => {
+              req.query.focusId = node.id
+              return '/msvis/html/?' + Object.getOwnPropertyNames(req.query)
+                .map(propName => propName + '=' + req.query[propName])
+                .join('&')
+            }
           }
         }
         const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)

@@ -1,5 +1,5 @@
 import * as axios from 'axios'
-import { appBaseUrl } from '../appBaseUrl'
+import { getBaseUrlInCurrentEnvironment } from '../appBaseUrl'
 import { EventRegistrator } from './viewhelper/EventRegistrator'
 
 const queryPart = window.location.href.substr(window.location.href.lastIndexOf('?'))
@@ -22,15 +22,6 @@ axios.default
     element.innerHTML = error
     document.body.appendChild(element)
   })
-
-function getBaseUrlInCurrentEnvironment() {
-  let appBaseUrlStart = window.location.href.lastIndexOf(appBaseUrl)
-  if (appBaseUrlStart === -1) {
-    return appBaseUrlStart
-  } else {
-    return window.location.href.substring(0, appBaseUrlStart) + appBaseUrl
-  }
-}
 
 function append(svgSystem) {
   let element: HTMLElement = document.createElement('div')
