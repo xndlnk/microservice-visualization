@@ -166,7 +166,10 @@ export const largeSystem: INode = {
         {
           'id': '21',
           'name': 'jointnesses',
-          'type': 'Microservice'
+          'type': 'Microservice',
+          'properties': {
+            'url': 'hello'
+          }
         },
         {
           'id': '22',

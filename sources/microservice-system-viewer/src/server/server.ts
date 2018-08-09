@@ -1,7 +1,8 @@
 import * as express from 'express'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
-import * as systemToDot from './domain/systemToDot'
+import { SystemToDotConverter, Options as ConverterOptions } from './domain/systemToDot'
+import { Node } from './domain/model'
 import { appBaseUrl } from './appBaseUrl'
 import { SystemProvider } from './systemProvider/SystemProvider'
 import { SystemFetcher } from './systemProvider/SystemFetcher'
@@ -42,7 +43,16 @@ function addRestHandlers(app: express.Express) {
         if (req.query.focusId) {
           system = GraphInteractions.focusNode(system, req.query.focusId)
         }
-        const dotSystem = systemToDot.convertSystemToDot(system)
+        let options: ConverterOptions = {
+          urlExtractor: (node: Node) => node.getProp('url', null)
+        }
+
+        if (req.query.interactive) {
+          options = {
+            urlExtractor: (node: Node) => req.url + '&focusId=' + node.id
+          }
+        }
+        const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)
         const svgSystem = vizJs(dotSystem, { format: 'svg', engine: 'dot' })
         res.send(svgSystem)
       } else {

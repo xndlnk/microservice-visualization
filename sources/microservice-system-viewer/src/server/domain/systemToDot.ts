@@ -1,18 +1,25 @@
 import { Node, Edge } from './model'
 import _ = require('lodash')
 
-export function convertSystemToDot(system: Node): string {
-  let dotNodes: string = convertNodesToDot(getNonSubSystemNodes(system), 1)
+export interface Options {
+  urlExtractor: (node: Node) => string
+}
 
-  let dotSubGraphs: string = getSubSystemNodes(system)
-    .map((subSystem) => convertSubSystemToDot(subSystem))
-    .join('\n')
+export class SystemToDotConverter {
+  constructor(private options?: Options) {}
 
-  let dotLinks: string = convertEdgesToDot(system.getEdges(), 1)
+  convertSystemToDot(system: Node): string {
+    let dotNodes: string = this.convertNodesToDot(this.getNonSubSystemNodes(system), 1)
 
-  // splines=ortho;
-  // splines=polyline;
-  let dotGraph: string = `strict digraph {
+    let dotSubGraphs: string = this.getSubSystemNodes(system)
+      .map((subSystem) => this.convertSubSystemToDot(subSystem))
+      .join('\n')
+
+    let dotLinks: string = this.convertEdgesToDot(system.getEdges(), 1)
+
+    // splines=ortho;
+    // splines=polyline;
+    let dotGraph: string = `strict digraph {
     ranksep=2;
     newrank=true;
     splines=polyline;
@@ -21,26 +28,21 @@ export function convertSystemToDot(system: Node): string {
 ${dotSubGraphs}
   ${dotLinks}
 }`
-  return dotGraph
-}
+    return dotGraph
+  }
 
-function getSubSystemNodes(node: Node): Node[] {
-  return node.getNodes().filter(node => node.hasNodes())
-}
+  getSubSystemNodes(node: Node): Node[] {
+    return node.getNodes().filter(node => node.hasNodes())
+  }
 
-function getNonSubSystemNodes(node: Node): Node[] {
-  return node.getNodes().filter(node => !node.hasNodes())
-}
+  getNonSubSystemNodes(node: Node): Node[] {
+    return node.getNodes().filter(node => !node.hasNodes())
+  }
 
-function addSpaces(n: number): string {
-  return _.fill(Array(n), '  ')
-    .join('')
-}
-
-function convertSubSystemToDot(node: Node): string {
-  let dotNodes: string = convertNodesToDot(node.getNodes(), 2)
-  let dotEdges: string = convertEdgesToDot(node.getEdges(), 2)
-  let dotGraph = `  subgraph cluster_${node.getName()} {
+  convertSubSystemToDot(node: Node): string {
+    let dotNodes: string = this.convertNodesToDot(node.getNodes(), 2)
+    let dotEdges: string = this.convertEdgesToDot(node.getEdges(), 2)
+    let dotGraph = `  subgraph cluster_${node.getName()} {
     label = "cabinet ${node.getName()}";
     fontname="Arial";
     style="filled";
@@ -48,44 +50,50 @@ function convertSubSystemToDot(node: Node): string {
     ${dotNodes}
     ${dotEdges}
   }`
-  return dotGraph
-}
+    return dotGraph
+  }
 
-function convertNodesToDot(nodes: Node[], identation: number): string {
-  return nodes
-    .map((node) => {
-      const id = makeId(node.id)
-      const styling = getNodeStyling(node)
-      return `${id} [${styling},fontname="Arial"]`
-    })
-    .join(';\n' + addSpaces(identation)) + (nodes.length > 0 ? ';' : '')
-}
+  convertNodesToDot(nodes: Node[], identation: number): string {
+    return nodes
+      .map((node) => {
+        const id = makeId(node.id)
+        const styling = this.getNodeStyling(node)
+        return `${id} [${styling},fontname="Arial"]`
+      })
+      .join(';\n' + addSpaces(identation)) + (nodes.length > 0 ? ';' : '')
+  }
 
-function getNodeStyling(node: Node): string {
-  if (node.type === 'MessageExchange') {
-    return `shape=cylinder,style=filled,fillcolor=lightgrey,label="${node.getName()}"`
-  } else {
-    const urlProp = node.getProp('url', null)
-    const optionalUrl = urlProp ? `,URL="${urlProp.value}"` : ''
-    return `shape=box,style=filled,fillcolor=gold,label="${node.getName()}"${optionalUrl}`
+  getNodeStyling(node: Node): string {
+    if (node.type === 'MessageExchange') {
+      return `shape=cylinder,style=filled,fillcolor=lightgrey,label="${node.getName()}"`
+    } else {
+      const url = this.options ? this.options.urlExtractor(node) : null
+      const optionalUrl = url ? `,URL="${url}"` : ''
+      return `shape=box,style=filled,fillcolor=gold,label="${node.getName()}"${optionalUrl}`
+    }
+  }
+
+  convertEdgesToDot(edges: Edge[], identation: number): string {
+    return edges.map((edge) => {
+      const sourceId = makeId(edge.sourceId)
+      const targetId = makeId(edge.targetId)
+      const styling = this.getEdgeStyling(edge)
+      return `${sourceId} -> ${targetId} ${styling}`
+    }).join(';\n' + addSpaces(identation)) + (edges.length > 0 ? ';' : '')
+  }
+
+  getEdgeStyling(edge: Edge): string {
+    if (edge.type === 'SyncInfoFlow') {
+      return '[color=red,arrowhead=normal]'
+    } else {
+      return ''
+    }
   }
 }
 
-function convertEdgesToDot(edges: Edge[], identation: number): string {
-  return edges.map((edge) => {
-    const sourceId = makeId(edge.sourceId)
-    const targetId = makeId(edge.targetId)
-    const styling = getEdgeStyling(edge)
-    return `${sourceId} -> ${targetId} ${styling}`
-  }).join(';\n' + addSpaces(identation)) + (edges.length > 0 ? ';' : '')
-}
-
-function getEdgeStyling(edge: Edge): string {
-  if (edge.type === 'SyncInfoFlow') {
-    return '[color=red,arrowhead=normal]'
-  } else {
-    return ''
-  }
+function addSpaces(n: number): string {
+  return _.fill(Array(n), '  ')
+    .join('')
 }
 
 function makeId(value: string) {
