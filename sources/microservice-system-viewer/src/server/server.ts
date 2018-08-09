@@ -14,7 +14,7 @@ dotenv.config()
 
 const app = express()
 
-const htmlDir = path.join(process.cwd(), 'dist', 'html')
+const htmlDir = path.join(process.cwd(), 'src', 'server', 'html')
 const bundleDir = path.join(process.cwd(), 'dist', 'bundle')
 
 app.use(`${appBaseUrl}/html`, express.static(htmlDir))
@@ -53,7 +53,7 @@ function addRestHandlers(app: express.Express) {
           options = {
             urlExtractor: (node: Node) => {
               req.query.focusId = node.id
-              return '/msvis/html/?' + Object.getOwnPropertyNames(req.query)
+              return '?' + Object.getOwnPropertyNames(req.query)
                 .map(propName => propName + '=' + req.query[propName])
                 .join('&')
             }
