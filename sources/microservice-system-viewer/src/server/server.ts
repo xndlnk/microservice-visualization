@@ -6,6 +6,7 @@ import { appBaseUrl } from './appBaseUrl'
 import { SystemProvider } from './systemProvider/SystemProvider'
 import { SystemFetcher } from './systemProvider/SystemFetcher'
 import { ConsulAnalyzerServiceResolver } from './systemProvider/ConsulAnalyzerServiceResolver'
+import { GraphInteractions } from './domain/GraphInteractions'
 import vizJs = require('viz.js')
 
 dotenv.config()
@@ -38,6 +39,9 @@ function addRestHandlers(app: express.Express) {
   app.get(`${appBaseUrl}/system`, (req, res) => {
     systemProvider.getSystem(req.query).then(system => {
       if (system) {
+        if (req.query.focusId) {
+          system = GraphInteractions.focusNode(system, req.query.focusId)
+        }
         const dotSystem = systemToDot.convertSystemToDot(system)
         const svgSystem = vizJs(dotSystem, { format: 'svg', engine: 'dot' })
         res.send(svgSystem)
