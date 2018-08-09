@@ -4,27 +4,27 @@
     <title>system structure</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tachyons.css">
 </head>
 <body>
-    <p>
-        Explanation of symbols:
-        <ul>
-            <li>a rectangular box represents a microservice</li>
-            <li>a cylinder represents a RabbitMQ exchange</li>
-            <li>a black link represents an asynchronous information flow</li>
-            <li>a red link represents a synchronous information flow (the actual synchronous call takes place in the opposite
-                direction)</li>
-        </ul>
-    </p>
-    <hr>
+    <div class="sans-serif">
+        <div class="bg-black white pa2 f2">system graph</div>
+        <div class="bg-green pa2 f5">
+            Explanation of symbols:
+            <ul>
+                <li>a rectangular box represents a microservice</li>
+                <li>a cylinder represents a RabbitMQ exchange</li>
+                <li>a black link represents an asynchronous information flow</li>
+                <li>a red link represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
+                    direction)</li>
+            </ul>
+        </div>
+        <!-- <div class="bg-yellow pa3 f3">
+            <a href="">start</a> | <a href="">interactive</a> | <a href="">wiki</a> | <a href="">cabinets only</a>
+        </div> -->
+    </div>
+
     <script src="bundle.js"></script>
-    <script>
-            (function () {
-
-
-
-        })()
-    </script>
 </body>
 
 </html>
