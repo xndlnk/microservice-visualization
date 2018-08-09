@@ -3,13 +3,17 @@ import { appBaseUrl } from '../appBaseUrl'
 import { EventRegistrator } from './viewhelper/EventRegistrator'
 
 const queryPart = window.location.href.substr(window.location.href.lastIndexOf('?'))
-const svgSystemUrl = getBaseUrlInCurrentEnvironment() + '/svg/wikilinks' + queryPart
+const svgSystemUrl = getBaseUrlInCurrentEnvironment() + '/system' + queryPart
 console.log('fetching svg system from url ' + svgSystemUrl)
 
 // can also use: axios.defaults.baseURL
 axios.default
   .get(svgSystemUrl)
   .then(function(response) {
+      // INFO: keeping the state in the backend is not ideal. it would be much better to use react.
+      // then each user keeps his own state and can operate on it.
+      // however, the backend solution is the one that we can implement the fastest right now
+      // in order to allow graph navigation.
     append(response.data)
     EventRegistrator.init()
   })

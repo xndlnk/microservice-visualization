@@ -1,5 +1,5 @@
-import {ScrollHandler} from './ScrollHandler'
-import {SvgEdgeHighlightning} from './SvgEdgeHighlightning'
+import { ScrollHandler } from './ScrollHandler'
+import { SvgEdgeHighlightning } from './SvgEdgeHighlightning'
 
 export class EventRegistrator {
 

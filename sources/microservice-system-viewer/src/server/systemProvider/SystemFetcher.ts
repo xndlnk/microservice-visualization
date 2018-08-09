@@ -1,6 +1,7 @@
 import * as axios from 'axios'
 import * as NodeCache from 'node-cache'
 import { ConsulAnalyzerServiceResolver } from './ConsulAnalyzerServiceResolver'
+import { INode } from '../domain/model'
 
 export class SystemFetcher {
 
@@ -16,7 +17,7 @@ export class SystemFetcher {
     }
   }
 
-  async fetchSystem(): Promise<any> {
+  async fetchSystem(): Promise<INode> {
     if (this.isProduction()) {
       let cachedResponse = this.cache.get(this.SYSTEM_CACHE_KEY)
       if (cachedResponse) {

@@ -1,30 +1,15 @@
 import * as randomWord from 'random-word'
+import { Node, Edge } from '../domain/model'
+import { GraphService } from '../domain/service'
 
 export class RandomWordAnonymizer {
   private nameMapping = new Map()
 
-  getAnonymizedSystem(originalSystem) {
-    const system = JSON.parse(JSON.stringify(originalSystem))
+  anonymizeSystem(system: Node) {
+    system.setName(this.getNewNameCached(system.getName()))
 
-    this.anonymizeSystem(system)
-
-    return system
-  }
-
-  anonymizeSystem(system) {
-    system.name = this.getNewNameCached(system.name)
-
-    system.services.forEach((service) => {
-      service.name = this.getNewNameCached(service.name)
-    })
-
-    system.links.forEach((link) => {
-      link.sourceName = this.getNewNameCached(link.sourceName)
-      link.targetName = this.getNewNameCached(link.targetName)
-    })
-
-    system.subSystems.forEach((subSystem) => {
-      this.anonymizeSystem(subSystem)
+    GraphService.computeAllNodes(system).forEach(node => {
+      node.setName(this.getNewNameCached(node.getName()))
     })
   }
 

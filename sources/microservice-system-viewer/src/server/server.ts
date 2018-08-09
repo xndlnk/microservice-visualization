@@ -1,11 +1,11 @@
 import * as express from 'express'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
-import * as systemToDot from './systemToDot'
+import * as systemToDot from './domain/systemToDot'
 import { appBaseUrl } from './appBaseUrl'
-import { SystemProvider } from './SystemProvider'
-import { SystemFetcher } from './SystemFetcher'
-import { ConsulAnalyzerServiceResolver } from './ConsulAnalyzerServiceResolver'
+import { SystemProvider } from './systemProvider/SystemProvider'
+import { SystemFetcher } from './systemProvider/SystemFetcher'
+import { ConsulAnalyzerServiceResolver } from './systemProvider/ConsulAnalyzerServiceResolver'
 import vizJs = require('viz.js')
 
 dotenv.config()
@@ -23,44 +23,19 @@ if (isProduction()) {
 }
 
 addRestHandlers(app)
-addRestHandlersForV1(app)
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT)
 console.log('running on http://localhost:' + PORT)
 
 function addRestHandlers(app: express.Express) {
+  // TODO: move these calls to a central system provider
   const systemFetcher = new SystemFetcher(process.env.SYSTEM_PROVIDER_URL, getAnalyzerServiceResolver())
   const systemProvider = new SystemProvider(systemFetcher)
 
-  app.get(`${appBaseUrl}/json`, (req, res) => {
-    systemProvider.getSystem(req.query).then(system => {
-      if (system) {
-        res.send(JSON.stringify(system))
-      } else {
-        res.send(systemProvider.getMessageForFallbackToLastFetchedSystem(req))
-      }
-    })
-    .catch(error => {
-      res.send('an error occured: ' + error)
-    })
-  })
+  // TODO: allow to clear the cached system
 
-  app.get(`${appBaseUrl}/dot`, (req, res) => {
-    systemProvider.getSystem(req.query).then(system => {
-      if (system) {
-        const dotSystem = systemToDot.convertSystemToDot(system)
-        res.send(dotSystem)
-      } else {
-        res.send(systemProvider.getMessageForFallbackToLastFetchedSystem(req))
-      }
-    })
-    .catch(error => {
-      res.send('an error occured: ' + error)
-    })
-  })
-
-  app.get(`${appBaseUrl}/svg/wikilinks`, (req, res) => {
+  app.get(`${appBaseUrl}/system`, (req, res) => {
     systemProvider.getSystem(req.query).then(system => {
       if (system) {
         const dotSystem = systemToDot.convertSystemToDot(system)
@@ -90,10 +65,6 @@ function addRestHandlers(app: express.Express) {
 
     res.send(`<h1>API</h1>${endpointHtml}`)
   })
-}
-
-function addRestHandlersForV1(app: express.Express) {
-  // TODO:
 }
 
 function getAnalyzerServiceResolver() {
