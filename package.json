@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "lerna run test",
-    "publish": "lerna run dist && lerna publish --force-publish=*"
+    "publish": "lerna run dist && lerna publish"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "license": "Apache-2.0",
