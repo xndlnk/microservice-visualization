@@ -65,11 +65,12 @@ ${dotSubGraphs}
   }
 
   getNodeStyling(node: Node): string {
+    const url = this.options ? this.options.urlExtractor(node) : null
+    const optionalUrl = url ? `,URL="${url}"` : ''
+
     if (node.type === 'MessageExchange') {
-      return `shape=cylinder,style=filled,fillcolor=lightgrey,label="${node.getName()}"`
+      return `shape=cylinder,style=filled,fillcolor=lightgrey,label="${node.getName()}"${optionalUrl}`
     } else {
-      const url = this.options ? this.options.urlExtractor(node) : null
-      const optionalUrl = url ? `,URL="${url}"` : ''
       return `shape=box,style=filled,fillcolor=gold,label="${node.getName()}"${optionalUrl}`
     }
   }
