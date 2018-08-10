@@ -11,7 +11,8 @@
     "build": "tsc && webpack",
     "watch": "webpack --watch",
     "docker-build": "node docker-build.js",
-    "docker-run": "node docker-run.js"
+    "docker-run": "node docker-run.js",
+    "docker-publish": "node docker-publish.js"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
   "license": "Apache-2.0",
