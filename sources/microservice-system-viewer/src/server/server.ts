@@ -46,8 +46,6 @@ function addRestHandlers(app: express.Express) {
         let options: ConverterOptions = {
           urlExtractor: (node: Node) => node.getProp('url', null)
         }
-        console.log('path: ' + req.path)
-        console.log('url: ' + req.url)
 
         if (req.query.interactive) {
           options = {

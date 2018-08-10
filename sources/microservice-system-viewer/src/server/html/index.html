@@ -8,20 +8,31 @@
 </head>
 <body>
     <div class="sans-serif">
-        <div class="bg-black white pa2 f2">system graph</div>
-        <div class="bg-green pa2 f5">
-            Explanation of symbols:
-            <ul>
-                <li>a rectangular box represents a microservice</li>
-                <li>a cylinder represents a RabbitMQ exchange</li>
-                <li>a black link represents an asynchronous information flow</li>
-                <li>a red link represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
-                    direction)</li>
-            </ul>
-        </div>
-        <!-- <div class="bg-yellow pa3 f3">
-            <a href="">start</a> | <a href="">interactive</a> | <a href="">wiki</a> | <a href="">cabinets only</a>
-        </div> -->
+        <div class="bg-black white pa2 f2">System Structure</div>
+        <div class="mw9">
+              <div class="fl w-100 w-50-ns bb">
+                <div class="bg-white pa2">
+                    Actions:
+                    <ul>
+                        <li>Show <a href="./">complete structure</a> with all nodes and edges.</li>
+                        <li>Switch to <a href="./?interactive=1">interactive mode</a> to focus on a node and its neighbours.</li>
+                    </ul>
+                </div>
+              </div>
+              <div class="fl w-100 w-50-ns bb">
+                <div class="bg-light-green pa2">
+                    Semantics:
+                    <ul>
+                        <li>A <b>rectangular box</b> represents a microservice.</li>
+                        <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
+                        <li>A <b>black link</b> represents an asynchronous information flow from source to target. If both source and target are connected
+                            to a microservice then a message exchange exists in between them. This message exchange is not shown.</li>
+                        <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
+                            direction).</li>
+                    </ul>
+                </div>
+              </div>
+          </div>
     </div>
 
     <script src="bundle.js"></script>
