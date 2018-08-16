@@ -43,6 +43,9 @@ function addRestHandlers(app: express.Express) {
         if (req.query.focusId) {
           system = GraphInteractions.focusNode(system, req.query.focusId)
         }
+        if (req.query.collapse) {
+          system = GraphInteractions.collapseNode(system)
+        }
         let options: ConverterOptions = {
           urlExtractor: (node: Node) => node.getProp('url', null)
         }
