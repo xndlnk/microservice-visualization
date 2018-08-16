@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as dotenv from 'dotenv'
 import { SystemToDotConverter, Options as ConverterOptions } from './domain/systemToDot'
 import { Node } from './domain/model'
-import { appBaseUrl } from './appBaseUrl'
+import { appBaseUrl } from '../appBaseUrl'
 import { SystemProvider } from './systemProvider/SystemProvider'
 import { SystemFetcher } from './systemProvider/SystemFetcher'
 import { ConsulAnalyzerServiceResolver } from './systemProvider/ConsulAnalyzerServiceResolver'
@@ -14,7 +14,7 @@ dotenv.config()
 
 const app = express()
 
-const htmlDir = path.join(process.cwd(), 'src', 'server', 'html')
+const htmlDir = path.join(process.cwd(), 'src', 'frontend')
 const bundleDir = path.join(process.cwd(), 'dist', 'bundle')
 
 app.use(`${appBaseUrl}/html`, express.static(htmlDir))

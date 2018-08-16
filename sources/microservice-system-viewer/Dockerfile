@@ -19,8 +19,8 @@ COPY --from=build /viewer/dist /viewer/dist/
 COPY --from=build /viewer/*.json /viewer/
 COPY --from=build /viewer/*.js /viewer/
 COPY --from=build /viewer/*.lock /viewer/
-RUN mkdir -p /viewer/src/server/html
-COPY --from=build /viewer/src/server/html /viewer/src/server/html/
+RUN mkdir -p /viewer/src/frontend
+COPY --from=build /viewer/src/frontend /viewer/src/frontend/
 
 WORKDIR /viewer
 # TODO: add lock file for npm. we use npm here because yarn somehow cannot just install without dev depedencies

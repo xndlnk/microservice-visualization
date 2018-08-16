@@ -1,8 +1,8 @@
 import { describe, it, test } from 'mocha'
 import { expect } from 'chai'
-import { Node } from '../../src/server/domain/model'
-import { GraphService } from '../../src/server/domain/service'
-import { NodeCollapser } from '../../src/server/domain/NodeCollapser'
+import { Node } from '../../../src/backend/domain/model'
+import { GraphService } from '../../../src/backend/domain/service'
+import { NodeCollapser } from '../../../src/backend/domain/NodeCollapser'
 
 describe('node collapser', function() {
 
