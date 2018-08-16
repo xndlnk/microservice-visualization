@@ -6,21 +6,24 @@
         "downlevelIteration": true,
         "allowJs": true,
         "sourceMap": true,
-        "outDir": "dist",
+        "outDir": "build",
+        "rootDirs": [
+            "src",
+            "test"
+        ],
         "baseUrl": ".",
+        "paths": {
+            "~/*": ["src/*"]
+        },
         "lib": [
             "es2015",
             "es2016",
             "dom",
             "dom.iterable"
-          ],
+        ],
     },
-    "include": [
-        "src/**/*"
-    ],
     "exclude": [
         "node_modules",
-        "**/*.js",
-        "**/*.test.ts"
+        "**/*.js"
     ]
 }

@@ -15,7 +15,7 @@ RUN npm run build
 FROM node:8-alpine
 
 RUN mkdir -p /viewer/dist
-COPY --from=build /viewer/dist /viewer/dist/
+COPY --from=build /viewer/build /viewer/build/
 COPY --from=build /viewer/*.json /viewer/
 COPY --from=build /viewer/*.js /viewer/
 COPY --from=build /viewer/*.lock /viewer/

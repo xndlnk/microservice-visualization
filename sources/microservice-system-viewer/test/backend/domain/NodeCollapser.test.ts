@@ -1,6 +1,6 @@
 import { describe, it, test } from 'mocha'
 import { expect } from 'chai'
-import { Node } from '../../../src/backend/domain/model'
+import { Node } from '~/backend/domain/model'
 import { GraphService } from '../../../src/backend/domain/service'
 import { NodeCollapser } from '../../../src/backend/domain/NodeCollapser'
 

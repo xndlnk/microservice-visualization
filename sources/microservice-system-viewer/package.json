@@ -2,10 +2,9 @@
   "name": "microservice-system-viewer",
   "version": "0.7.2",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "server": "tsc && node dist/backend/server.js",
-    "server-prod": "NODE_ENV=production node dist/backend/server.js",
+    "server": "tsc && node build/src/backend/server.js",
+    "server-prod": "NODE_ENV=production node build/src/backend/server.js",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts test/*.ts",
     "dev": "webpack-dev-server",
     "build": "tsc && webpack",

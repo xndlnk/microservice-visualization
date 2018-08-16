@@ -15,7 +15,7 @@ dotenv.config()
 const app = express()
 
 const htmlDir = path.join(process.cwd(), 'src', 'frontend')
-const bundleDir = path.join(process.cwd(), 'dist', 'bundle')
+const bundleDir = path.join(process.cwd(), 'build', 'bundle', 'frontend')
 
 app.use(`${appBaseUrl}/html`, express.static(htmlDir))
 app.use(`${appBaseUrl}/html`, express.static(bundleDir))
