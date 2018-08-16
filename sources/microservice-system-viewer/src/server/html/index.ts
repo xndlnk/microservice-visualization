@@ -1,6 +1,8 @@
 import * as axios from 'axios'
 import { getBaseUrlInCurrentEnvironment } from '../appBaseUrl'
 import { EventRegistrator } from './viewhelper/EventRegistrator'
+import 'tachyons/css/tachyons.css'
+import './style.css'
 
 const queryPart = window.location.href.substr(window.location.href.lastIndexOf('?'))
 const svgSystemUrl = getBaseUrlInCurrentEnvironment() + '/system' + queryPart
