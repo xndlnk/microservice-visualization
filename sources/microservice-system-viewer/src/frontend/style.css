@@ -10,6 +10,11 @@ g.node:hover polygon {
     stroke: rgb(69, 153, 248) !important
 }
 
+g.node.highlight polygon {
+    transition: stroke 0.2s ease-out 0s, fill 0.2s ease-out 0s;
+    fill: rgb(69, 153, 248) !important
+}
+
 g.edge polygon,
 g.edge path,
 g.edge ellipse{
