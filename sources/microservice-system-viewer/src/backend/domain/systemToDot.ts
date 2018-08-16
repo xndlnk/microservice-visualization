@@ -43,11 +43,15 @@ ${dotSubGraphs}
   convertSubSystemToDot(node: Node): string {
     let dotNodes: string = this.convertNodesToDot(node.getNodes(), 2)
     let dotEdges: string = this.convertEdgesToDot(node.getEdges(), 2)
+    const url = this.getUrlOrEmpty(node)
+    const optionalUrl = url ? url + ';' : ''
+
     let dotGraph = `  subgraph cluster_${node.getName()} {
     label = "cabinet ${node.getName()}";
     fontname="Arial";
     style="filled";
     color="#f8ecc9";
+    ${optionalUrl}
     ${dotNodes}
     ${dotEdges}
   }`
@@ -65,14 +69,19 @@ ${dotSubGraphs}
   }
 
   getNodeStyling(node: Node): string {
-    const url = this.options ? this.options.urlExtractor(node) : null
-    const optionalUrl = url ? `,URL="${url}"` : ''
+    const url = this.getUrlOrEmpty(node)
+    const optionalUrl = url ? ',' + url : ''
 
     if (node.type === 'MessageExchange') {
       return `shape=cylinder,style=filled,fillcolor=lightgrey,label="${node.getName()}"${optionalUrl}`
     } else {
       return `shape=box,style=filled,fillcolor=gold,label="${node.getName()}"${optionalUrl}`
     }
+  }
+
+  getUrlOrEmpty(node: Node): string {
+    const url = this.options ? this.options.urlExtractor(node) : null
+    return url ? `URL="${url}"` : ''
   }
 
   convertEdgesToDot(edges: Edge[], identation: number): string {
