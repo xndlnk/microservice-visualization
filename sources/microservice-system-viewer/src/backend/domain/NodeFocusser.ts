@@ -10,12 +10,28 @@ export class NodeFocusser {
     this.graphService = graphService
   }
 
-  focusNodeById(focusedNodeId: string): Node {
-    return this.focusNode(this.graphService.findNode(focusedNodeId))
+  focusNodeById(focusedNodeId: string, neighbourHoodLevel: number = 1): Node {
+    const focusedNode = this.graphService.findNode(focusedNodeId)
+    return this.focusNode(focusedNode, neighbourHoodLevel)
   }
 
-  focusNode(focusedNode: Node): Node {
-    const neighbourNodeIds = this.graphService.getNeighbourNodeIds(focusedNode.id)
+  focusNode(focusedNode: Node, neighbourHoodLevel: number): Node {
+    const neighbourNodeIds = []
+    neighbourNodeIds.push(focusedNode.id)
+
+    let remainingNeighourHoods = neighbourHoodLevel
+    while (remainingNeighourHoods > 0) {
+      const newNeighbourNodeIds: string[] = _.flatten(neighbourNodeIds
+        .map(nodeId => this.graphService.getNeighbourNodeIds(nodeId)))
+      newNeighbourNodeIds
+        .forEach(nodeId => {
+          if (!neighbourNodeIds.find(neighbourNodeId => neighbourNodeId === nodeId)) {
+            neighbourNodeIds.push(nodeId)
+          }
+        })
+      remainingNeighourHoods--
+    }
+
     const allInnerNodeIds = this.graphService.getAllNodesOfNode(focusedNode).map(node => node.id)
 
     const additionalIds: string[] = []
