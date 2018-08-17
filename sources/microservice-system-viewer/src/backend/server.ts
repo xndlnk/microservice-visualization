@@ -9,13 +9,13 @@ import { SystemProvider } from './systemProvider/SystemProvider'
 import { SystemFetcher } from './systemProvider/SystemFetcher'
 import { ConsulAnalyzerServiceResolver } from './systemProvider/ConsulAnalyzerServiceResolver'
 import { GraphInteractions } from './domain/GraphInteractions'
+import { SecondLevelEdgesRemover } from './domain/SecondLevelEdgesRemover'
 import vizJs = require('viz.js')
 
 dotenv.config()
 envYaml.config()
 
 const views: any = process.env.views ? JSON.parse(process.env.views) : {}
-console.log(JSON.stringify(views, null, 2))
 
 const app = express()
 
@@ -50,6 +50,9 @@ function addRestHandlers(app: express.Express) {
         }
         if (req.query.collapse) {
           system = GraphInteractions.collapseNode(system)
+        }
+        if (req.query.collapse2) {
+          system = new SecondLevelEdgesRemover().transformer(system)
         }
         let options: ConverterOptions = {
           urlExtractor: (node: Node) => node.getProp('url', null)
