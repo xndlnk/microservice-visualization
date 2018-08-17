@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
+import * as envYaml from './envYamlString'
 import { SystemToDotConverter, Options as ConverterOptions } from './domain/systemToDot'
 import { Node } from './domain/model'
 import { appBaseUrl } from '../appBaseUrl'
@@ -11,6 +12,10 @@ import { GraphInteractions } from './domain/GraphInteractions'
 import vizJs = require('viz.js')
 
 dotenv.config()
+envYaml.config()
+
+const views: any = process.env.views ? JSON.parse(process.env.views) : {}
+console.log(JSON.stringify(views, null, 2))
 
 const app = express()
 

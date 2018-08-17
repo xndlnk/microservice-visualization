@@ -4,7 +4,7 @@ dist
 **/output
 **/temp
 .gradle
-.env
+.env*
 .nyc_output
 .cache
 build
