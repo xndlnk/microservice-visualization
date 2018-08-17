@@ -31,8 +31,8 @@ describe('node collapser', function() {
 
     let nodeCollapser = new NodeCollapser()
 
-    expect(nodeCollapser.getTopLevelParentInGraph(graph, 'c').id).to.eql('b')
-    expect(nodeCollapser.getTopLevelParentInGraph(graph, 'd').id).to.eql('b')
+    expect(nodeCollapser.getTopLevelParentOfNodeInGraph('c', graph).id).to.eql('b')
+    expect(nodeCollapser.getTopLevelParentOfNodeInGraph('d', graph).id).to.eql('b')
   })
 
   test('edges to inside nodes of all contained nodes are moved to edges to the contained nodes themselfes', () => {
