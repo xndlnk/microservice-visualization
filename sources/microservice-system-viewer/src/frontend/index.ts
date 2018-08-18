@@ -9,6 +9,7 @@ import { graphviz } from 'd3-graphviz'
 import { SystemToDotConverter, Options as ConverterOptions } from '../backend/domain/systemToDot'
 import { GraphService } from '../backend/domain/service'
 import { Node, INode } from '../backend/domain/model'
+import { NodeFocusser } from '../backend/domain/NodeFocusser'
 
 // attach all d3 plugins to the d3 library
 const d3 = Object.assign(d3Base, { graphviz })
@@ -28,10 +29,8 @@ axios.default
     const rawSystem = response.data
     const system = Node.ofRawNode(rawSystem)
     GraphService.deepResolveNodesReferencedInEdges(system)
-    const dotSystem = new SystemToDotConverter().convertSystemToDot(system)
-    d3.select('#graph')
-      .graphviz()
-      .renderDot(dotSystem)
+    const nodeFocusser = new NodeFocusser(new GraphService(system))
+    renderSystem(system, nodeFocusser)
 
     // EventRegistrator.init()
   })
@@ -40,3 +39,24 @@ axios.default
     element.innerHTML = error
     document.body.appendChild(element)
   })
+
+function renderSystem(system: Node, nodeFocusser: NodeFocusser) {
+  const systemToDotConverter = new SystemToDotConverter()
+
+  const transition = d3.transition()
+      .delay(100)
+      .duration(1000)
+
+  d3.select('#graph')
+    .graphviz()
+    .transition(transition)
+    .renderDot(systemToDotConverter.convertSystemToDot(system))
+
+  const nodes = d3.selectAll('.node,.edge')
+  nodes.on('click', function() {
+    const id = d3.select(this).attr('id')
+    console.log('clicked on ' + id)
+    const focusedSystem = nodeFocusser.focusNodeById(id)
+    renderSystem(focusedSystem, nodeFocusser)
+  })
+}

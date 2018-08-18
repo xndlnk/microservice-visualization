@@ -73,9 +73,9 @@ ${dotSubGraphs}
     const optionalUrl = url ? ',' + url : ''
 
     if (node.type === 'MessageExchange') {
-      return `shape=cylinder,style=filled,fillcolor=lightgrey,label="${node.getName()}"${optionalUrl}`
+      return `shape=cylinder,style=filled,fillcolor=lightgrey,id="${node.id}",label="${node.getName()}"${optionalUrl}`
     } else {
-      return `shape=box,style=filled,fillcolor=gold,label="${node.getName()}"${optionalUrl}`
+      return `shape=box,style=filled,fillcolor=gold,id="${node.id}",label="${node.getName()}"${optionalUrl}`
     }
   }
 
