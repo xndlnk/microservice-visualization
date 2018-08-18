@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv'
 import * as envYaml from './envYamlString'
 import { SystemToDotConverter, Options as ConverterOptions } from './domain/systemToDot'
 import { Node } from './domain/model'
-import { appBaseUrl } from '../appBaseUrl'
+import { appBaseUrl } from './appBaseUrl'
 import { SystemProvider } from './systemProvider/SystemProvider'
 import { SystemFetcher } from './systemProvider/SystemFetcher'
 import { ConsulAnalyzerServiceResolver } from './systemProvider/ConsulAnalyzerServiceResolver'
@@ -19,8 +19,8 @@ const views: any = process.env.views ? JSON.parse(process.env.views) : {}
 
 const app = express()
 
-const htmlDir = path.join(process.cwd(), 'src', 'frontend')
-const bundleDir = path.join(process.cwd(), 'build', 'bundle', 'frontend')
+const htmlDir = path.join(process.cwd(), 'src', 'html')
+const bundleDir = path.join(process.cwd(), 'build', 'bundle')
 
 app.use(`${appBaseUrl}/html`, express.static(htmlDir))
 app.use(`${appBaseUrl}/html`, express.static(bundleDir))

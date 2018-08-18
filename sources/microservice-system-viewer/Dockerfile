@@ -14,13 +14,13 @@ RUN npm run build
 # stage: install prod packages & run
 FROM node:8-alpine
 
-RUN mkdir -p /viewer/dist
+RUN mkdir -p /viewer/build
 COPY --from=build /viewer/build /viewer/build/
 COPY --from=build /viewer/*.json /viewer/
 COPY --from=build /viewer/*.js /viewer/
 COPY --from=build /viewer/*.lock /viewer/
-RUN mkdir -p /viewer/src/frontend
-COPY --from=build /viewer/src/frontend /viewer/src/frontend/
+RUN mkdir -p /viewer/src/html
+COPY --from=build /viewer/src/html /viewer/src/html/
 
 WORKDIR /viewer
 # TODO: add lock file for npm. we use npm here because yarn somehow cannot just install without dev depedencies

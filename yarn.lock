@@ -27,10 +27,6 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.0.tgz#50c1e2260ac0ed9439a181de3725a0168d59c48a"
 
-"@pnkbrn/cat-names@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pnkbrn/cat-names/-/cat-names-1.0.3.tgz#84a9e07c990cae4241c005321b334241d17c09fe"
-
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"

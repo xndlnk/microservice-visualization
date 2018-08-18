@@ -2,10 +2,10 @@
   "name": "microservice-system-viewer",
   "version": "0.7.2",
   "description": "",
-  "main": "src/frontend/index.ts",
+  "main": "src/viewer.ts",
   "scripts": {
-    "server": "tsc && node build/src/backend/server.js",
-    "server-prod": "NODE_ENV=production node build/src/backend/server.js",
+    "server": "tsc && node build/src/server.js",
+    "server-prod": "NODE_ENV=production node build/src/server.js",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts test/*.ts",
     "dev": "tsc && webpack --mode development",
     "build": "tsc && webpack",
@@ -18,7 +18,6 @@
   "license": "Apache-2.0",
   "private": true,
   "dependencies": {
-    "@pnkbrn/cat-names": "^1.0.3",
     "axios": "^0.18.0",
     "d3": "^5.5.0",
     "d3-graphviz": "^2.4.3",

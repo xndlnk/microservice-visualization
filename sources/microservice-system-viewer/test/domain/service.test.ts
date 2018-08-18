@@ -1,7 +1,7 @@
 import { describe, it, test } from 'mocha'
 import { expect } from 'chai'
-import { Node } from '../../../src/backend/domain/model'
-import { GraphService } from '../../../src/backend/domain/service'
+import { Node } from '../../src/domain/model'
+import { GraphService } from '../../src/domain/service'
 
 describe('graph service functions', function() {
 

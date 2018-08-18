@@ -1,15 +1,15 @@
 import * as axios from 'axios'
-import { getBaseUrlInCurrentEnvironment } from '../appBaseUrl'
+import { getBaseUrlInCurrentEnvironment } from './appBaseUrl'
 import { EventRegistrator } from './viewhelper/EventRegistrator'
 import 'tachyons/css/tachyons.css'
-import './style.css'
+import './html/style.css'
 import * as d3Base from 'd3'
 import { graphviz } from 'd3-graphviz'
 
-import { SystemToDotConverter, Options as ConverterOptions } from '../backend/domain/systemToDot'
-import { GraphService } from '../backend/domain/service'
-import { Node, INode } from '../backend/domain/model'
-import { NodeFocusser } from '../backend/domain/NodeFocusser'
+import { SystemToDotConverter, Options as ConverterOptions } from './domain/systemToDot'
+import { GraphService } from './domain/service'
+import { Node, INode } from './domain/model'
+import { NodeFocusser } from './domain/NodeFocusser'
 
 // attach all d3 plugins to the d3 library
 // see https://www.giacomodebidda.com/how-to-import-d3-plugins-with-webpack/
