@@ -6,29 +6,33 @@
 <body>
     <div class="sans-serif">
         <div class="bg-black white pa2 f2">System Structure</div>
-        <div class="mw9">
-              <div class="fl w-100 w-50-ns bb">
+        <div class="mw100">
+              <div class="fl w-100 bb">
                 <div class="bg-white pa2">
-                    <a class="f5 grow no-underline br-pill ph3 pv2 mb2 dib white bg-green" href="./">Complete structure</a>
-                    <a class="f5 grow no-underline br-pill ph3 pv2 mb2 dib white bg-green" href="./?collapse=1">Collapse cabinets</a>
-                </div>
-              </div>
-              <div class="fl w-100 w-50-ns bb">
-                <div class="bg-light-green pa2">
-                    Semantics:
-                    <ul>
-                        <li>A <b>rectangular box</b> represents a microservice.</li>
-                        <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
-                        <li>A <b>black link</b> represents an asynchronous information flow from source to target. If both source and target are connected
-                            to a microservice then a message exchange exists in between them. This message exchange is not shown.</li>
-                        <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
-                            direction).</li>
-                    </ul>
+                    <div class="f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Complete</div>
+                    <div class="f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Cabinets</div>
+                    <div id="info-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-blue">Info</div>
+                    <div class="f6 no-underline br-pill ba ph3 pv2 dib blue">Use shift to focus on nodes</div>
                 </div>
               </div>
           </div>
-          <div class="mw9">
-            <div class="fl w-100 h-75 bg-yellow">
+          <div class="mw100">
+                <div class="fl w-100">
+                  <div id="info" class="bg-light-blue pa2 bb" style="display:none;">
+                      Info:
+                      <ul>
+                          <li>A <b>rectangular box</b> represents a microservice.</li>
+                          <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
+                          <li>A <b>black link</b> represents an asynchronous information flow from source to target. If both source and target are connected
+                              to a microservice then a message exchange exists in between them. This message exchange is not shown.</li>
+                          <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
+                              direction).</li>
+                      </ul>
+                  </div>
+                </div>
+            </div>
+          <div class="mw100">
+            <div class="fl w-100 h-100 bg-yellow">
                 <div id="graph"></div>
             </div>
           </div>

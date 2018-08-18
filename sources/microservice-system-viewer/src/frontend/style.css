@@ -2,6 +2,10 @@ g a {
     cursor: pointer
 }
 
+.clickable {
+    cursor: pointer
+}
+
 g.node polygon {
     transition: stroke 0.2s ease-out , fill 0.2s ease-out;
 }

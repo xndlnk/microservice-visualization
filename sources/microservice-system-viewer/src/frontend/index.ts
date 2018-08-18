@@ -37,6 +37,12 @@ axios.default
 
     registerShiftKey()
     // EventRegistrator.init()
+
+    d3.select('#info-link').on('click', function() {
+      const infoElement = d3.select('#info')
+      const currentDisplay = infoElement.style('display')
+      infoElement.style('display', currentDisplay === 'none' ? 'block' : 'none')
+    })
   })
   .catch(function(error) {
     let element: HTMLElement = document.createElement('div')
