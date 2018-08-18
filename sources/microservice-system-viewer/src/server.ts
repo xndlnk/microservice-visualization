@@ -76,7 +76,7 @@ function addRestHandlers(app: express.Express) {
       }
     })
     .catch(error => {
-      res.send('an error occured: ' + error)
+      res.status(500).send('an error occured: ' + error)
     })
   })
 

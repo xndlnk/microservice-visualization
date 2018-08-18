@@ -1,6 +1,7 @@
 import * as axios from 'axios'
 import 'tachyons/css/tachyons.css'
 import './html/style.css'
+import * as d3 from 'd3'
 
 import { getBaseUrlInCurrentEnvironment } from './appBaseUrl'
 
@@ -17,7 +18,7 @@ console.log('fetching system from url ' + systemUrl)
 // can also use: axios.defaults.baseURL
 axios.default
   .get(systemUrl)
-  .then(function(response) {
+  .then((response) => {
     const rawSystem = response.data
     const system = Node.ofRawNode(rawSystem)
     GraphService.deepResolveNodesReferencedInEdges(system)
@@ -30,8 +31,6 @@ axios.default
     systemRenderer.renderSystem(system)
     nodeActions.install()
   })
-  .catch(function(error) {
-    let element: HTMLElement = document.createElement('div')
-    element.innerHTML = error
-    document.body.appendChild(element)
+  .catch((error) => {
+    d3.select('#graph').text(error).classed('f1 pa2 bg-red white', true)
   })
