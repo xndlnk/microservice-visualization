@@ -20,6 +20,7 @@ const systemUrl = getBaseUrlInCurrentEnvironment() + '/system' + queryPart
 console.log('fetching system from url ' + systemUrl)
 
 let altKeyPressed: boolean = false
+let selectedNodePolygon: any = null
 
 // can also use: axios.defaults.baseURL
 axios.default
@@ -35,14 +36,9 @@ axios.default
     const nodeFocusser = new NodeFocusser(new GraphService(system))
     renderSystem(system, nodeFocusser)
 
+    registerMenuHandlers()
     registerAltKey()
     // EventRegistrator.init()
-
-    d3.select('#info-link').on('click', function() {
-      const infoElement = d3.select('#info')
-      const currentDisplay = infoElement.style('display')
-      infoElement.style('display', currentDisplay === 'none' ? 'block' : 'none')
-    })
   })
   .catch(function(error) {
     let element: HTMLElement = document.createElement('div')
@@ -72,25 +68,57 @@ function renderSystem(system: Node, nodeFocusser: NodeFocusser) {
 
   d3.selectAll('.node')
     .on('mouseover', function() {
+      selectedNodePolygon = d3.select(this).select('polygon')
       if (altKeyPressed) {
-        d3.select(this).select('polygon').attr('fill', '#ff4136')
+        altHighlightCurrentlySelectedNodePolygon()
+      } else {
+        infoHighlightCurrentlySelectedNodePolygon()
       }
     })
     .on('mouseout', function() {
-      if (altKeyPressed) {
-        d3.select(this).select('polygon').attr('fill', '#ffde37')
-      }
+      removeHighlightOnCurrentlySelectedNodePolygon()
+      selectedNodePolygon = null
     })
+}
+
+function registerMenuHandlers() {
+  d3.select('#info-link').on('click', function() {
+    const infoElement = d3.select('#info')
+    const currentDisplay = infoElement.style('display')
+    infoElement.style('display', currentDisplay === 'none' ? 'block' : 'none')
+  })
 }
 
 function registerAltKey() {
   window.onkeydown = (ev: KeyboardEvent) => {
     altKeyPressed = ev.altKey
-    console.log(altKeyPressed)
+    altHighlightCurrentlySelectedNodePolygon()
   }
 
   window.onkeyup = (ev: KeyboardEvent) => {
     altKeyPressed = ev.altKey
-    console.log(altKeyPressed)
+    if (selectedNodePolygon) {
+      infoHighlightCurrentlySelectedNodePolygon()
+    } else {
+      removeHighlightOnCurrentlySelectedNodePolygon()
+    }
+  }
+}
+
+function altHighlightCurrentlySelectedNodePolygon() {
+  if (selectedNodePolygon) {
+    selectedNodePolygon.attr('fill', '#ff4136')
+  }
+}
+
+function infoHighlightCurrentlySelectedNodePolygon() {
+  if (selectedNodePolygon) {
+    selectedNodePolygon.attr('fill', '#96ccff')
+  }
+}
+
+function removeHighlightOnCurrentlySelectedNodePolygon() {
+  if (selectedNodePolygon) {
+    selectedNodePolygon.attr('fill', '#ffde37')
   }
 }

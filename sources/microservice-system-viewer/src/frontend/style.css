@@ -6,12 +6,12 @@ g a {
     cursor: pointer
 }
 
-g.node polygon {
-    transition: stroke 0.2s ease-out , fill 0.2s ease-out;
+g.node {
+    cursor: pointer
 }
 
-g.node:hover polygon {
-    stroke: rgb(69, 153, 248) !important
+g.node polygon {
+    transition: stroke 0.2s ease-out , fill 0.2s ease-out;
 }
 
 g.node.highlight polygon {
