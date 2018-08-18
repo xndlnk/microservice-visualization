@@ -2,6 +2,7 @@
   "name": "microservice-system-viewer",
   "version": "0.7.2",
   "description": "",
+  "main": "src/frontend/index.ts",
   "scripts": {
     "server": "tsc && node build/src/backend/server.js",
     "server-prod": "NODE_ENV=production node build/src/backend/server.js",
