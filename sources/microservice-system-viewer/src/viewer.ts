@@ -26,9 +26,10 @@ axios.default
   .catch((error) => {
     const errorDiv = d3.select('#graph')
       .append('div')
-      .classed('f1 pa2 bg-red white', true)
+      .classed('pa2 bg-red white', true)
 
     errorDiv.append('div')
+      .classed('f3 pa2 bg-red white', true)
       .text(error)
 
     errorDiv.append('div')
