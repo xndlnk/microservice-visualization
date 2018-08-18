@@ -26,10 +26,6 @@ let selectedNodePolygon: any = null
 axios.default
   .get(systemUrl)
   .then(function(response) {
-      // INFO: keeping the state in the backend is not ideal. it would be much better to use react.
-      // then each user keeps his own state and can operate on it.
-      // however, the backend solution is the one that we can implement the fastest right now
-      // in order to allow graph navigation.
     const rawSystem = response.data
     const system = Node.ofRawNode(rawSystem)
     GraphService.deepResolveNodesReferencedInEdges(system)
@@ -38,7 +34,7 @@ axios.default
 
     registerMenuHandlers()
     registerAltKey()
-    // EventRegistrator.init()
+    EventRegistrator.init()
   })
   .catch(function(error) {
     let element: HTMLElement = document.createElement('div')
@@ -58,8 +54,7 @@ function renderSystem(system: Node, nodeFocusser: NodeFocusser) {
     .transition(transition)
     .renderDot(systemToDotConverter.convertSystemToDot(system))
 
-  const nodes = d3.selectAll('.node,.edge')
-  nodes
+  d3.selectAll('.node')
     .on('click', function() {
       const id = d3.select(this).attr('id')
       const focusedSystem = nodeFocusser.focusNodeById(id)
