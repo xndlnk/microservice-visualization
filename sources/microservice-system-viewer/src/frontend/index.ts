@@ -19,7 +19,7 @@ const queryPart = window.location.href.substr(window.location.href.lastIndexOf('
 const systemUrl = getBaseUrlInCurrentEnvironment() + '/system' + queryPart
 console.log('fetching system from url ' + systemUrl)
 
-let shiftPressed: boolean = false
+let altKeyPressed: boolean = false
 
 // can also use: axios.defaults.baseURL
 axios.default
@@ -35,7 +35,7 @@ axios.default
     const nodeFocusser = new NodeFocusser(new GraphService(system))
     renderSystem(system, nodeFocusser)
 
-    registerShiftKey()
+    registerAltKey()
     // EventRegistrator.init()
 
     d3.select('#info-link').on('click', function() {
@@ -72,25 +72,25 @@ function renderSystem(system: Node, nodeFocusser: NodeFocusser) {
 
   d3.selectAll('.node')
     .on('mouseover', function() {
-      if (shiftPressed) {
+      if (altKeyPressed) {
         d3.select(this).select('polygon').attr('fill', '#ff4136')
       }
     })
     .on('mouseout', function() {
-      if (shiftPressed) {
+      if (altKeyPressed) {
         d3.select(this).select('polygon').attr('fill', '#ffde37')
       }
     })
 }
 
-function registerShiftKey() {
+function registerAltKey() {
   window.onkeydown = (ev: KeyboardEvent) => {
-    shiftPressed = ev.shiftKey
-    console.log(shiftPressed)
+    altKeyPressed = ev.altKey
+    console.log(altKeyPressed)
   }
 
   window.onkeyup = (ev: KeyboardEvent) => {
-    shiftPressed = ev.shiftKey
-    console.log(shiftPressed)
+    altKeyPressed = ev.altKey
+    console.log(altKeyPressed)
   }
 }
