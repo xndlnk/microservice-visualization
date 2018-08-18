@@ -8,7 +8,7 @@
     "server-prod": "NODE_ENV=production node build/src/server.js",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts test/*.ts",
     "dev": "tsc && webpack --mode development",
-    "build": "tsc && webpack",
+    "build": "tsc && webpack --mode production",
     "watch": "webpack --watch",
     "docker-build": "node docker-build.js",
     "docker-run": "node docker-run.js",
