@@ -68,9 +68,9 @@ function addRestHandlers(app: express.Express) {
             }
           }
         }
-        const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)
-        const svgSystem = vizJs(dotSystem, { format: 'svg', engine: 'dot' })
-        res.send(svgSystem)
+        // const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)
+        // const svgSystem = vizJs(dotSystem, { format: 'svg', engine: 'dot' })
+        res.send(system)
       } else {
         res.send(systemProvider.getMessageForFallbackToLastFetchedSystem(req))
       }

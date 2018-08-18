@@ -1,3 +1,5 @@
+const ProgressBarPlugin = require('progress-bar-webpack-plugin')
+
 module.exports = {
   entry: './src/frontend/index.ts',
   output: {
@@ -20,5 +22,8 @@ module.exports = {
   },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ]
-  }
+  },
+  plugins: [
+    new ProgressBarPlugin()
+  ]
 }
