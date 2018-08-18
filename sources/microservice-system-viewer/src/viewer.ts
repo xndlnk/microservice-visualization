@@ -9,6 +9,7 @@ import { GraphService } from './domain/service'
 import { Node } from './domain/model'
 import { NodeActions } from './ui/NodeActions'
 import { MenuActions } from './ui/MenuActions'
+import { LoadExampleAction } from './ui/LoadExampleAction'
 import { SystemRenderer } from './SystemRenderer'
 
 const queryPart = window.location.href.substr(window.location.href.lastIndexOf('?'))
@@ -32,5 +33,17 @@ axios.default
     nodeActions.install()
   })
   .catch((error) => {
-    d3.select('#graph').text(error).classed('f1 pa2 bg-red white', true)
+    const errorDiv = d3.select('#graph')
+      .append('div')
+      .classed('f1 pa2 bg-red white', true)
+
+    errorDiv.append('div')
+      .text(error)
+
+    errorDiv.append('div')
+      .text('Load example')
+      .attr('id', 'load-example-link')
+      .classed('f5 grow no-underline br-pill ph3 pv2 dib red bg-white clickable', true)
+
+    new LoadExampleAction().install()
   })
