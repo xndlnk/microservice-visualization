@@ -12,11 +12,14 @@ import { Node, INode } from '../backend/domain/model'
 import { NodeFocusser } from '../backend/domain/NodeFocusser'
 
 // attach all d3 plugins to the d3 library
+// see https://www.giacomodebidda.com/how-to-import-d3-plugins-with-webpack/
 const d3 = Object.assign(d3Base, { graphviz })
 
 const queryPart = window.location.href.substr(window.location.href.lastIndexOf('?'))
 const systemUrl = getBaseUrlInCurrentEnvironment() + '/system' + queryPart
 console.log('fetching system from url ' + systemUrl)
+
+let shiftPressed: boolean = false
 
 // can also use: axios.defaults.baseURL
 axios.default
@@ -32,6 +35,7 @@ axios.default
     const nodeFocusser = new NodeFocusser(new GraphService(system))
     renderSystem(system, nodeFocusser)
 
+    registerShiftKey()
     // EventRegistrator.init()
   })
   .catch(function(error) {
@@ -53,10 +57,34 @@ function renderSystem(system: Node, nodeFocusser: NodeFocusser) {
     .renderDot(systemToDotConverter.convertSystemToDot(system))
 
   const nodes = d3.selectAll('.node,.edge')
-  nodes.on('click', function() {
-    const id = d3.select(this).attr('id')
-    console.log('clicked on ' + id)
-    const focusedSystem = nodeFocusser.focusNodeById(id)
-    renderSystem(focusedSystem, nodeFocusser)
-  })
+  nodes
+    .on('click', function() {
+      const id = d3.select(this).attr('id')
+      const focusedSystem = nodeFocusser.focusNodeById(id)
+      renderSystem(focusedSystem, nodeFocusser)
+    })
+
+  d3.selectAll('.node')
+    .on('mouseover', function() {
+      if (shiftPressed) {
+        d3.select(this).select('polygon').attr('fill', '#ff4136')
+      }
+    })
+    .on('mouseout', function() {
+      if (shiftPressed) {
+        d3.select(this).select('polygon').attr('fill', '#ffde37')
+      }
+    })
+}
+
+function registerShiftKey() {
+  window.onkeydown = (ev: KeyboardEvent) => {
+    shiftPressed = ev.shiftKey
+    console.log(shiftPressed)
+  }
+
+  window.onkeyup = (ev: KeyboardEvent) => {
+    shiftPressed = ev.shiftKey
+    console.log(shiftPressed)
+  }
 }
