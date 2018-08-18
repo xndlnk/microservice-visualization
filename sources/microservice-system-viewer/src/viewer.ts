@@ -6,7 +6,7 @@ import * as d3 from 'd3'
 import { getBaseUrlInCurrentEnvironment } from './appBaseUrl'
 
 import { GraphService } from './domain/service'
-import { Node } from './domain/model'
+import { Node, INode } from './domain/model'
 import { NodeActions } from './ui/NodeActions'
 import { MenuActions } from './ui/MenuActions'
 import { LoadExampleAction } from './ui/LoadExampleAction'
@@ -21,16 +21,7 @@ axios.default
   .get(systemUrl)
   .then((response) => {
     const rawSystem = response.data
-    const system = Node.ofRawNode(rawSystem)
-    GraphService.deepResolveNodesReferencedInEdges(system)
-
-    const systemRenderer = new SystemRenderer()
-    const graphService = new GraphService(system)
-    const nodeActions = new NodeActions(systemRenderer, graphService)
-    new MenuActions().install()
-
-    systemRenderer.renderSystem(system)
-    nodeActions.install()
+    displaySystem(rawSystem)
   })
   .catch((error) => {
     const errorDiv = d3.select('#graph')
@@ -45,5 +36,18 @@ axios.default
       .attr('id', 'load-example-link')
       .classed('f5 grow no-underline br-pill ph3 pv2 dib red bg-white clickable', true)
 
-    new LoadExampleAction().install()
+    new LoadExampleAction().install(displaySystem)
   })
+
+function displaySystem(rawSystem: INode) {
+  const system = Node.ofRawNode(rawSystem)
+  GraphService.deepResolveNodesReferencedInEdges(system)
+
+  const systemRenderer = new SystemRenderer()
+  const graphService = new GraphService(system)
+  const nodeActions = new NodeActions(systemRenderer, graphService)
+  new MenuActions().install()
+
+  systemRenderer.renderSystem(system)
+  nodeActions.install()
+}
