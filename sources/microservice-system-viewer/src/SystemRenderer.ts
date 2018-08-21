@@ -19,6 +19,8 @@ export class SystemRenderer {
     d3.select('#graph')
       .graphviz()
       .transition(transition)
-      .renderDot(this.systemToDotConverter.convertSystemToDot(system))
+      .renderDot(this.systemToDotConverter.convertSystemToDot(system), function() {
+        this.resetZoom()
+      })
   }
 }
