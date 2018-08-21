@@ -32,15 +32,15 @@ ${dotSubGraphs}
     return dotGraph
   }
 
-  getSubSystemNodes(node: Node): Node[] {
+  private getSubSystemNodes(node: Node): Node[] {
     return node.getNodes().filter(node => node.hasNodes())
   }
 
-  getNonSubSystemNodes(node: Node): Node[] {
+  private getNonSubSystemNodes(node: Node): Node[] {
     return node.getNodes().filter(node => !node.hasNodes())
   }
 
-  convertSubSystemToDot(node: Node): string {
+  private convertSubSystemToDot(node: Node): string {
     let dotNodes: string = this.convertNodesToDot(node.getNodes(), 2)
     let dotEdges: string = this.convertEdgesToDot(node.getEdges(), 2)
     const url = this.getUrlOrEmpty(node)
@@ -58,7 +58,7 @@ ${dotSubGraphs}
     return dotGraph
   }
 
-  convertNodesToDot(nodes: Node[], identation: number): string {
+  private convertNodesToDot(nodes: Node[], identation: number): string {
     return nodes
       .map((node) => {
         const id = makeId(node.id)
@@ -68,7 +68,7 @@ ${dotSubGraphs}
       .join(';\n' + addSpaces(identation)) + (nodes.length > 0 ? ';' : '')
   }
 
-  getNodeStyling(node: Node): string {
+  private getNodeStyling(node: Node): string {
     const url = this.getUrlOrEmpty(node)
     const optionalUrl = url ? ',' + url : ''
 
@@ -79,12 +79,12 @@ ${dotSubGraphs}
     }
   }
 
-  getUrlOrEmpty(node: Node): string {
+  private getUrlOrEmpty(node: Node): string {
     const url = this.options ? this.options.urlExtractor(node) : null
     return url ? `URL="${url}"` : ''
   }
 
-  convertEdgesToDot(edges: Edge[], identation: number): string {
+  private convertEdgesToDot(edges: Edge[], identation: number): string {
     return edges.map((edge) => {
       const sourceId = makeId(edge.sourceId)
       const targetId = makeId(edge.targetId)
@@ -93,11 +93,12 @@ ${dotSubGraphs}
     }).join(';\n' + addSpaces(identation)) + (edges.length > 0 ? ';' : '')
   }
 
-  getEdgeStyling(edge: Edge): string {
+  private getEdgeStyling(edge: Edge): string {
+    const id = makeId(edge.sourceId + '_' + edge.targetId)
     if (edge.type === 'SyncInfoFlow') {
-      return '[color=red,arrowhead=normal]'
+      return `[id="${id}",color=red,arrowhead=normal]`
     } else {
-      return ''
+      return `[id="${id}"]`
     }
   }
 }
