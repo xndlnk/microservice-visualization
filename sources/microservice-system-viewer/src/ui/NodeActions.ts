@@ -39,18 +39,9 @@ export class NodeActions {
       this.focusedNodeId = id
       this.focusedSystem = this.nodeFocusser.focusNodeById(id, this.focusLevel)
 
-      const outerThis = this
+      const actualThis = this
       this.systemRenderer.renderSystem(this.focusedSystem, function() {
-        d3.selectAll('.node,.cluster')
-          .select((d, i, nodes) => {
-            const selectedNode = d3.select(nodes[i])
-            const selectedId = selectedNode.attr('id')
-            if (selectedId && selectedId === id) {
-              outerThis.changeColor(selectedNode, '#ff6300')
-            }
-          })
-
-        outerThis.install()
+        actualThis.giveSpecialColorToFocusedNode(actualThis)
       })
     })
 
@@ -69,6 +60,19 @@ export class NodeActions {
       this.showDefaultForCurrentNode()
       this.selectedNode = null
     })
+  }
+
+  private giveSpecialColorToFocusedNode(nodeActions: NodeActions) {
+    d3.selectAll('.node,.cluster')
+      .select((d, i, nodes) => {
+        const selectedNode = d3.select(nodes[i])
+        const selectedId = selectedNode.attr('id')
+        if (selectedId && selectedId === nodeActions.focusedNodeId) {
+          nodeActions.changeColor(selectedNode, '#ff6300')
+        }
+      })
+
+    nodeActions.install()
   }
 
   private registerAltKey() {
