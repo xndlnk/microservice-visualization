@@ -46,18 +46,17 @@ export class NodeActions {
             const selectedNode = d3.select(nodes[i])
             const selectedId = selectedNode.attr('id')
             if (selectedId && selectedId === id) {
-              outerThis.changeColor(selectedNode, '#e7040f')
+              outerThis.changeColor(selectedNode, '#ff6300')
             }
           })
+
+        outerThis.install()
       })
-      this.install()
     })
 
     d3.selectAll('.node,.cluster')
     .on('mouseover', (d, i, nodes) => {
       this.selectedNode = d3.select(nodes[i])
-      if (this.isFocusedNodeSelected()) return
-
       this.initialNodeColor = this.getColor(this.selectedNode)
 
       if (this.altKeyPressed) {
@@ -67,15 +66,9 @@ export class NodeActions {
       }
     })
     .on('mouseout', () => {
-      if (this.isFocusedNodeSelected()) return
-
       this.showDefaultForCurrentNode()
       this.selectedNode = null
     })
-  }
-
-  private isFocusedNodeSelected() {
-    return this.selectedNode.attr('id') === this.focusedNodeId
   }
 
   private registerAltKey() {
