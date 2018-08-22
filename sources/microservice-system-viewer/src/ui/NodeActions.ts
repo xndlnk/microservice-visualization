@@ -22,6 +22,7 @@ export class NodeActions {
     EventRegistrator.init()
   }
 
+  // TODO: this should be tested!
   private registerElementHandlers() {
     d3.selectAll('.node,.cluster')
     .on('click', (d, i, nodes) => {
