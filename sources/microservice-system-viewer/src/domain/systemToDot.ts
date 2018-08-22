@@ -50,9 +50,10 @@ ${dotSubGraphs}
     // INFO: don't change indentation below. it is important!
     let dotGraph = `  subgraph cluster_${node.getName()} {
     label = "cabinet ${node.getName()}";
-    fontname="Arial";
-    style="filled";
-    color="#f8ecc9";
+    fontname = "Arial";
+    style = "filled";
+    color = "#f8ecc9";
+    id = "${node.id}";
     ${optionalUrl}
     ${dotNodes}
     ${dotEdges}

@@ -10,6 +10,7 @@ export class NodeActions {
   private altKeyPressed: boolean = false
   private altKeyInfoText: string = null
   private selectedNodePolygon: any = null
+  private initialNodeColor: string = null
 
   constructor(private systemRenderer: SystemRenderer, graphService: GraphService) {
     this.nodeFocusser = new NodeFocusser(graphService)
@@ -22,7 +23,7 @@ export class NodeActions {
   }
 
   private registerElementHandlers() {
-    d3.selectAll('.node')
+    d3.selectAll('.node,.cluster')
     .on('click', (d, i, nodes) => {
       const id = d3.select(nodes[i]).attr('id')
       const focusedSystem = this.nodeFocusser.focusNodeById(id)
@@ -30,17 +31,18 @@ export class NodeActions {
       this.install()
     })
 
-    d3.selectAll('.node')
+    d3.selectAll('.node,.cluster')
     .on('mouseover', (d, i, nodes) => {
       this.selectedNodePolygon = d3.select(nodes[i]).select('polygon')
+      this.initialNodeColor = this.selectedNodePolygon.attr('fill')
       if (this.altKeyPressed) {
-        this.altHighlightCurrentlySelectedNodePolygon()
+        this.showAltInfoForCurrentNode()
       } else {
-        this.infoHighlightCurrentlySelectedNodePolygon()
+        this.showInfoForCurrentNode()
       }
     })
     .on('mouseout', () => {
-      this.removeHighlightOnCurrentlySelectedNodePolygon()
+      this.showDefaultForCurrentNode()
       this.selectedNodePolygon = null
     })
   }
@@ -49,7 +51,7 @@ export class NodeActions {
     window.onkeydown = (ev: KeyboardEvent) => {
       this.altKeyPressed = ev.altKey
       this.showAltKeyPressed()
-      this.altHighlightCurrentlySelectedNodePolygon()
+      this.showAltInfoForCurrentNode()
     }
 
     window.onkeyup = (ev: KeyboardEvent) => {
@@ -58,9 +60,9 @@ export class NodeActions {
         this.showAltKeyInfo()
       }
       if (this.selectedNodePolygon) {
-        this.infoHighlightCurrentlySelectedNodePolygon()
+        this.showInfoForCurrentNode()
       } else {
-        this.removeHighlightOnCurrentlySelectedNodePolygon()
+        this.showDefaultForCurrentNode()
       }
     }
   }
@@ -80,21 +82,21 @@ export class NodeActions {
     altKeyInfo.text(this.altKeyInfoText)
   }
 
-  private altHighlightCurrentlySelectedNodePolygon() {
+  private showAltInfoForCurrentNode() {
     if (this.selectedNodePolygon) {
       this.selectedNodePolygon.attr('fill', '#ff4136')
     }
   }
 
-  private infoHighlightCurrentlySelectedNodePolygon() {
+  private showInfoForCurrentNode() {
     if (this.selectedNodePolygon) {
       this.selectedNodePolygon.attr('fill', '#96ccff')
     }
   }
 
-  private removeHighlightOnCurrentlySelectedNodePolygon() {
+  private showDefaultForCurrentNode() {
     if (this.selectedNodePolygon) {
-      this.selectedNodePolygon.attr('fill', '#ffde37')
+      this.selectedNodePolygon.attr('fill', this.initialNodeColor)
     }
   }
 }

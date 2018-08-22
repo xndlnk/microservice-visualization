@@ -6,7 +6,7 @@ g a {
     cursor: pointer
 }
 
-g.node {
+g.node, g.cluster {
     cursor: pointer
 }
 
