@@ -35,12 +35,7 @@ export class NodeActions {
     d3.selectAll('.node,.cluster')
     .on('mouseover', (d, i, nodes) => {
       this.selectedNode = d3.select(nodes[i])
-
-      if (!this.selectedNode.select('polygon').empty()) {
-        this.initialNodeColor = this.selectedNode.select('polygon').attr('fill')
-      } else if (!this.selectedNode.select('path').empty()) {
-        this.initialNodeColor = this.selectedNode.select('path').attr('fill')
-      }
+      this.initialNodeColor = this.getColor(this.selectedNode)
 
       if (this.altKeyPressed) {
         this.showAltInfoForCurrentNode()
@@ -105,6 +100,15 @@ export class NodeActions {
     if (this.selectedNode) {
       this.changeColor(this.selectedNode, this.initialNodeColor)
     }
+  }
+
+  private getColor(node: any): string {
+    if (!this.selectedNode.select('polygon').empty()) {
+      return this.selectedNode.select('polygon').attr('fill')
+    } else if (!this.selectedNode.select('path').empty()) {
+      return this.selectedNode.select('path').attr('fill')
+    }
+    return null
   }
 
   private changeColor(node: any, color: string) {
