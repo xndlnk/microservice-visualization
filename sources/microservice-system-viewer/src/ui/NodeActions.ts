@@ -8,6 +8,7 @@ import { EventRegistrator } from '../viewhelper/EventRegistrator'
 export class NodeActions {
   private nodeFocusser
   private altKeyPressed: boolean = false
+  private altKeyInfoText: string = null
   private selectedNodePolygon: any = null
 
   constructor(private systemRenderer: SystemRenderer, graphService: GraphService) {
@@ -47,17 +48,36 @@ export class NodeActions {
   private registerAltKey() {
     window.onkeydown = (ev: KeyboardEvent) => {
       this.altKeyPressed = ev.altKey
+      this.showAltKeyPressed()
       this.altHighlightCurrentlySelectedNodePolygon()
     }
 
     window.onkeyup = (ev: KeyboardEvent) => {
       this.altKeyPressed = ev.altKey
+      if (!this.altKeyPressed) {
+        this.showAltKeyInfo()
+      }
       if (this.selectedNodePolygon) {
         this.infoHighlightCurrentlySelectedNodePolygon()
       } else {
         this.removeHighlightOnCurrentlySelectedNodePolygon()
       }
     }
+  }
+
+  private showAltKeyPressed() {
+    const altKeyInfo = d3.select('#alt-key-info')
+    altKeyInfo.classed('blue', false)
+    altKeyInfo.classed('white bg-red', true)
+    this.altKeyInfoText = altKeyInfo.text()
+    altKeyInfo.text('🎯 Node focus mode activated!')
+  }
+
+  private showAltKeyInfo() {
+    const altKeyInfo = d3.select('#alt-key-info')
+    altKeyInfo.classed('blue', true)
+    altKeyInfo.classed('white bg-red', false)
+    altKeyInfo.text(this.altKeyInfoText)
   }
 
   private altHighlightCurrentlySelectedNodePolygon() {
