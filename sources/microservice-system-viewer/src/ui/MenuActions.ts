@@ -4,6 +4,7 @@ import { SystemRenderer } from '../SystemRenderer'
 import { NodeFocusser } from '../domain/NodeFocusser'
 import { NodeCollapser } from '../domain/NodeCollapser'
 import { GraphService } from '../domain/service'
+import { NodeActions } from '../ui/NodeActions'
 
 export class MenuActions {
   private nodeFocusser: NodeFocusser
@@ -27,11 +28,13 @@ export class MenuActions {
 
     d3.select('#complete-link').on('click', () => {
       this.systemRenderer.renderSystem(this.graphService.getGraph())
+      new NodeActions(this.systemRenderer, this.graphService).install()
     })
 
     d3.select('#cabinets-link').on('click', () => {
       const collapsedGraph = this.nodeCollapser.collapseContainedNodes(this.graphService.getGraph())
       this.systemRenderer.renderSystem(collapsedGraph)
+      new NodeActions(this.systemRenderer, this.graphService).install()
     })
   }
 }
