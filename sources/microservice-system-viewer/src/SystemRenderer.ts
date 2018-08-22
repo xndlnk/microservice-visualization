@@ -11,7 +11,7 @@ const d3 = Object.assign(d3Base, { graphviz })
 export class SystemRenderer {
   private systemToDotConverter = new SystemToDotConverter()
 
-  renderSystem(system: Node) {
+  renderSystem(system: Node, postRenderActions?: () => void) {
     const transition = d3.transition()
         .delay(100)
         .duration(1000)
@@ -21,6 +21,9 @@ export class SystemRenderer {
       .transition(transition)
       .renderDot(this.systemToDotConverter.convertSystemToDot(system), function() {
         this.resetZoom()
+        if (postRenderActions) {
+          postRenderActions()
+        }
       })
   }
 }

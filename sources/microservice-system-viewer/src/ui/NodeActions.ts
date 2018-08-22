@@ -38,13 +38,26 @@ export class NodeActions {
       }
       this.focusedNodeId = id
       this.focusedSystem = this.nodeFocusser.focusNodeById(id, this.focusLevel)
-      this.systemRenderer.renderSystem(this.focusedSystem)
+
+      const outerThis = this
+      this.systemRenderer.renderSystem(this.focusedSystem, function() {
+        d3.selectAll('.node,.cluster')
+          .select((d, i, nodes) => {
+            const selectedNode = d3.select(nodes[i])
+            const selectedId = selectedNode.attr('id')
+            if (selectedId && selectedId === id) {
+              outerThis.changeColor(selectedNode, '#e7040f')
+            }
+          })
+      })
       this.install()
     })
 
     d3.selectAll('.node,.cluster')
     .on('mouseover', (d, i, nodes) => {
       this.selectedNode = d3.select(nodes[i])
+      if (this.isFocusedNodeSelected()) return
+
       this.initialNodeColor = this.getColor(this.selectedNode)
 
       if (this.altKeyPressed) {
@@ -54,9 +67,15 @@ export class NodeActions {
       }
     })
     .on('mouseout', () => {
+      if (this.isFocusedNodeSelected()) return
+
       this.showDefaultForCurrentNode()
       this.selectedNode = null
     })
+  }
+
+  private isFocusedNodeSelected() {
+    return this.selectedNode.attr('id') === this.focusedNodeId
   }
 
   private registerAltKey() {
