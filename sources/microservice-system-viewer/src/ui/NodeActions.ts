@@ -16,7 +16,7 @@ export class NodeActions {
   private selectedNode: any = null
   private initialNodeColor: string = null
 
-  constructor(private systemRenderer: SystemRenderer, graphService: GraphService) {
+  constructor(private systemRenderer: SystemRenderer, private graphService: GraphService) {
     this.nodeFocusser = new NodeFocusser(graphService)
   }
 
@@ -31,28 +31,37 @@ export class NodeActions {
     d3.selectAll('.node,.cluster')
     .on('click', (d, i, nodes) => {
       const id = d3.select(nodes[i]).attr('id')
-      if (this.focusedNodeId === id) {
-        this.focusLevel++
+
+      if (this.altKeyPressed) {
+        if (this.focusedNodeId === id) {
+          this.focusLevel++
+        } else {
+          this.focusLevel = 1
+        }
+        this.focusedNodeId = id
+        this.focusedSystem = this.nodeFocusser.focusNodeById(id, this.focusLevel)
+
+        const actualThis = this
+        this.systemRenderer.renderSystem(this.focusedSystem, function() {
+          // INFO: extracting this code to a separate function was not working
+          d3.selectAll('.node,.cluster')
+            .select((d, i, nodes) => {
+              const selectedNode = d3.select(nodes[i])
+              const selectedId = selectedNode.attr('id')
+              if (selectedId && selectedId === actualThis.focusedNodeId) {
+                actualThis.changeColor(selectedNode, '#ff6300')
+              }
+            })
+
+          actualThis.install()
+        })
       } else {
-        this.focusLevel = 1
+        const node = this.graphService.findNode(id)
+        const url = node.getProp('url', null)
+        if (url) {
+          window.open(url, '_blank')
+        }
       }
-      this.focusedNodeId = id
-      this.focusedSystem = this.nodeFocusser.focusNodeById(id, this.focusLevel)
-
-      const actualThis = this
-      this.systemRenderer.renderSystem(this.focusedSystem, function() {
-        // INFO: extracting this code to a separate function was not working
-        d3.selectAll('.node,.cluster')
-          .select((d, i, nodes) => {
-            const selectedNode = d3.select(nodes[i])
-            const selectedId = selectedNode.attr('id')
-            if (selectedId && selectedId === actualThis.focusedNodeId) {
-              actualThis.changeColor(selectedNode, '#ff6300')
-            }
-          })
-
-        actualThis.install()
-      })
     })
 
     d3.selectAll('.node,.cluster')
