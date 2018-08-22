@@ -19,6 +19,7 @@ export class SystemToDotConverter {
 
     // splines=ortho;
     // splines=polyline;
+    // INFO: don't change indentation below. it is important!
     let dotGraph: string = `strict digraph {
     size="40"
     ranksep=2;
@@ -46,6 +47,7 @@ ${dotSubGraphs}
     const url = this.getUrlOrEmpty(node)
     const optionalUrl = url ? url + ';' : ''
 
+    // INFO: don't change indentation below. it is important!
     let dotGraph = `  subgraph cluster_${node.getName()} {
     label = "cabinet ${node.getName()}";
     fontname="Arial";
