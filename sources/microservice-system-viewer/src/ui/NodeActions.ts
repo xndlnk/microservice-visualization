@@ -1,12 +1,16 @@
 import * as d3 from 'd3'
 
+import { Node } from '../domain/model'
 import { SystemRenderer } from '../SystemRenderer'
 import { NodeFocusser } from '../domain/NodeFocusser'
 import { GraphService } from '../domain/service'
 import { EventRegistrator } from '../viewhelper/EventRegistrator'
 
 export class NodeActions {
-  private nodeFocusser
+  private nodeFocusser: NodeFocusser
+  private focusedSystem: Node = null
+  private focusedNodeId: string = null
+  private focusLevel: number = 1
   private altKeyPressed: boolean = false
   private altKeyInfoText: string = null
   private selectedNode: any = null
@@ -27,8 +31,14 @@ export class NodeActions {
     d3.selectAll('.node,.cluster')
     .on('click', (d, i, nodes) => {
       const id = d3.select(nodes[i]).attr('id')
-      const focusedSystem = this.nodeFocusser.focusNodeById(id)
-      this.systemRenderer.renderSystem(focusedSystem)
+      if (this.focusedNodeId === id) {
+        this.focusLevel++
+      } else {
+        this.focusLevel = 1
+      }
+      this.focusedNodeId = id
+      this.focusedSystem = this.nodeFocusser.focusNodeById(id, this.focusLevel)
+      this.systemRenderer.renderSystem(this.focusedSystem)
       this.install()
     })
 
