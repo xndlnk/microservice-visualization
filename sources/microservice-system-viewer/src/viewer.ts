@@ -47,7 +47,7 @@ function displaySystem(rawSystem: INode) {
   const systemRenderer = new SystemRenderer()
   const graphService = new GraphService(system)
   const nodeActions = new NodeActions(systemRenderer, graphService)
-  new MenuActions().install()
+  new MenuActions(systemRenderer, graphService).install()
 
   systemRenderer.renderSystem(system)
   nodeActions.install()

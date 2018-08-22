@@ -43,6 +43,10 @@ export class GraphService {
     }
   }
 
+  getGraph(): Node {
+    return this.graph
+  }
+
   findNode(nodeId: string): Node {
     return this.getAllNodes().find(node => node.sameId(nodeId))
   }
