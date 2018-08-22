@@ -9,7 +9,7 @@ export class NodeActions {
   private nodeFocusser
   private altKeyPressed: boolean = false
   private altKeyInfoText: string = null
-  private selectedNodePolygon: any = null
+  private selectedNode: any = null
   private initialNodeColor: string = null
 
   constructor(private systemRenderer: SystemRenderer, graphService: GraphService) {
@@ -34,8 +34,14 @@ export class NodeActions {
 
     d3.selectAll('.node,.cluster')
     .on('mouseover', (d, i, nodes) => {
-      this.selectedNodePolygon = d3.select(nodes[i]).select('polygon')
-      this.initialNodeColor = this.selectedNodePolygon.attr('fill')
+      this.selectedNode = d3.select(nodes[i])
+
+      if (!this.selectedNode.select('polygon').empty()) {
+        this.initialNodeColor = this.selectedNode.select('polygon').attr('fill')
+      } else if (!this.selectedNode.select('path').empty()) {
+        this.initialNodeColor = this.selectedNode.select('path').attr('fill')
+      }
+
       if (this.altKeyPressed) {
         this.showAltInfoForCurrentNode()
       } else {
@@ -44,7 +50,7 @@ export class NodeActions {
     })
     .on('mouseout', () => {
       this.showDefaultForCurrentNode()
-      this.selectedNodePolygon = null
+      this.selectedNode = null
     })
   }
 
@@ -60,7 +66,7 @@ export class NodeActions {
       if (!this.altKeyPressed) {
         this.showAltKeyInfo()
       }
-      if (this.selectedNodePolygon) {
+      if (this.selectedNode) {
         this.showInfoForCurrentNode()
       } else {
         this.showDefaultForCurrentNode()
@@ -84,20 +90,28 @@ export class NodeActions {
   }
 
   private showAltInfoForCurrentNode() {
-    if (this.selectedNodePolygon) {
-      this.selectedNodePolygon.attr('fill', '#ff4136')
+    if (this.selectedNode) {
+      this.changeColor(this.selectedNode, '#ff4136')
     }
   }
 
   private showInfoForCurrentNode() {
-    if (this.selectedNodePolygon) {
-      this.selectedNodePolygon.attr('fill', '#96ccff')
+    if (this.selectedNode) {
+      this.changeColor(this.selectedNode, '#96ccff')
     }
   }
 
   private showDefaultForCurrentNode() {
-    if (this.selectedNodePolygon) {
-      this.selectedNodePolygon.attr('fill', this.initialNodeColor)
+    if (this.selectedNode) {
+      this.changeColor(this.selectedNode, this.initialNodeColor)
+    }
+  }
+
+  private changeColor(node: any, color: string) {
+    if (!node.select('polygon').empty()) {
+      node.select('polygon').attr('fill', color)
+    } else if (!node.select('path').empty()) {
+      node.select('path').attr('fill', color)
     }
   }
 }
