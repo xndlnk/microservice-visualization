@@ -82,6 +82,8 @@ export class NodeActions {
   }
 
   private registerAltKey() {
+    this.saveAltKeyInfo()
+
     window.onkeydown = (ev: KeyboardEvent) => {
       this.altKeyPressed = ev.altKey
       if (this.altKeyPressed) {
@@ -105,11 +107,15 @@ export class NodeActions {
     }
   }
 
+  private saveAltKeyInfo() {
+    const altKeyInfo = d3.select('#alt-key-info')
+    this.altKeyInfoText = altKeyInfo.text()
+  }
+
   private showAltKeyPressed() {
     const altKeyInfo = d3.select('#alt-key-info')
     altKeyInfo.classed('blue', false)
     altKeyInfo.classed('white bg-red', true)
-    this.altKeyInfoText = altKeyInfo.text()
     altKeyInfo.text('🎯 Node focus mode activated!')
   }
 
