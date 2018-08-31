@@ -3,12 +3,17 @@ FROM node:8-alpine as build
 
 RUN mkdir -p /viewer/src
 COPY src /viewer/src/
+
+RUN mkdir -p /viewer/test
+COPY test /viewer/test/
+
 COPY *.json /viewer/
 COPY *.js /viewer/
 COPY *.lock /viewer/
 
 WORKDIR /viewer
 RUN npm install
+RUN npm run test
 RUN npm run build
 
 # stage: install prod packages & run
