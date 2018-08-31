@@ -84,8 +84,12 @@ export class NodeActions {
   private registerAltKey() {
     window.onkeydown = (ev: KeyboardEvent) => {
       this.altKeyPressed = ev.altKey
-      this.showAltKeyPressed()
-      this.showAltInfoForCurrentNode()
+      if (this.altKeyPressed) {
+        this.showAltKeyPressed()
+        this.showAltInfoForCurrentNode()
+      } else {
+        this.showAltKeyInfo()
+      }
     }
 
     window.onkeyup = (ev: KeyboardEvent) => {
