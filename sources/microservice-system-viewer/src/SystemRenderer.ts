@@ -29,7 +29,8 @@ export class SystemRenderer {
       .graphviz()
       .transition(transition)
       .width(window.innerWidth - 3 * 20)
-      .fit(false)
+      .height(window.innerHeight - 100)
+      .fit(true)
       .renderDot(this.systemToDotConverter.convertSystemToDot(system), function() {
         this.resetZoom()
 
