@@ -11,6 +11,15 @@ const d3 = Object.assign(d3Base, { graphviz })
 export class SystemRenderer {
   private systemToDotConverter = new SystemToDotConverter()
 
+  public static removeHeightFromSvg() {
+    d3.select('#graph').select('svg').select((d, i, nodes) => {
+      const selectedNode = d3.select(nodes[i])
+      const currentHeight = selectedNode.attr('height')
+      console.log('currentHeight: ' + currentHeight)
+      selectedNode.attr('height', null)
+    })
+  }
+
   renderSystem(system: Node, postRenderActions?: () => void) {
     const transition = d3.transition()
         .delay(100)
@@ -19,11 +28,15 @@ export class SystemRenderer {
     d3.select('#graph')
       .graphviz()
       .transition(transition)
+      .width(window.innerWidth - 3 * 20)
+      .fit(false)
       .renderDot(this.systemToDotConverter.convertSystemToDot(system), function() {
         this.resetZoom()
+
         if (postRenderActions) {
           postRenderActions()
         }
       })
   }
+
 }
