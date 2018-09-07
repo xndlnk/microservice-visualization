@@ -15,6 +15,8 @@ const queryPart = window.location.href.substr(window.location.href.lastIndexOf('
 const systemUrl = getBaseUrlInCurrentEnvironment() + '/system' + queryPart
 console.log('fetching system from url ' + systemUrl)
 
+displayVersion()
+
 // can also use: axios.defaults.baseURL
 axios.default
   .get(systemUrl)
@@ -56,12 +58,10 @@ function displaySystem(rawSystem: INode) {
   if (!loadingFinished) {
     addLoadSpinner()
     // checkLoadProgress()
-    asyncLoadSystemRenderer(system)
 
-    // uncomment for testing
-    /*setTimeout(function() {
+    setTimeout(function() {
       asyncLoadSystemRenderer(system)
-    }, 2000)*/
+    }, 10)
   }
 }
 
@@ -83,12 +83,12 @@ function addLoadSpinner() {
 
 function asyncLoadSystemRenderer(system: Node) {
   return import(/* webpackChunkName: "SystemRenderer" */ './SystemRenderer').then(SystemRenderer => {
-    removeLoadStatus()
-
     const systemRenderer = new SystemRenderer.SystemRenderer()
     const graphService = new GraphService(system)
 
-    systemRenderer.renderSystem(system)
+    systemRenderer.renderSystem(system, () => {
+      removeLoadStatus()
+    })
     new MenuActions(systemRenderer, graphService).install()
     new NodeActions(systemRenderer, graphService).install()
   })
@@ -97,4 +97,16 @@ function asyncLoadSystemRenderer(system: Node) {
 function removeLoadStatus() {
   loadingFinished = true
   loadStatusDiv.remove()
+}
+
+function displayVersion() {
+  axios.default
+  .get(getBaseUrlInCurrentEnvironment() + '/version')
+  .then((response) => {
+    const version = response.data
+    select('#title')
+      .select('a')
+      .attr('href', 'https://github.com/MaibornWolff/microservice-visualization/releases/tag/v' + version)
+      .text('Viewer v' + version)
+  })
 }

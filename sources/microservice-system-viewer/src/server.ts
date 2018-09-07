@@ -96,7 +96,7 @@ function addRestHandlers(app: express.Express) {
     res.send(`<h1>API</h1>${endpointHtml}`)
   })
 
-  app.get('/version', (req, res) => {
+  app.get(`${appBaseUrl}/version`, (req, res) => {
     res.send(process.env.npm_package_version)
   })
 }
