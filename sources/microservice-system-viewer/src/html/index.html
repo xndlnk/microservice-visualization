@@ -39,17 +39,20 @@
             </div>
         </div>
         <div id="content" class="mw100">
-                <div class="fl pa4">
-                    <div class="ba bw1 b--silver">
-                        <div id="graph"></div>
-                    </div>
+            <div id="loadSpinner" class="vh-75 w-100 dt">
+                <div class="dtc tc v-mid bg-white">
+                    <img src="spinner.svg" width="200" alt="loading">
                 </div>
+            </div>
+            <div id="graphBox" class="fl pa4" style="display:none;">
+                <div class="ba bw1 b--silver">
+                    <div id="graph"></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="vendors-SystemRenderer.chunk.js"></script>
-    <script src="SystemRenderer.chunk.js"></script>
-    <script src="vendors-main.chunk.js"></script>
     <script src="main.bundle.js"></script>
+    <script src="SystemViewer.chunk.js"></script>
 </body>
 </html>

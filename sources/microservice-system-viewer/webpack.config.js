@@ -32,7 +32,7 @@ module.exports = {
   ],
   optimization: {
     splitChunks: {
-      chunks: 'all',
+      chunks: 'async',
       automaticNameDelimiter: '-'
     }
   }
