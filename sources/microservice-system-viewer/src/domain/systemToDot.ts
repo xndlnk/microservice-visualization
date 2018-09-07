@@ -1,5 +1,5 @@
 import { Node, Edge } from './model'
-import _ = require('lodash')
+import * as _ from 'lodash'
 
 export interface Options {
   urlExtractor: (node: Node) => string

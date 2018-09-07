@@ -5,42 +5,46 @@
 </head>
 <body>
     <div class="sans-serif">
-        <div class="bg-black white pa2 f3">System Structure</div>
+        <div class="bg-black white pa2 f3">
+            System Structure <a href="https://github.com/MaibornWolff/microservice-visualization/releases/tag/v0.8.0">vX.X.X</a>
+        </div>
         <div class="mw100">
-              <div class="fl w-100 bb">
+            <div class="fl w-100 bb">
                 <div class="bg-white pa2">
                     <div id="complete-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Complete</div>
                     <div id="cabinets-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Cabinets</div>
                     <div id="info-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-blue">Info</div>
                     <div id="alt-key-info" class="f6 no-underline br-pill ba ph3 pv2 dib blue">💡 Use alt-key to focus on nodes.</div>
                 </div>
-              </div>
-          </div>
-          <div class="mw100">
-                <div class="fl w-100">
-                  <div id="info" class="bg-light-blue pa2 bb" style="display:none;">
-                      Info:
-                      <ul>
-                          <li>A <b>rectangular box</b> represents a microservice.</li>
-                          <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
-                          <li>A <b>black link</b> represents an asynchronous information flow from source to target. If both source and target are connected
-                              to a microservice then a message exchange exists in between them. This message exchange is not shown.</li>
-                          <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
-                              direction).</li>
-                      </ul>
-                  </div>
+            </div>
+        </div>
+        <div class="mw100">
+            <div class="fl w-100">
+                <div id="info" class="bg-light-blue pa2 bb" style="display:none;">
+                    Info:
+                    <ul>
+                        <li>A <b>rectangular box</b> represents a microservice.</li>
+                        <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
+                        <li>A <b>black link</b> represents an asynchronous information flow from source to target. If both source and target are connected
+                            to a microservice then a message exchange exists in between them. This message exchange is not shown.</li>
+                        <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
+                            direction).</li>
+                    </ul>
                 </div>
             </div>
-          <div class="mw100">
-            <div class="fl pa4">
-                <div class="fl bg-yellow">
-                    <div id="graph"></div>
+        </div>
+        <div id="content" class="mw100">
+                <div class="fl pa4">
+                    <div class="fl bg-yellow">
+                        <div id="graph"></div>
+                    </div>
                 </div>
-            </div>
-          </div>
+        </div>
     </div>
 
-    <script src="viewer.js"></script>
+    <script src="vendors-SystemRenderer.chunk.js"></script>
+    <script src="SystemRenderer.chunk.js"></script>
+    <script src="vendors-main.chunk.js"></script>
+    <script src="main.bundle.js"></script>
 </body>
-
 </html>

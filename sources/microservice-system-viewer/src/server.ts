@@ -10,7 +10,7 @@ import { SystemFetcher } from './systemProvider/SystemFetcher'
 import { ConsulAnalyzerServiceResolver } from './systemProvider/ConsulAnalyzerServiceResolver'
 import { GraphInteractions } from './domain/GraphInteractions'
 import { SecondLevelEdgesRemover } from './domain/SecondLevelEdgesRemover'
-import vizJs = require('viz.js')
+// import vizJs = require('viz.js')
 
 dotenv.config()
 envYaml.config()
@@ -94,6 +94,10 @@ function addRestHandlers(app: express.Express) {
     const endpointHtml = endpoints.map(endpoint => `${endpoint.method}: <a href="${endpoint.path}">${endpoint.path}</a>`).join('<br/>')
 
     res.send(`<h1>API</h1>${endpointHtml}`)
+  })
+
+  app.get('/version', (req, res) => {
+    res.send(process.env.npm_package_version)
   })
 }
 
