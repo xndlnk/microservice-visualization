@@ -8,9 +8,11 @@ The microservice-system-viewer is a Docker-based microservice that transforms a 
 
 ![Example Visualization](docs/example.png "Example Visualization")
 
-### Video of focussing on single nodes by showing neighours only
+### Video of the viewer in action
 
-![Example Visualization](docs/msvis.gif "Example Visualization")
+It shows the focussing on single nodes by displaying theirs neighours only. And then neighbours and neighbours of neighbours and so on.
+
+[![watch the viewer in action](https://img.youtube.com/vi/cD7M2gwV2PI/0.jpg)](https://youtu.be/cD7M2gwV2PI)
 
 ## Usage
 
