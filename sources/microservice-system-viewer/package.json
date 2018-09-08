@@ -6,7 +6,7 @@
   "scripts": {
     "server": "tsc && node build/src/server.js",
     "server-prod": "NODE_ENV=production node build/src/server.js",
-    "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts test/*.ts",
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**/*.ts",
     "dev": "tsc && webpack --mode development",
     "build": "tsc && webpack --mode production",
     "watch": "webpack --watch",
@@ -28,7 +28,6 @@
     "random-word": "^2.0.0"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/chai": "^4.1.4",
     "@types/dotenv": "^4.0.3",
     "@types/express": "^4.11.1",
