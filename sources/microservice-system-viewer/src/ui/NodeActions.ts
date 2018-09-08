@@ -26,7 +26,6 @@ export class NodeActions {
     EventRegistrator.init()
   }
 
-  // TODO: this should be tested!
   private registerElementHandlers() {
     d3.selectAll('.node,.cluster')
     .on('click', (d, i, nodes) => {
@@ -109,7 +108,9 @@ export class NodeActions {
 
   private saveAltKeyInfo() {
     const altKeyInfo = d3.select('#alt-key-info')
-    this.altKeyInfoText = altKeyInfo.text()
+    if (this.altKeyInfoText == null) {
+      this.altKeyInfoText = altKeyInfo.text()
+    }
   }
 
   private showAltKeyPressed() {
