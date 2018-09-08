@@ -2,7 +2,6 @@ import { SystemFetcher } from './SystemFetcher'
 import { largeSystem } from '../exampleSystems/largeSystem'
 import { RandomWordAnonymizer } from './RandomWordAnonymizer'
 import { Node, INode } from '../domain/model'
-import * as express from 'express'
 import { GraphService } from '../domain/service'
 
 export class SystemProvider {
@@ -44,18 +43,8 @@ export class SystemProvider {
     return system
   }
 
-  getMessageForFallbackToLastFetchedSystem(req: express.Request) {
-    if (!this.lastFetchedSystem) {
-      return 'could not fetch the current system :/'
-    }
-
-    // TODO: not working on dev
-    const url = req.url.lastIndexOf('?last=1') > 0 ? req.url : req.url + '?last=1'
-    const time = this.lastFetchedTimestamp.toJSON()
-    return 'could not fetch the current system. '
-      + 'the last successful fetch occured at time ' + time + '. '
-      + 'you can view this last fetch via the following url: '
-          + `<a href="${url}">${url}</a>`
+  getLastFetchedTimestamp() {
+    return this.lastFetchedTimestamp
   }
 
   private useLocalFile() {
