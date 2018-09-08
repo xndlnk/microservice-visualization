@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/MaibornWolff/microservice-visualization.svg?branch=master)](https://travis-ci.org/MaibornWolff/microservice-visualization) 
 ![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
+[![Automated Release Notes by gren](https://img.shields.io/badge/%F0%9F%A4%96-release%20notes-00B2EE.svg)](https://github-tools.github.io/github-release-notes/)
 
 This repository contains software for analyzing and visualizing the topology of a microservice system.
 
@@ -14,16 +15,12 @@ The repository is organized as a mono-repo with Yarn and Lerna. Each directory i
 
 ## Setup
 
-- You need a global installation of the following:
-  - Node.js v8,
-  - Yarn,
-  - Lerna.
-- After that, bootstrap the node package structure with `yarn install`.
-
-## Publishing a new version
-
-- commit changes
-- execute `npm run publish` to build distribution libraries and publish
+1. You need a global installation of the following:
+  - [Node.js v8](https://nodejs.org),
+  - [Yarn](https://yarnpkg.com),
+  - [Lerna](https://github.com/lerna/lerna),
+  - optionally [gren](https://github.com/github-tools/github-release-notes) (only if you want to create github release notes)
+2. Bootstrap the node package structure with `yarn install`.
 
 ## License
 
