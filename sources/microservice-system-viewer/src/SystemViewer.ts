@@ -25,7 +25,9 @@ export function load() {
       displaySystem(rawSystem)
     })
     .catch((error) => {
-      const errorDiv = select('#graph')
+      replaceSpinnerByGraphBox()
+
+      const errorDiv = select('#graphBox')
         .append('div')
         .classed('pa2 bg-red white', true)
 
@@ -34,7 +36,7 @@ export function load() {
         .text(error)
 
       errorDiv.append('div')
-        .text('Load example')
+        .text('Show demo system')
         .attr('id', 'load-example-link')
         .classed('f5 grow no-underline br-pill ph3 pv2 dib red bg-white clickable', true)
 
@@ -68,9 +70,13 @@ function asyncLoadSystemRenderer(system: Node) {
   const graphService = new GraphService(system)
 
   systemRenderer.renderSystem(system, () => {
-    select('#loadSpinner').remove()
-    select('#graphBox').style('display', 'block')
+    replaceSpinnerByGraphBox()
   })
   new MenuActions(systemRenderer, graphService).install()
   new NodeActions(systemRenderer, graphService).install()
+}
+
+function replaceSpinnerByGraphBox() {
+  select('#loadSpinner').remove()
+  select('#graphBox').style('display', 'block')
 }
