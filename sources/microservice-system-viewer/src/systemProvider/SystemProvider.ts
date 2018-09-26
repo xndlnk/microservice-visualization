@@ -1,5 +1,5 @@
 import { SystemFetcher } from './SystemFetcher'
-import { largeSystem } from '../exampleSystems/largeSystem'
+import { largeDemoSystem } from '../exampleSystems/largeSystem'
 import { RandomWordAnonymizer } from './RandomWordAnonymizer'
 import { Node, INode } from '../domain/model'
 import { GraphService } from '../domain/service'
@@ -14,9 +14,9 @@ export class SystemProvider {
   async getSystem(query?: any): Promise<Node> {
     let rawSystem: INode = null
 
-    if (query.local || this.useLocalFile()) {
-      console.log('using example system from local file')
-      rawSystem = largeSystem
+    if (query.demo || this.useDemoFile()) {
+      console.log('using demo system from local storage')
+      rawSystem = largeDemoSystem
     }
 
     if (query.last) {
@@ -47,7 +47,7 @@ export class SystemProvider {
     return this.lastFetchedTimestamp
   }
 
-  private useLocalFile() {
+  private useDemoFile() {
     return process.argv.length > 2 && process.argv[2] === 'local'
   }
 

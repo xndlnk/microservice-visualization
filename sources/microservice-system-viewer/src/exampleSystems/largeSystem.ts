@@ -1,6 +1,6 @@
 import { INode } from '../domain/model'
 
-export const largeSystem: INode = {
+export const largeDemoSystem: INode = {
   'id': '0',
   'name': 'squattiness',
   'type': 'System',
