@@ -33,7 +33,11 @@ export const largeSystem: INode = {
         {
           'id': '6',
           'name': 'anyon',
-          'type': 'Microservice'
+          'type': 'Microservice',
+          'properties': {
+            'shared': true,
+            'forked': true
+          }
         },
         {
           'id': '7',
@@ -48,7 +52,10 @@ export const largeSystem: INode = {
         {
           'id': '9',
           'name': 'questionnaires',
-          'type': 'Microservice'
+          'type': 'Microservice',
+          'properties': {
+            'shared': true
+          }
         },
         {
           'id': '10',
