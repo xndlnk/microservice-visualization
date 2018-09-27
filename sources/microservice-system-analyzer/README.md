@@ -27,8 +27,15 @@ Each importer collects information that provides a view of the system. This info
 
 - Spring FeignClients: An importer that searches for `@FeignClient` annotations in source code to capture synchronous communication links.
 - RabbitMQ-Management: An importer for asynchronous communication links that accesses the RabbitMQ Management API. It requires to follow a schema for naming queues and exchanges.
-  - A sending microservice has to send data to an exchange with the same name as the microservice. E.g. microservice A sends data to exchange A.
-  - A receiving microservice creates a queue and binds it to an exchange. The name of the queue has to begin with name of the receiving microservice followed by a dot and any more characters. E.g. microservice B creates a queue B.foo and binds it to the exchange A.
+  - Schema:
+    - A sending microservice `s` must send data to an exchange `s`, i.e. the exchange must have the same name as the sending microservice.
+    - A receiving microservice `r` must create a queue.
+      - The queue must be bound to the exchange `s`.
+      - The queue name must match the following regular expression: `r\.\w*`.
+  - Example:
+    - Given two Microservices A and B where B receives events from A.
+    - Microservice B has a queue named `B.foo` which is bound to the exchange A.
+    - Microservice A sends data to the exchange A.
 - Consul
 - Git-Repositories
 

@@ -3,7 +3,6 @@ const log = require('npmlog')
 const System = require('../model/modelClasses').System
 const configRepository = require('../config/configRepository')
 
-// TODO: describe required naming pattern in docs
 /** extracts binding information of queues and exchanges via RabbitMQ management api. */
 async function getSystem () {
   const queues = await getQueues()
