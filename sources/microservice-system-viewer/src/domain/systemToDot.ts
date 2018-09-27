@@ -78,8 +78,24 @@ ${dotSubGraphs}
     if (node.type === 'MessageExchange') {
       return `shape=cylinder,style=filled,fillcolor=lightgrey,id="${node.id}",label="${node.getName()}"${optionalUrl}`
     } else {
-      return `shape=box,style=filled,fillcolor=gold,id="${node.id}",label="${node.getName()}"${optionalUrl}`
+      // TODO: develop concept for supporting configurable styling based on properties.
+      const color = this.getFillColorForNode(node)
+      return `shape=box,style=striped,fillcolor="${color}",id="${node.id}",label="${node.getName()}"${optionalUrl}`
     }
+  }
+
+  private getFillColorForNode(node: Node): string {
+    const defaultColor = 'gold'
+    let color = defaultColor
+    if (node.getProp('shared', null)) {
+      const lightGreen = '#9eebcf'
+      color = lightGreen
+    }
+    if (node.getProp('forked', null)) {
+      const lightRed = '#ff725c'
+      color = color + ':' + lightRed
+    }
+    return color
   }
 
   private getUrlOrEmpty(node: Node): string {
