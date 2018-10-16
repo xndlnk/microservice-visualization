@@ -52,6 +52,8 @@ function cloneRepository (serviceName, repositoryUrl) {
   }
 
   let localServicePath = getLocalServicePath(serviceName)
+  // TODO: check if dir already exists or else an exception will occur here.
+  // this can happen if the clone below fails and another repository location is tried.
   fs.mkdirSync(localServicePath)
 
   log.info('git', 'cloning repository %s', repositoryUrl)
