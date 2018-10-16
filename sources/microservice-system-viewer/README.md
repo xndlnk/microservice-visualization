@@ -22,7 +22,7 @@ If you just want to try the viewer and play with it, do the following:
 
 - build the bundle that is used in [index.html](./src/html/index.html): `npm run dev`
 - run the server that provides the index.html: `npm run server`
-- access the [local example system](./src/exampleSystems/largeSystem.ts): `http://localhost:8080/msvis/html/?local=1`
+- access the [local example system](./src/exampleSystems/largeSystem.ts): `http://localhost:8080/msvis/html/?demo=1`
 
 ### Configuration
 
@@ -62,7 +62,7 @@ Further configuration:
 
 In addition, the following options can be specified via query parameters:
 
-- `?local=1` to use local example system as input (for debugging)
+- `?demo=1` to use an example system as input (for demo and debugging)
 - `?last=1` to use last system successfully fetched (as fallback)
 - `?anonymize=1` to anonymize all names
 
