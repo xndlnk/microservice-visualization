@@ -2,7 +2,7 @@ import * as express from 'express'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
 import * as envYaml from './envYamlString'
-import vizJs = require('viz.js')
+const vizJs = require('viz.js')
 
 import { appBaseUrl } from './appBaseUrl'
 import { SystemProvider } from './systemProvider/SystemProvider'
