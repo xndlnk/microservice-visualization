@@ -6,7 +6,7 @@ export interface Options {
 }
 
 export class SystemToDotConverter {
-  constructor(private options?: Options) {}
+  constructor(private options?: Options) { }
 
   convertSystemToDot(system: Node): string {
     let dotNodes: string = this.convertNodesToDot(this.getNonSubSystemNodes(system), 1)
@@ -22,7 +22,7 @@ export class SystemToDotConverter {
     // INFO: don't change indentation below. it is important!
     let dotGraph: string = `strict digraph {
     size="40"
-    ranksep=2;
+    ranksep=1;
     newrank=true;
     splines=polyline;
     edge[dir=both, arrowhead="normal", arrowtail="dot"];
