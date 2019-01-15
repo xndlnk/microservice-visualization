@@ -19,13 +19,13 @@ export class SystemToDotConverter {
 
     // splines=ortho;
     // splines=polyline;
+    // edge[dir=both, arrowhead="normal", arrowtail="dot"];
     // INFO: don't change indentation below. it is important!
     let dotGraph: string = `strict digraph {
     size="40"
     ranksep=1;
     newrank=true;
     splines=polyline;
-    edge[dir=both, arrowhead="normal", arrowtail="dot"];
   ${dotNodes}
 ${dotSubGraphs}
   ${dotLinks}
