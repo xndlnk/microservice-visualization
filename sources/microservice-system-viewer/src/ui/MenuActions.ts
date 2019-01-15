@@ -5,6 +5,7 @@ import { NodeFocusser } from '../domain/NodeFocusser'
 import { NodeCollapser } from '../domain/NodeCollapser'
 import { GraphService } from '../domain/service'
 import { NodeActions } from '../ui/NodeActions'
+import { getBaseUrlInCurrentEnvironment } from '../appBaseUrl'
 
 export class MenuActions {
   private nodeFocusser: NodeFocusser
@@ -29,6 +30,13 @@ export class MenuActions {
     d3.select('#complete-link').on('click', () => {
       this.systemRenderer.renderSystem(this.graphService.getGraph())
       new NodeActions(this.systemRenderer, this.graphService).install()
+    })
+
+    d3.select('#svg-link').on('click', () => {
+      const queryPosition = window.location.href.lastIndexOf('?')
+      const query = queryPosition > -1 ? window.location.href.substr(queryPosition) : ''
+      const url = getBaseUrlInCurrentEnvironment() + '/svg' + query
+      window.open(url, '_blank')
     })
 
     d3.select('#cabinets-link').on('click', () => {

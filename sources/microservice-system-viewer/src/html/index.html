@@ -1,8 +1,10 @@
 <html>
+
 <head>
     <title>system structure</title>
     <link rel="icon" type="image/png" href="logo.png">
 </head>
+
 <body>
     <div class="sans-serif">
         <div id="title" class="flex bg-black white pa2 f3">
@@ -16,10 +18,15 @@
         <div class="mw100">
             <div class="fl w-100 bb">
                 <div class="bg-white pa2">
-                    <div id="complete-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Complete</div>
-                    <div id="cabinets-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Cabinets</div>
+                    <div id="complete-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Overview
+                        Interactive</div>
+                    <div id="svg-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-gold">Overview
+                        SVG only</div>
+                    <div id="cabinets-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">Cabinets
+                        only</div>
                     <div id="info-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-blue">Info</div>
-                    <div id="alt-key-info" class="f6 no-underline br-pill ba ph3 pv2 dib blue">💡 Use alt-key to focus on nodes.</div>
+                    <div id="alt-key-info" class="f6 no-underline br-pill ba ph3 pv2 dib blue">💡 Use alt-key to focus
+                        on nodes.</div>
                 </div>
             </div>
         </div>
@@ -30,9 +37,12 @@
                     <ul>
                         <li>A <b>rectangular box</b> represents a microservice.</li>
                         <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
-                        <li>A <b>black link</b> represents an asynchronous information flow from source to target. If both source and target are connected
-                            to a microservice then a message exchange exists in between them. This message exchange is not shown.</li>
-                        <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous call takes place in the opposite
+                        <li>A <b>black link</b> represents an asynchronous information flow from source to target. If
+                            both source and target are connected
+                            to a microservice then a message exchange exists in between them. This message exchange is
+                            not shown.</li>
+                        <li>A <b>red link</b> represents a synchronous information flow (note: the actual synchronous
+                            call takes place in the opposite
                             direction).</li>
                     </ul>
                 </div>
@@ -55,4 +65,5 @@
     <script src="main.bundle.js"></script>
     <script src="SystemViewer.chunk.js"></script>
 </body>
+
 </html>
