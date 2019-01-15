@@ -60,7 +60,12 @@ export const largeDemoSystem: INode = {
         {
           'id': '10',
           'name': 'upleans',
-          'type': 'Microservice'
+          'type': 'Microservice',
+          'properties': {
+            'reduced': true,
+            'shared': true,
+            'forked': true
+          }
         },
         {
           'id': '11',

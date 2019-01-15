@@ -95,6 +95,9 @@ ${dotSubGraphs}
       const lightRed = '#ff725c'
       color = color + ':' + lightRed
     }
+    if (node.getProp('reduced', null)) {
+      color = color + ':' + 'lightgrey'
+    }
     return color
   }
 
