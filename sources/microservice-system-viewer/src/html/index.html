@@ -35,7 +35,22 @@
                 <div id="info" class="bg-light-blue pa2 bb" style="display:none;">
                     Info:
                     <ul>
-                        <li>A <b>rectangular box</b> represents a microservice.</li>
+                        <li>A <b>box</b> represents a microservice or a microservice and its outgoing exchange if the
+                            microservice and its outgoing exchange have the same name.</li>
+                        <li>
+                            Box colors have the following meaning:
+                            <ul>
+                                <li class="pa1">
+                                    <div class="ba w-25 pa1 bg-gold" style="width:100;">default</div>
+                                </li>
+                                <li class="pa1">
+                                    <div class="ba w-25 pa1" style="width:100; background-color: #9eebcf">shared</div>
+                                </li>
+                                <li class="pa1">
+                                    <div class="ba w-25 pa1" style="width:100; background-color: #ff725c">forked</div>
+                                </li>
+                            </ul>
+                        </li>
                         <li>A <b>cylinder</b> represents a RabbitMQ message exchange.</li>
                         <li>A <b>black link</b> represents an asynchronous information flow from source to target. If
                             both source and target are connected
