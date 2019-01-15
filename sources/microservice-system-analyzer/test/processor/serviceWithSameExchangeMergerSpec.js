@@ -6,6 +6,7 @@ const modelClasses = require('../../src/model/modelClasses')
 const System = modelClasses.System
 const Service = modelClasses.Service
 const Link = modelClasses.Link
+const Property = modelClasses.Property
 
 const merger = require('../../src/processor/serviceWithSameExchangeMerger')
 
@@ -41,7 +42,7 @@ describe('service with same exchange merger', function () {
       sendToImporter
     ])
 
-    expect(mergedSystem.services).to.deep.contain(new Service('A'))
+    expect(mergedSystem.services).to.deep.contain(new Service('A', [new Property('reduced', true)]))
     expect(mergedSystem.services).not.to.deep.contain(new Service('exchange A'))
 
     expect(mergedSystem.services).to.deep.contain(new Service('B'))

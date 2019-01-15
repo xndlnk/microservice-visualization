@@ -18,6 +18,9 @@ function mergeSystems (systems) {
       if (isLinkTheSourceOfOneService(link, exchangeServices)) {
         const sourceNameWithoutExchange = getNameWithoutExchangePrefix(link.sourceName)
         result.addLink(sourceNameWithoutExchange, link.targetName, link.communicationType)
+        console.log('added reduced property to ' + sourceNameWithoutExchange)
+        const sourceService = result.getService(sourceNameWithoutExchange)
+        sourceService.addProperty('reduced', true)
       } else if (!isLinkTheTargetOfOneService(link, exchangeServices)) {
         result.addLink(link.sourceName, link.targetName, link.communicationType)
       }
