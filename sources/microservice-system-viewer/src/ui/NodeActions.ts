@@ -13,7 +13,7 @@ export class NodeActions {
   private altKeyPressed: boolean = false
   private altKeyInfoText: string = null
   private selectedNode: any = null
-  private initialNodeColor: string = null
+  private initialNodeColorsById: Map<string, string[]> = new Map()
 
   constructor(private systemRenderer: SystemRenderer, private graphService: GraphService) {
     this.nodeFocusser = new NodeFocusser(graphService)
@@ -46,7 +46,7 @@ export class NodeActions {
                 const selectedNode = d3.select(nodes[i])
                 const selectedId = selectedNode.attr('id')
                 if (selectedId && selectedId === actualThis.focusedNodeId) {
-                  actualThis.changeColor(selectedNode, '#ff6300')
+                  actualThis.changeColors(selectedNode, ['#ff6300'])
                 }
               })
 
@@ -61,10 +61,15 @@ export class NodeActions {
         }
       })
 
+    d3.selectAll('.node,.cluster').select((d, i, nodes) => {
+      const node = d3.select(nodes[i])
+      const nodeId = node.attr('id')
+      this.initialNodeColorsById[nodeId] = this.getColors(node)
+    })
+
     d3.selectAll('.node,.cluster')
       .on('mouseover', (d, i, nodes) => {
         this.selectedNode = d3.select(nodes[i])
-        this.initialNodeColor = this.getColor(this.selectedNode)
 
         if (this.altKeyPressed) {
           this.showAltInfoForCurrentNode()
@@ -127,36 +132,57 @@ export class NodeActions {
 
   private showAltInfoForCurrentNode() {
     if (this.selectedNode) {
-      this.changeColor(this.selectedNode, '#ff4136')
+      this.changeColors(this.selectedNode, ['#ff4136'])
     }
   }
 
   private showInfoForCurrentNode() {
     if (this.selectedNode) {
-      this.changeColor(this.selectedNode, '#96ccff')
+      this.changeColors(this.selectedNode, ['#96ccff'])
     }
   }
 
   private showDefaultForCurrentNode() {
     if (this.selectedNode) {
-      this.changeColor(this.selectedNode, this.initialNodeColor)
+      const nodeId = this.selectedNode.attr('id')
+      this.changeColors(this.selectedNode, this.initialNodeColorsById[nodeId])
     }
   }
 
-  private getColor(node: any): string {
-    if (!this.selectedNode.select('polygon').empty()) {
-      return this.selectedNode.select('polygon').attr('fill')
-    } else if (!this.selectedNode.select('path').empty()) {
-      return this.selectedNode.select('path').attr('fill')
-    }
-    return null
-  }
-
-  private changeColor(node: any, color: string) {
+  private getColors(node: any): string[] {
     if (!node.select('polygon').empty()) {
-      node.select('polygon').attr('fill', color)
+      const colors: string[] = []
+      node.selectAll('polygon')
+        .filter((d, i, nodes) => {
+          const selectedNode = d3.select(nodes[i])
+          if (selectedNode.attr('fill') !== 'none') {
+            colors.push(selectedNode.attr('fill'))
+          }
+        })
+      return colors
     } else if (!node.select('path').empty()) {
-      node.select('path').attr('fill', color)
+      const color = node.select('path').attr('fill')
+      return [color]
+    }
+    return []
+  }
+
+  private changeColors(node: any, newColors: string[]) {
+    if (!node.select('polygon').empty()) {
+      let currentColorIndex = 0
+      let currentColor = newColors[0]
+      node.selectAll('polygon')
+        .select((d, i, nodes) => {
+          const selectedNode = d3.select(nodes[i])
+          const fill = selectedNode.attr('fill')
+          if (fill && fill !== '' && fill !== 'none') {
+            selectedNode.attr('fill', currentColor)
+            currentColorIndex++
+            currentColor = currentColorIndex < newColors.length ? newColors[currentColorIndex] : currentColor
+          }
+        })
+    } else if (!node.select('path').empty()) {
+      node.select('path').attr('fill', newColors[0])
     }
   }
 }
