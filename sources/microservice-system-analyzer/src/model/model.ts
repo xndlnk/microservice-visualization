@@ -28,7 +28,12 @@ export class Node {
   }
 
   addNodeUniquely(node: Node): boolean {
-    if (this.deepFindNodeById(node.getId())) return false
+    const existingNode = this.deepFindNodeById(node.getId())
+    if (existingNode) {
+      Object.getOwnPropertyNames(node.getProperties())
+        .forEach(propName => existingNode.addProperty(propName, node.getProperties()[propName]))
+      return false
+    }
 
     this.nodes.push(node)
     return true

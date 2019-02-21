@@ -1,5 +1,4 @@
-import { System, Microservice, MessageExchange, AsyncInfoFlow, Node, Edge } from '~/model/model'
-import { V1SystemMerger } from '~/processor/V1SystemMerger'
+import { System, Microservice, AsyncInfoFlow, Node, Edge, Properties } from '~/model/model'
 import { createLogger } from '~/logging'
 import * as _ from 'lodash'
 
@@ -7,65 +6,62 @@ const logger = createLogger('service-exchange-merger')
 
 export class ServiceExchangeMerger {
 
-  /** each provided systems is checked for microservices that are directly connected to an equally
-   * named message exchange. each pair of such nodes is merged into one microservice node.
-   */
-  mergeSystems(systems: System[]) {
-    const result = new System(new V1SystemMerger().mergeSystemNames([], systems))
-    const exchangesToMerge = this.getExchangesToMerge(systems)
+  mergeServiceAndExchangeOfSameNameToService(system: System): System {
+    const result = new System(system.getName())
 
-    logger.info('names of services and exchanges to be merged: ' + exchangesToMerge.map(exchange => exchange.getName()).join(', '))
+    const exchangesToMerge: Node[] = system.getEdges()
+      .filter(edge => this.connectsMicroserviceAndExchangeOfSameName(edge))
+      .map(edge => edge.getTarget())
 
-    this.mergeEdges(systems, exchangesToMerge)
-      .forEach(edge => result.addEdgeWithNodesUniquely(edge))
+    system.getEdges()
+      .filter(edge => !this.connectsMicroserviceAndExchangeOfSameName(edge))
+      .forEach(edge => {
+        if (this.edgeHasSource(edge, exchangesToMerge)) {
+          const exchangeToMerge = edge.getSource()
+          const mergedService = new Microservice(exchangeToMerge.getName(), exchangeToMerge.getProperties())
 
-    systems.forEach(system => {
-      system.getNodes().forEach(node => {
-        if (!exchangesToMerge.find(exchange => exchange.getId() === node.getId())) {
-          result.addNodeUniquely(node)
+          const edgeRedirected = new AsyncInfoFlow(mergedService, edge.getTarget())
+          result.addEdgeWithNodesUniquely(edgeRedirected)
+
+          this.logEdgeReplacement(edge, edgeRedirected)
+        } else if (this.edgeHasTarget(edge, exchangesToMerge)) {
+          const exchangeToMerge = edge.getTarget()
+          const mergedService = new Microservice(exchangeToMerge.getName(), exchangeToMerge.getProperties())
+
+          const edgeRedirected = new AsyncInfoFlow(edge.getSource(), mergedService)
+          result.addEdgeWithNodesUniquely(edgeRedirected)
+
+          this.logEdgeReplacement(edge, edgeRedirected)
+        } else {
+          result.addEdgeWithNodesUniquely(edge)
         }
       })
+
+    system.getNodes().forEach(node => {
+      if (!exchangesToMerge.find(exchange => exchange === node)) {
+        result.addNodeUniquely(node)
+      }
     })
 
     return result
   }
 
-  private mergeEdges(systems: System[], exchangesToMerge: MessageExchange[]): Edge[] {
-    return this.getAllEdges(systems).map(edge => {
-      if (this.isOutgoingEdgeOfAnyExchange(edge, exchangesToMerge)) {
-        const newEdge = new AsyncInfoFlow(new Microservice(edge.getSource().getName()), edge.getTarget())
-        logger.info('adding edge between ' + newEdge.getSource().getId() + ' and ' + newEdge.getTarget().getId())
-        return newEdge
-      } else if (!this.isIncomingEdgeOfAnyExchange(edge, exchangesToMerge)) {
-        return edge
-      } else {
-        logger.info('skipping edge between ' + edge.getSource().getId() + ' and ' + edge.getTarget().getId())
-        return null
-      }
-    })
-    .filter(edge => edge != null)
+  private edgeHasSource(edge: Edge, nodes: Node[]) {
+    return nodes.find(exchange => exchange === edge.getSource())
   }
 
-  private isOutgoingEdgeOfAnyExchange(edge: Edge, exchanges: MessageExchange[]) {
-    return exchanges.some(exchange => exchange.getId() === edge.getSource().getId())
+  private edgeHasTarget(edge: Edge, nodes: Node[]) {
+    return nodes.find(exchange => exchange === edge.getTarget())
   }
 
-  private isIncomingEdgeOfAnyExchange(edge: Edge, exchanges: MessageExchange[]) {
-    return exchanges.some(exchange => exchange.getId() === edge.getTarget().getId())
-  }
-
-  private getExchangesToMerge(systems: System[]): MessageExchange[] {
-    return this.getAllEdges(systems).filter(edge => this.connectsMicroserviceAndExchangeOfSameName(edge))
-    .map(edge => edge.getTarget() as MessageExchange)
-  }
-
-  private getAllEdges(systems: System[]): Edge[] {
-    return _.flatMap(systems, system => system.getEdges())
+  private logEdgeReplacement(originalEdge: Edge, redirectedEdge: Edge) {
+    logger.info('replacing edge ' + originalEdge.getSource().getId() + ' -> ' + originalEdge.getTarget().getId()
+      + ' with ' + redirectedEdge.getSource().getId() + ' -> ' + redirectedEdge.getTarget().getId())
   }
 
   private connectsMicroserviceAndExchangeOfSameName(edge: Edge) {
     return edge.getSource().getName() === edge.getTarget().getName()
-    && edge.getSource().getType() === 'Microservice'
-    && edge.getTarget().getType() === 'MessageExchange'
+      && edge.getSource().getType() === 'Microservice'
+      && edge.getTarget().getType() === 'MessageExchange'
   }
 }
