@@ -27,6 +27,7 @@ describe('service with same exchange merger', function () {
 
     const sendToImporter = new System([
       new Link('A', 'exchange A'),
+      new Link('A', 'exchange A1'),
       new Link('B', 'exchange P'),
       new Link('C', 'exchange P'),
       new Link('D', 'exchange B')
@@ -55,6 +56,7 @@ describe('service with same exchange merger', function () {
     expect(mergedSystem.services).to.deep.contain(new Service('exchange B'))
 
     expect(mergedSystem.links).not.to.deep.contain(new Link('A', 'exchange A'))
+    expect(mergedSystem.links).to.deep.contain(new Link('A', 'exchange A1'))
     expect(mergedSystem.links).to.deep.contain(new Link('A', 'B'))
     expect(mergedSystem.links).to.deep.contain(new Link('B', 'exchange P'))
     expect(mergedSystem.links).to.deep.contain(new Link('C', 'exchange P'))
