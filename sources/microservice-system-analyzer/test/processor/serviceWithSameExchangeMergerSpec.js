@@ -67,4 +67,20 @@ describe('service with same exchange merger', function () {
     expect(mergedSystem.links).to.deep.contain(new Link('A', 'F'))
     expect(mergedSystem.links).to.deep.contain(new Link('B', 'F'))
   })
+
+  it('can merge services even when a second exchange exists', function () {
+    const system = new System([
+      new Link('A', 'exchange A'),
+      new Link('A', 'exchange A1'),
+      new Link('exchange A1', 'B')
+    ])
+
+    const mergedSystem = merger.mergeSystems([system])
+
+    expect(mergedSystem.services).to.deep.contain(new Service('A', [new Property('reduced', true)]))
+    expect(mergedSystem.services).not.to.deep.contain(new Service('exchange A'))
+
+    expect(mergedSystem.links).to.deep.contain(new Link('A', 'exchange A1'))
+    expect(mergedSystem.links).to.deep.contain(new Link('exchange A1', 'B'))
+  })
 })

@@ -129,6 +129,15 @@ class Service {
     this.properties.push(new Property(name, value))
   }
 
+  setProperty (name, value) {
+    const existingProp = this.properties.find((prop) => prop.name === name)
+    if (existingProp) {
+      existingProp.value = value
+    } else {
+      this.properties.push(new Property(name, value))
+    }
+  }
+
   hasProperty (name) {
     return this.properties.find((prop) => prop.name === name) != null
   }
