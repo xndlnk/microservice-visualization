@@ -16,19 +16,21 @@ describe('service exchange merger', function() {
 
     const mergedSystem = new ServiceExchangeMerger().mergeServiceAndExchangeOfSameNameToService(system)
 
+    const mergedB = new Microservice('B', { reduced: true })
+
     expect(mergedSystem.getNodes()).to.have.deep.members([
-      new Microservice('A'), new Microservice('B'), new Microservice('C')
+      new Microservice('A'), mergedB, new Microservice('C')
     ])
     expect(mergedSystem.getEdges()).to.have.deep.members([
-      new AsyncInfoFlow(new Microservice('A'), new Microservice('B')),
-      new AsyncInfoFlow(new Microservice('B'), new Microservice('C'))
+      new AsyncInfoFlow(new Microservice('A'), mergedB),
+      new AsyncInfoFlow(mergedB, new Microservice('C'))
     ])
   })
 
   it('merges properties of service and exchange', function() {
     const serviceToMerge = new Microservice('B', { p: 1 })
     const exchangeToMerge = new MessageExchange('B', { q: 2 })
-    const mergeResult = new Microservice('B', { p: 1, q: 2 })
+    const mergeResult = new Microservice('B', { p: 1, q: 2, reduced: true })
 
     const system = Node.ofEdgesWithNodes('S', [
       new AsyncInfoFlow(new Microservice('A'), serviceToMerge),
@@ -56,12 +58,14 @@ describe('service exchange merger', function() {
       ])
     )
 
+    const mergedB = new Microservice('B', { reduced: true })
+
     expect(mergedSystem.getNodes()).to.have.deep.members([
-      new Microservice('X'), new Microservice('B'), new Microservice('Y')
+      new Microservice('X'), mergedB, new Microservice('Y')
     ])
     expect(mergedSystem.getEdges()).to.have.deep.members([
-      new AsyncInfoFlow(new Microservice('X'), new Microservice('B')),
-      new AsyncInfoFlow(new Microservice('B'), new Microservice('Y'))
+      new AsyncInfoFlow(new Microservice('X'), mergedB),
+      new AsyncInfoFlow(mergedB, new Microservice('Y'))
     ])
   })
 

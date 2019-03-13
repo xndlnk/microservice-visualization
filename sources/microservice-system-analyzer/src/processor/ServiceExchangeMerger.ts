@@ -19,6 +19,7 @@ export class ServiceExchangeMerger {
         if (this.edgeHasSource(edge, exchangesToMerge)) {
           const exchangeToMerge = edge.getSource()
           const mergedService = new Microservice(exchangeToMerge.getName(), exchangeToMerge.getProperties())
+          mergedService.getProperties().reduced = true
 
           const edgeRedirected = new AsyncInfoFlow(mergedService, edge.getTarget())
           result.addEdgeWithNodesUniquely(edgeRedirected)
@@ -27,6 +28,7 @@ export class ServiceExchangeMerger {
         } else if (this.edgeHasTarget(edge, exchangesToMerge)) {
           const exchangeToMerge = edge.getTarget()
           const mergedService = new Microservice(exchangeToMerge.getName(), exchangeToMerge.getProperties())
+          mergedService.getProperties().reduced = true
 
           const edgeRedirected = new AsyncInfoFlow(edge.getSource(), mergedService)
           result.addEdgeWithNodesUniquely(edgeRedirected)

@@ -20,7 +20,6 @@ function mergeSystems (systems) {
         result.addLink(sourceNameWithoutExchange, link.targetName, link.communicationType)
 
         const sourceService = result.getService(sourceNameWithoutExchange)
-        // TODO: add property also in ServiceExchangeMerger.ts
         sourceService.setProperty('reduced', true)
         console.log('added reduced property to ' + sourceNameWithoutExchange)
       } else if (isLinkTheTargetOfOneService(link, exchangeServices)) {
