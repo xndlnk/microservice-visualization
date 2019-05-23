@@ -1,0 +1,93 @@
+# http://www.graphviz.org/content/cluster
+
+digraph msvisualization {
+    node [shape=box,fillcolor=white,style=filled,fontname="Arial"];
+    edge [fontname="Arial"]
+    
+    subgraph cluster_legend {
+		label = "symbol explanation";
+		fontname="Arial";
+        library [shape=ellipse];
+        service1 [shape=box];
+				service2 [shape=box, style=filled, fillcolor="#ff8080", label="service2\n(not yet implemented)"];
+				service1 -> service2 [label="sync call"];
+        service2 -> library [style=dashed, arrowhead=vee, label="use"];
+        {rank = same; library; service1; service2;}
+        color="#ffffcc";
+				style=filled;
+    }
+    
+    user [shape=egg];
+
+	subgraph cluster_generic {
+		msanalyzer [label="analyzer\n(backend)"];
+		msvisualizer [label="visualizer\n(frontend)"];
+		reactgraph [shape=ellipse,label="react-graph", style=filled, fillcolor="#ff8080"];
+
+		msvisualizer -> reactgraph [style=dashed, arrowhead=vee];
+
+		
+		label = "generic visualization";
+		fontname="Arial";
+		color="#ccffcc";
+		style=filled;
+	}
+
+	subgraph cluster_external {
+		k8s [label="kubernetes"];
+		consul [style=filled, fillcolor="#ff8080"];
+		git;
+		rabbitmq;
+
+		label = "external services used";
+		fontname="Arial";
+		color="#e6e6e6";
+		style=filled;
+	}
+
+	subgraph cluster_thirdparty {
+		graphviz [shape=ellipse];
+
+		label = "third party";
+		fontname="Arial";
+		color="#ffb3da";
+		style=filled;
+	}
+
+	subgraph cluster_visualized_system {
+		ms1 [label="ms X"];
+		ms2 [label="ms Y\n(with agent)", style=filled, fillcolor="#ff8080"];
+		ci [shape=box, label="CI pipeline"];
+
+		label = "visualized system";
+		fontname="Arial";
+		color="#e6e6e6";
+		style=filled;
+	}
+
+	subgraph cluster_custom_visualization {
+		source [shape=cylinder, label="source storage"];
+		customanalyzer [label="custom\nanalyzer", style=filled, fillcolor="#ff8080"];
+
+		label = "custom visualization";
+		fontname="Arial";
+		color="#cceeff";
+		style=filled;
+	}
+
+  msanalyzer -> consul [label="discover\nservices"];
+	msanalyzer -> k8s [label="discover services,\nget env variables"];
+	msanalyzer -> ms2 [label="get graph\nfraction via\nagent API"];
+	msanalyzer -> source [label="store,\nanalyze"];
+	msanalyzer -> git [label="clone,\nfetch"];
+	msanalyzer -> rabbitmq [label="get bindings"];
+	msvisualizer -> msanalyzer [label="get graph JSON"];
+	ci -> ms1 [label="1. build"];
+	ci -> ms2;
+	ci -> msanalyzer [label="2. compute\nconsumer\nservices"];
+	ci -> msanalyzer [label="3. trigger updates",arrowhead=open];
+	user -> msvisualizer [label="web"];
+	msvisualizer -> graphviz [style=dashed, arrowhead=vee, label="create svg"];
+	reactgraph -> graphviz [style=dashed, arrowhead=vee, label="compute layout"];
+	customanalyzer -> msanalyzer [style=dashed, arrowhead=vee, label="use as\nnpm library"];
+}
