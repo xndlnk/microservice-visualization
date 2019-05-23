@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "allowJs": false,
+    "noImplicitAny": false,
+    //"strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "./build",
+    "baseUrl": "./"
+  },
+  "lib": [
+    "es2018"
+  ],
+  "rootDirs": [
+    "src",
+    "test"
+  ],
+  "exclude": [
+    "node_modules",
+    "temp",
+    "build"
+  ]
+}

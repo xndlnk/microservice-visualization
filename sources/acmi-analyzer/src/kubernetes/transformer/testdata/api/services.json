@@ -1,0 +1,75 @@
+{
+  "statusCode": 200,
+  "body": {
+    "kind": "ServiceList",
+    "apiVersion": "v1",
+    "metadata": {
+      "selfLink": "/api/v1/namespaces/test-ns/services",
+      "resourceVersion": "2417410"
+    },
+    "items": [
+      {
+        "metadata": {
+          "name": "test-microservice",
+          "namespace": "test-ns",
+          "uid": "123",
+          "resourceVersion": "2398456",
+          "labels": {
+            "app": "test-microservice",
+            "chart": "xms-1.1",
+            "heritage": "Tiller",
+            "release": "test-ns"
+          },
+          "annotations": {
+            "prometheus.io/path": "/prometheus",
+            "prometheus.io/port": "8080",
+            "prometheus.io/scrape": "true"
+          }
+        },
+        "spec": {
+          "ports": [
+            {
+              "protocol": "TCP",
+              "port": 8080,
+              "targetPort": 8080
+            }
+          ]
+        },
+        "status": {
+          "loadBalancer": {}
+        }
+      },
+      {
+        "metadata": {
+          "name": "test-microservice-without-pod",
+          "namespace": "test-ns",
+          "uid": "123",
+          "resourceVersion": "2398456",
+          "labels": {
+            "app": "test-microservice",
+            "chart": "xms-1.1",
+            "heritage": "Tiller",
+            "release": "test-ns"
+          },
+          "annotations": {
+            "prometheus.io/path": "/prometheus",
+            "prometheus.io/port": "8080",
+            "prometheus.io/scrape": "true"
+          }
+        },
+        "spec": {
+          "ports": [
+            {
+              "protocol": "TCP",
+              "port": 8080,
+              "targetPort": 8080
+            }
+          ]
+        },
+        "status": {
+          "loadBalancer": {}
+        }
+      }
+    ]
+  }
+}

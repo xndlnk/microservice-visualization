@@ -1,0 +1,14 @@
+[
+  {
+    "source": "",
+    "vhost": "/",
+    "destination": "receiver-service.routingKey.publish.update",
+    "destination_type": "queue"
+  },
+  {
+    "source": "source-exchange",
+    "vhost": "/",
+    "destination": "receiver-service.routingKey.publish.update",
+    "destination_type": "queue"
+  }
+]
