@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 import { System } from '../../model/ms'
 import { FeignClientsFromSourceCodeProducer } from './FeignClientsFromSourceCodeProducer'
@@ -18,14 +18,14 @@ describe(FeignClientsFromSourceCodeProducer.name, () => {
     process.env = originalEnv
   })
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [ConfigService, FeignClientsFromSourceCodeProducer]
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
       // TODO: move test data to feign folder
@@ -57,7 +57,7 @@ describe(FeignClientsFromSourceCodeProducer.name, () => {
     verifyEachContentHasTransformer(outputSystem, FeignClientsFromSourceCodeProducer.name)
   })
 
-  it('ignores source found in current project when not run in test mode', async() => {
+  it('ignores source found in current project when not run in test mode', async () => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
       () => process.cwd() + '/src/collector/feign/testdata/source-folder'

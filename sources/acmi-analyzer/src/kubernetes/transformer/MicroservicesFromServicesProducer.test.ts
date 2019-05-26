@@ -1,5 +1,5 @@
 import { KubernetesApiService } from '../api/api.service'
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 import { MicroservicesFromServicesProducer } from './MicroservicesFromServicesProducer'
 
 import { body as testBodyServices } from './testdata/api/services.json'
@@ -11,7 +11,7 @@ jest.mock('../../config/config.service')
 
 describe(MicroservicesFromServicesProducer.name, () => {
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     ConfigService.prototype.getKubernetesNamespace = jest.fn().mockImplementation(() => {
       return 'test-ns'
     })
@@ -25,7 +25,7 @@ describe(MicroservicesFromServicesProducer.name, () => {
     })
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
     const config = new ConfigService()
     const apiService = new KubernetesApiService(config)
 

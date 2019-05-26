@@ -13,21 +13,22 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "outDir": "./build",
-    "baseUrl": "./",
-    "types": [
-      "jest"
-    ]
+    "baseUrl": "./"
   },
   "lib": [
     "es2018"
   ],
   "rootDirs": [
-    "src",
-    "test"
+    "src"
   ],
   "exclude": [
     "node_modules",
     "temp",
-    "build"
+    "build",
+    "test",
+    "*.test.ts"
+  ],
+  "types": [
+    "jest"
   ]
 }

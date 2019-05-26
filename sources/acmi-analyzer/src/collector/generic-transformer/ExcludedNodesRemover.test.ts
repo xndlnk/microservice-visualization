@@ -1,4 +1,4 @@
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 import { ExcludedNodesRemover } from './ExcludedNodesRemover'
 import { System, AsyncEventFlow } from '../../model/ms'
@@ -8,13 +8,13 @@ jest.mock('../../config/config.service')
 
 describe(ExcludedNodesRemover.name, () => {
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     ConfigService.prototype.getExcludedNodeNames = jest.fn().mockImplementation(() => {
       return 'A, C'
     })
   })
 
-  it('removes nodes to be excluded', async() => {
+  it('removes nodes to be excluded', async () => {
     const inputSystem = new System('system')
     const serviceA = inputSystem.addMicroService('A')
     inputSystem.addMicroService('B')

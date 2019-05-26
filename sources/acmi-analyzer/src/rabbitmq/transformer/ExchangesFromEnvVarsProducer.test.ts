@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import '../../test/expect-extensions'
 import { verifyEachContentHasTransformer } from '../../test/verifiers'
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 import { ExchangesFromEnvVarsProducer } from './ExchangesFromEnvVarsProducer'
 
 import { System } from '../../model/ms'
@@ -11,7 +11,7 @@ import { System } from '../../model/ms'
 describe(ExchangesFromEnvVarsProducer.name, () => {
   let app: TestingModule
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [
@@ -20,7 +20,7 @@ describe(ExchangesFromEnvVarsProducer.name, () => {
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
     const inputSystem = new System('test')
     const service = inputSystem.addMicroService('test-microservice', { p: 1 })
     service.getPayload().env = [

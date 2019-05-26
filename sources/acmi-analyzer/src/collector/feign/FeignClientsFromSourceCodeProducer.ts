@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import * as fs from 'fs'
 import { findFiles, getServiceNameFromPath, isNoSourceOfThisProject } from '../../source-code-analysis/file-analysis/analysis'
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 import { System, SyncDataFlow } from '../../model/ms'
 
 @Injectable()

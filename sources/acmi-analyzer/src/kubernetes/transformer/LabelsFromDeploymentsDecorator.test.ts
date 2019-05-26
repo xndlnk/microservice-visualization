@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { KubernetesApiService } from '../api/api.service'
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 import { body as testBody } from './testdata/api/deployments.json'
 import { System } from '../../model/ms'
@@ -10,16 +10,16 @@ import { LabelsFromDeploymentsDecorator } from './LabelsFromDeploymentsDecorator
 describe(LabelsFromDeploymentsDecorator.name, () => {
   let app: TestingModule
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [ConfigService, KubernetesApiService, LabelsFromDeploymentsDecorator]
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
     const apiService = app.get<KubernetesApiService>(KubernetesApiService)
-    jest.spyOn(apiService, 'getDeployments').mockImplementation(async() => testBody)
+    jest.spyOn(apiService, 'getDeployments').mockImplementation(async () => testBody)
 
     const inputSystem = new System('test')
     inputSystem.addMicroService('test-microservice', { p: 1 })

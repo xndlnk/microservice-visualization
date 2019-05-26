@@ -26,7 +26,13 @@ export class ConfigService {
   }
 
   get(key: string): string {
-    return this.envConfig[key]
+    const value = this.envConfig[key]
+    if (value && typeof value === 'string') {
+      if (value.startsWith('\'') && value.endsWith('\'') || value.startsWith('"') && value.endsWith('"')) {
+        this.logger.warn('env variable ' + key + ' is surrounded by quotes: ' + value)
+      }
+    }
+    return value
   }
 
   getSourceFolder(): string {

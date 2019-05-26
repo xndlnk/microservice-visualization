@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 import { System } from '../../model/ms'
 import { ExchangesFromApiProducer } from './ExchangesFromApiProducer'
@@ -13,18 +13,18 @@ import { verifyEachContentHasTransformer } from '../../test/verifiers'
 describe(ExchangesFromApiProducer.name, () => {
   let app: TestingModule
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [ConfigService, ExchangesFromApiProducer, RabbitMqManagementApiService]
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
 
     const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
-    jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
-    jest.spyOn(apiService, 'getBindings').mockImplementation(async() => testBindings)
+    jest.spyOn(apiService, 'getQueues').mockImplementation(async () => testQueues)
+    jest.spyOn(apiService, 'getBindings').mockImplementation(async () => testBindings)
 
     const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
 
@@ -48,11 +48,11 @@ describe(ExchangesFromApiProducer.name, () => {
     verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
   })
 
-  it('does not create empty exchanges when there are only empty source properties in bindings', async() => {
+  it('does not create empty exchanges when there are only empty source properties in bindings', async () => {
 
     const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
-    jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
-    jest.spyOn(apiService, 'getBindings').mockImplementation(async() => ([
+    jest.spyOn(apiService, 'getQueues').mockImplementation(async () => testQueues)
+    jest.spyOn(apiService, 'getBindings').mockImplementation(async () => ([
       {
         source: '',
         vhost: '/',

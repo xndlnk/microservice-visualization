@@ -4,7 +4,7 @@ import * as Api from 'kubernetes-client'
 const Client = Api.Client1_10
 const logger = new Logger('KubernetesApiService')
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 @Injectable()
 export class KubernetesApiService {

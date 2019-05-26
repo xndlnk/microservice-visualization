@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { KubernetesApiService } from '../api/api.service'
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 import { EnvVarsFromPodsDecorator } from './EnvVarsFromPodsDecorator'
 
 import { body as testBody } from './testdata/api/pods.json'
@@ -10,16 +10,16 @@ import { System } from '../../model/ms'
 describe(EnvVarsFromPodsDecorator.name, () => {
   let app: TestingModule
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [ConfigService, KubernetesApiService, EnvVarsFromPodsDecorator]
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
     const apiService = app.get<KubernetesApiService>(KubernetesApiService)
-    jest.spyOn(apiService, 'getPods').mockImplementation(async() => testBody)
+    jest.spyOn(apiService, 'getPods').mockImplementation(async () => testBody)
 
     const inputSystem = new System('test')
     inputSystem.addMicroService('test-microservice', { p: 1 })

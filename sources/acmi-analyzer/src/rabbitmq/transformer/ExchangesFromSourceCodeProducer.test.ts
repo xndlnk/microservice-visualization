@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 import { System } from '../../model/ms'
 import { ExchangesFromSourceCodeProducer } from './ExchangesFromSourceCodeProducer'
@@ -18,14 +18,14 @@ describe(ExchangesFromSourceCodeProducer.name, () => {
     process.env = originalEnv
   })
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [ConfigService, ExchangesFromSourceCodeProducer]
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('transforms', async () => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
       // TODO: move test data to feign folder
@@ -48,7 +48,7 @@ describe(ExchangesFromSourceCodeProducer.name, () => {
     verifyEachContentHasTransformer(outputSystem, ExchangesFromSourceCodeProducer.name)
   })
 
-  it('ignores source found in current project when not run in test mode', async() => {
+  it('ignores source found in current project when not run in test mode', async () => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
       () => process.cwd() + '/src/rabbitmq/transformer/testdata/source-folder'

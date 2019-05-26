@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import * as request from 'request-promise-native'
 
-import { ConfigService } from '../../config/config.service'
+import { ConfigService } from '../../config/Config.service'
 
 @Injectable()
 export class RabbitMqManagementApiService {
