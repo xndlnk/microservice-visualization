@@ -15,7 +15,9 @@ RUN yarn test
 RUN yarn build
 
 # stage: install prod packages & run
-FROM node:10.14-jessie-slim
+FROM node:10.14-alpine
+
+RUN apk update && apk add --no-cache openssh-client git bash
 
 RUN mkdir -p /app/build
 COPY --from=build /app/build /app/build/
