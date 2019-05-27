@@ -1,6 +1,6 @@
 {
   "name": "acmi-analyzer",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "description": "analysis part of the architecture analyzer for microservice systems",
   "main": "build/src/lib.js",
   "types": "build/src/lib.d.ts",

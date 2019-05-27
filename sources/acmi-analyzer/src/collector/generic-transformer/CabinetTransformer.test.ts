@@ -2,7 +2,7 @@ import { CabinetTransformer } from './CabinetTransformer'
 import { System, AsyncEventFlow } from '../../model/ms'
 
 jest.mock('../../kubernetes/api/api.service')
-jest.mock('../../config/config.service')
+jest.mock('../../config/Config.service')
 
 describe(CabinetTransformer.name, () => {
 

@@ -7,11 +7,11 @@ import { body as testBodyPods } from './testdata/api/pods.json'
 import { verifyEachContentHasTransformer } from '../../test/verifiers'
 
 jest.mock('../api/api.service')
-jest.mock('../../config/config.service')
+jest.mock('../../config/Config.service')
 
 describe(MicroservicesFromServicesProducer.name, () => {
 
-  beforeAll(async () => {
+  beforeAll(async() => {
     ConfigService.prototype.getKubernetesNamespace = jest.fn().mockImplementation(() => {
       return 'test-ns'
     })
@@ -25,7 +25,7 @@ describe(MicroservicesFromServicesProducer.name, () => {
     })
   })
 
-  it('transforms', async () => {
+  it('transforms', async() => {
     const config = new ConfigService()
     const apiService = new KubernetesApiService(config)
 

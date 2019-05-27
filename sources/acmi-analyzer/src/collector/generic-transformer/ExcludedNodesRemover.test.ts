@@ -4,17 +4,17 @@ import { ExcludedNodesRemover } from './ExcludedNodesRemover'
 import { System, AsyncEventFlow } from '../../model/ms'
 
 jest.mock('../../kubernetes/api/api.service')
-jest.mock('../../config/config.service')
+jest.mock('../../config/Config.service')
 
 describe(ExcludedNodesRemover.name, () => {
 
-  beforeAll(async () => {
+  beforeAll(async() => {
     ConfigService.prototype.getExcludedNodeNames = jest.fn().mockImplementation(() => {
       return 'A, C'
     })
   })
 
-  it('removes nodes to be excluded', async () => {
+  it('removes nodes to be excluded', async() => {
     const inputSystem = new System('system')
     const serviceA = inputSystem.addMicroService('A')
     inputSystem.addMicroService('B')
