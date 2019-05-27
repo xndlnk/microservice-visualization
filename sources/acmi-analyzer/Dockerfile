@@ -21,11 +21,12 @@ RUN mkdir -p /app/build
 COPY --from=build /app/build /app/build/
 COPY --from=build /app/*.json /app/
 COPY --from=build /app/*.lock /app/
-COPY entrypoint.sh /
-COPY entrypoint-ssh.sh /
 
 WORKDIR /app
 RUN yarn install --production
+
+COPY entrypoint.sh /
+COPY entrypoint-ssh.sh /
 
 RUN mkdir -p /app/temp
 
