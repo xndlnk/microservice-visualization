@@ -1,13 +1,11 @@
 # stage: build
-FROM node:10.14-jessie-slim as build
+FROM node:10.14-alpine as build
 
 RUN mkdir -p /app/src
 COPY src /app/src/
 COPY test /app/test/
-
 COPY *.json /app/
 COPY *.lock /app/
-COPY entrypoint.sh /
 
 WORKDIR /app
 RUN yarn install
@@ -23,7 +21,8 @@ RUN mkdir -p /app/build
 COPY --from=build /app/build /app/build/
 COPY --from=build /app/*.json /app/
 COPY --from=build /app/*.lock /app/
-COPY --from=build /entrypoint.sh /
+COPY entrypoint.sh /
+COPY entrypoint-ssh.sh /
 
 WORKDIR /app
 RUN yarn install --production
