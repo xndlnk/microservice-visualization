@@ -43,8 +43,16 @@ export class ConfigService {
     return this.get('KUBERNETES_NAMESPACE')
   }
 
-  getRabbitMqApiBaseUrl(): string {
-    return this.get('RABBITMQ_API_BASE_URL')
+  getRabbitUrl(): string {
+    return this.get('RABBIT_URL')
+  }
+
+  getRabbitUser(): string {
+    return this.get('RABBIT_USER')
+  }
+
+  getRabbitPassword(): string {
+    return this.get('RABBIT_PASSWORD')
   }
 
   getGitBaseUrls(): string[] {
@@ -73,7 +81,9 @@ export class ConfigService {
       GIT_BASE_URLS: Joi.string().required().min(1),
       // TODO: should only be required when the corresponding steps are active
       KUBERNETES_NAMESPACE: Joi.string().required(),
-      RABBITMQ_API_BASE_URL: Joi.string().required()
+      RABBIT_USER: Joi.string().required(),
+      RABBIT_PASSWORD: Joi.string().optional(),
+      RABBIT_URL: Joi.string().optional()
     })
 
     const { error, value: validatedEnvConfig } = Joi.validate(

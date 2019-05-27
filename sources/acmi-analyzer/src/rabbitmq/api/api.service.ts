@@ -11,7 +11,7 @@ export class RabbitMqManagementApiService {
   }
 
   public async getQueues(): Promise<any> {
-    const url = this.config.getRabbitMqApiBaseUrl() + '/api/queues/'
+    const url = this.config.getRabbitUrl() + '/api/queues/'
     this.logger.log('get queues from url ' + url)
     return this.sendRequest(url, 'GET')
   }
@@ -19,16 +19,25 @@ export class RabbitMqManagementApiService {
   public async getBindings(queueName: string): Promise<any[]> {
     // TODO: make vhost configurable
     const vhost = '/'
-    const url = this.config.getRabbitMqApiBaseUrl() + '/api/queues/' + encodeURIComponent(vhost) + '/' + encodeURIComponent(queueName) + '/bindings/'
+    const url = this.config.getRabbitUrl() + '/api/queues/' + encodeURIComponent(vhost) + '/' + encodeURIComponent(queueName) + '/bindings/'
     this.logger.log('get bindings for ' + queueName + ' from url ' + url)
     return this.sendRequest(url, 'GET')
   }
 
   private async sendRequest(url, method) {
-    const options = {
+    const options: any = {
       method: method,
       url: url
     }
+
+    if (this.config.getRabbitUser() && this.config.getRabbitPassword()) {
+      // TODO: auth type should be configurable
+      options.auth = {
+        user: this.config.getRabbitUser(),
+        password: this.config.getRabbitPassword()
+      }
+    }
+
     try {
       // TODO: maybe change this to use axios provided bei Nest.js
       const response = await request(options)

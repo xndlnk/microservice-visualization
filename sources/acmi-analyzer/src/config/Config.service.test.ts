@@ -21,6 +21,8 @@ describe(ConfigService.name, () => {
     expect(config.getPort()).toEqual(2)
     expect(typeof config.getPort()).toEqual('number')
   })
+
+  // TODO: more tests needed here
 })
 
 function setAllRequiredEnvVars() {
@@ -28,5 +30,7 @@ function setAllRequiredEnvVars() {
   process.env.SOURCE_FOLDER = './src'
   process.env.GIT_BASE_URLS = 'git'
   process.env.KUBERNETES_NAMESPACE = 'ns'
-  process.env.RABBITMQ_API_BASE_URL = 'http'
+  process.env.RABBIT_USER = 'guest'
+  process.env.RABBIT_PASSWORD = 'guest'
+  process.env.RABBIT_URL = 'http'
 }
