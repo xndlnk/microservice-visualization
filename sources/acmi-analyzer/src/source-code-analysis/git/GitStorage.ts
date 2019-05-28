@@ -26,6 +26,7 @@ export class GitStorage {
   async storeRepository(repositoryName: string): Promise<string | undefined> {
     for (const baseUrl of this.gitBaseUrls) {
       const url = baseUrl + '/' + repositoryName
+      // TODO: log warning if repositoryName could not be cloned from any url
       const localPath = await this.storeRepositoryFromUrl(repositoryName, url)
       if (localPath) {
         return localPath
