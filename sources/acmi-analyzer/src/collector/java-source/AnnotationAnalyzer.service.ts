@@ -86,27 +86,16 @@ function transformEachElement(system: System, service: MicroService, fileContent
     const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
       (matchArray: RegExpExecArray) => matchArray[1])
 
-    elementValues.forEach(value => transformElementValue(system, service, fileContent,
+    elementValues.forEach(value => transformElementValueExpression(system, service, fileContent,
       elementMapping, value))
   }
 }
 
-function transformElementValue(system: System, service: MicroService, fileContent: string,
-  elementMapping: ElementMapping, elementValue: string) {
+function transformElementValueExpression(system: System, service: MicroService, fileContent: string,
+  elementMapping: ElementMapping, valueExpression: string) {
 
-  let nodeName = ''
-  if (elementValue) {
-    if (elementValue.startsWith('"')) {
-      nodeName = elementValue.substr(1, elementValue.length - 2)
-    } else {
-      // TODO: skip if defined in comment
-      const assignmentPattern = elementValue + '\\s*=\\s*"([^"]*)"'
-      const assignmentRegExp = new RegExp(assignmentPattern, 'g')
-      const assignmentValues = getAllPatternMatches<string>(assignmentRegExp, fileContent,
-        (matchArray: RegExpExecArray) => matchArray[1])
-      nodeName = assignmentValues[0]
-    }
-  }
+  const nodeName = getActualValue(valueExpression, fileContent)
+  if (!nodeName) return
 
   // TODO: better use system.addOrExtendNamedNode() but without type annotations
   const payload = { name: nodeName }
@@ -124,6 +113,21 @@ function transformElementValue(system: System, service: MicroService, fileConten
     // TODO: log error
   }
 }
+
+function getActualValue(valueExpression: string, fileContent: string): string {
+  if (valueExpression.startsWith('"')) {
+    return valueExpression.substr(1, valueExpression.length - 2)
+  } else {
+    // search variable assignment
+    // TODO: skip if defined in comment
+    const assignmentPattern = valueExpression + '\\s*=\\s*"([^"]*)"'
+    const assignmentRegExp = new RegExp(assignmentPattern, 'g')
+    const assignmentValues = getAllPatternMatches<string>(assignmentRegExp, fileContent,
+      (matchArray: RegExpExecArray) => matchArray[1])
+    return assignmentValues.length > 0 ? assignmentValues[0] : undefined
+  }
+}
+
 function getAllPatternMatches<MatchType>(pattern: RegExp, content: string,
   matchTransformer: ((matchArray: RegExpExecArray) => MatchType)): MatchType[] {
   const allMatches: MatchType[] = []
