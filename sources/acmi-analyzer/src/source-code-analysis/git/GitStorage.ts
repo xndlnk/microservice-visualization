@@ -23,6 +23,7 @@ export class GitStorage {
 
   constructor(private sourceFolder: string, private gitBaseUrls: string[]) { }
 
+  // TODO: improve error handling when ssh key is missing or not authorized
   async storeRepository(repositoryName: string): Promise<string | undefined> {
     for (const baseUrl of this.gitBaseUrls) {
       const url = baseUrl + '/' + repositoryName

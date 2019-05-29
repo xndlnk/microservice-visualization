@@ -4,7 +4,10 @@ import * as fs from 'fs'
 import { findFiles, getServiceNameFromPath, isNoSourceOfThisProject } from '../../source-code-analysis/file-analysis/analysis'
 
 import { ConfigService } from '../../config/Config.service'
-import { System, AsyncEventFlow } from '../../model/ms'
+import { System, AsyncEventFlow, MicroService } from '../../model/ms'
+
+// tslint:disable-next-line
+import * as ms from '../../model/ms'
 
 @Injectable()
 export class AnnotationAnalyzer {
@@ -16,87 +19,81 @@ export class AnnotationAnalyzer {
   ) { }
 
   public async transform(system: System): Promise<System> {
-    const scanResults = await this.scanPath(this.config.getSourceFolder())
-    for (const scanResult of scanResults) {
-      const currentService = system.addMicroService(scanResult.currentNodeName,
-        undefined, this.className)
-      const targetExchange = system.addMessageExchange(scanResult.patternMatch.targetNodeName,
-        undefined, this.className)
-      system.edges.push(new AsyncEventFlow(currentService, targetExchange,
-        undefined, this.className))
-    }
+    await this.transformSourcesInPath(system, this.config.getSourceFolder())
     return system
   }
 
-  private async scanPath(path: string): Promise<ScanResult[]> {
+  private async transformSourcesInPath(system: System, path: string) {
     this.logger.log('scanning java files in ' + path)
     const javaFiles = await findFiles(path, '.java')
     this.logger.log('found ' + javaFiles.length + ' java files')
 
-    const scanResults: ScanResult[] = []
     javaFiles
       .filter(file => isNoSourceOfThisProject(file))
       .forEach((file) => {
-        const matches = findPatternsInFile(file)
-        if (matches && matches.length > 0) {
-          const serviceName = getServiceNameFromPath(path, file)
-          for (const match of matches) {
-            scanResults.push({
-              file,
-              currentNodeName: serviceName,
-              patternMatch: match
-            })
-          }
+        // TODO: make this async
+        const serviceName = getServiceNameFromPath(path, file)
+        const service = system.findMicroService(serviceName)
+        if (!service) {
+          this.logger.log('skipping source of microservice ' + serviceName + ' because it is not part of the input system.')
+        } else {
+          const fileContent = fs.readFileSync(file, 'utf8')
+
+          const elementMappings: ElementMapping[] = [
+            {
+              elementDefiningNodeName: 'sendToExchange',
+              nodeTypeToCreate: 'MessageExchange'
+            }
+          ]
+
+          transformEachAnnotation(system, service, 'EventProcessor', fileContent, elementMappings)
         }
       })
-
-    return scanResults
   }
 }
 
-type ScanResult = {
-  file: string,
-  currentNodeName: string,
-  patternMatch: PatternMatch
+type ElementMapping = {
+  elementDefiningNodeName: string
+  nodeTypeToCreate: string
 }
 
-type PatternMatch = {
-  targetNodeName: string
-}
-
-function findPatternsInFile(path): PatternMatch[] | undefined {
-  // TODO: make this async
-  const fileContent = fs.readFileSync(path, 'utf8')
-
-  return findTargetExchangeInEachAnnotation(fileContent)
-}
-
-function findTargetExchangeInEachAnnotation(content: string): PatternMatch[] {
-  const annotationPattern = /@EventProcessor\s*\(([^\)]+)\)/g
-  const annotations = getAllPatternMatches<string>(annotationPattern, content,
+function transformEachAnnotation(system: System, service: MicroService,
+  annotationName: string, fileContent: string, elementMappings: ElementMapping[]) {
+  const annotationPattern = '@' + annotationName + '\\s*\\(([^\\)]+)\\)'
+  const annotationRegExp = new RegExp(annotationPattern, 'g')
+  const annotations = getAllPatternMatches<string>(annotationRegExp, fileContent,
     (matchArray: RegExpExecArray) => matchArray[1])
+  if (annotations.length === 0) return
 
-  const elementPattern = /sendToExchange\s*=\s*([^\),]+)/g
-  const elementValues = getAllPatternMatches<string>(elementPattern, annotations[0],
+  // TODO: process multiple mappings
+  const elementPattern = elementMappings[0].elementDefiningNodeName + '\\s*=\\s*([^\\),]+)'
+  const elementRegExp = new RegExp(elementPattern, 'g')
+  const elementValues = getAllPatternMatches<string>(elementRegExp, annotations[0],
     (matchArray: RegExpExecArray) => matchArray[1])
-  const match: PatternMatch = {
-    targetNodeName: elementValues[0]
-  }
+  if (elementValues.length === 0) return
 
-  if (match.targetNodeName) {
-    if (match.targetNodeName.startsWith('"')) {
-      match.targetNodeName = match.targetNodeName.substr(1, match.targetNodeName.length - 2)
+  let targetNodeName = elementValues[0]
+
+  if (targetNodeName) {
+    if (targetNodeName.startsWith('"')) {
+      targetNodeName = targetNodeName.substr(1, targetNodeName.length - 2)
     } else {
       // TODO: skip if defined in comment
-      const assignmentPattern = match.targetNodeName + '\\s*=\\s*"([^"]*)"'
+      const assignmentPattern = targetNodeName + '\\s*=\\s*"([^"]*)"'
       const assignmentRegExp = new RegExp(assignmentPattern, 'g')
-      const assignmentValues = getAllPatternMatches<string>(assignmentRegExp, content,
+      const assignmentValues = getAllPatternMatches<string>(assignmentRegExp, fileContent,
         (matchArray: RegExpExecArray) => matchArray[1])
-      match.targetNodeName = assignmentValues[0]
+      targetNodeName = assignmentValues[0]
     }
   }
 
-  return [match]
+  // TODO: better use system.addOrExtendNamedNode() but without type annotations
+  const payload = { name: targetNodeName }
+  const targetExchange = new ms[elementMappings[0].nodeTypeToCreate](targetNodeName, payload, AnnotationAnalyzer.name)
+  system.nodes.push(targetExchange)
+
+  system.edges.push(new AsyncEventFlow(service, targetExchange,
+    undefined, AnnotationAnalyzer.name))
 }
 
 function getAllPatternMatches<MatchType>(pattern: RegExp, content: string,
