@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { ConfigService } from '../../config/Config.service'
 
-import { System } from '../../model/ms'
+import { System, AsyncEventFlow } from '../../model/ms'
 import { verifyEachContentHasTransformer } from '../../test/verifiers'
 import { AnnotationAnalyzer } from './AnnotationAnalyzer.service'
 
@@ -25,7 +25,7 @@ describe(AnnotationAnalyzer.name, () => {
     }).compile()
   })
 
-  it('creates an async info flow to a target message exchange', async() => {
+  it('creates an async info flow for multiple annotations in the same file', async() => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
       () => process.cwd() + '/src/collector/java-source/testdata/source-folder'
@@ -38,7 +38,13 @@ describe(AnnotationAnalyzer.name, () => {
     const outputSystem = await transformer.transform(inputSystem)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
-    expect(outputSystem.findMessageExchange('target-exchange')).toBeDefined()
+    expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
+    expect(outputSystem.findMessageExchange('target-exchange-Y')).toBeDefined()
+    expect(outputSystem.edges[0].source.getName()).toEqual('service1')
+    expect(outputSystem.edges[0].target.getName()).toEqual('target-exchange-X')
+    expect(outputSystem.edges[0].content.type).toEqual(AsyncEventFlow.name)
+    expect(outputSystem.edges[1].source.getName()).toEqual('service1')
+    expect(outputSystem.edges[1].target.getName()).toEqual('target-exchange-Y')
 
     verifyEachContentHasTransformer(outputSystem, AnnotationAnalyzer.name)
   })

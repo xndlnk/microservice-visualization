@@ -59,16 +59,24 @@ type ElementMapping = {
 
 function transformEachAnnotation(system: System, service: MicroService,
   annotationName: string, fileContent: string, elementMappings: ElementMapping[]) {
+
   const annotationPattern = '@' + annotationName + '\\s*\\(([^\\)]+)\\)'
   const annotationRegExp = new RegExp(annotationPattern, 'g')
   const annotations = getAllPatternMatches<string>(annotationRegExp, fileContent,
     (matchArray: RegExpExecArray) => matchArray[1])
   if (annotations.length === 0) return
 
+  annotations.forEach(annotation => transformElement(system, service, fileContent,
+    annotation, elementMappings))
+}
+
+function transformElement(system: System, service: MicroService, fileContent: string,
+  annotationBody: string, elementMappings: ElementMapping[]) {
+
   // TODO: process multiple mappings
   const elementPattern = elementMappings[0].elementDefiningNodeName + '\\s*=\\s*([^\\),]+)'
   const elementRegExp = new RegExp(elementPattern, 'g')
-  const elementValues = getAllPatternMatches<string>(elementRegExp, annotations[0],
+  const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
     (matchArray: RegExpExecArray) => matchArray[1])
   if (elementValues.length === 0) return
 
