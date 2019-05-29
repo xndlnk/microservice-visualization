@@ -42,7 +42,13 @@ export class AnnotationAnalyzer {
           const elementMappings: ElementMapping[] = [
             {
               elementDefiningNodeName: 'sendToExchange',
-              nodeTypeToCreate: 'MessageExchange'
+              nodeTypeToCreate: 'MessageExchange',
+              nodeTypeDirection: 'target'
+            },
+            {
+              elementDefiningNodeName: 'receiveFromExchange',
+              nodeTypeToCreate: 'MessageExchange',
+              nodeTypeDirection: 'source'
             }
           ]
 
@@ -55,6 +61,7 @@ export class AnnotationAnalyzer {
 type ElementMapping = {
   elementDefiningNodeName: string
   nodeTypeToCreate: string
+  nodeTypeDirection: string // source or target
 }
 
 function transformEachAnnotation(system: System, service: MicroService,
@@ -62,48 +69,61 @@ function transformEachAnnotation(system: System, service: MicroService,
 
   const annotationPattern = '@' + annotationName + '\\s*\\(([^\\)]+)\\)'
   const annotationRegExp = new RegExp(annotationPattern, 'g')
-  const annotations = getAllPatternMatches<string>(annotationRegExp, fileContent,
+  const annotationBodies = getAllPatternMatches<string>(annotationRegExp, fileContent,
     (matchArray: RegExpExecArray) => matchArray[1])
-  if (annotations.length === 0) return
 
-  annotations.forEach(annotation => transformElement(system, service, fileContent,
-    annotation, elementMappings))
+  annotationBodies.forEach(body => transformEachElement(system, service, fileContent,
+    body, elementMappings))
 }
 
-function transformElement(system: System, service: MicroService, fileContent: string,
+function transformEachElement(system: System, service: MicroService, fileContent: string,
   annotationBody: string, elementMappings: ElementMapping[]) {
 
-  // TODO: process multiple mappings
-  const elementPattern = elementMappings[0].elementDefiningNodeName + '\\s*=\\s*([^\\),]+)'
-  const elementRegExp = new RegExp(elementPattern, 'g')
-  const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
-    (matchArray: RegExpExecArray) => matchArray[1])
-  if (elementValues.length === 0) return
+  for (const elementMapping of elementMappings) {
+    // TODO: process multiple mappings
+    const elementPattern = elementMapping.elementDefiningNodeName + '\\s*=\\s*([^\\),]+)'
+    const elementRegExp = new RegExp(elementPattern, 'g')
+    const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
+      (matchArray: RegExpExecArray) => matchArray[1])
 
-  let targetNodeName = elementValues[0]
+    elementValues.forEach(value => transformElementValue(system, service, fileContent,
+      elementMapping, value))
+  }
+}
 
-  if (targetNodeName) {
-    if (targetNodeName.startsWith('"')) {
-      targetNodeName = targetNodeName.substr(1, targetNodeName.length - 2)
+function transformElementValue(system: System, service: MicroService, fileContent: string,
+  elementMapping: ElementMapping, elementValue: string) {
+
+  let nodeName = ''
+  if (elementValue) {
+    if (elementValue.startsWith('"')) {
+      nodeName = elementValue.substr(1, elementValue.length - 2)
     } else {
       // TODO: skip if defined in comment
-      const assignmentPattern = targetNodeName + '\\s*=\\s*"([^"]*)"'
+      const assignmentPattern = elementValue + '\\s*=\\s*"([^"]*)"'
       const assignmentRegExp = new RegExp(assignmentPattern, 'g')
       const assignmentValues = getAllPatternMatches<string>(assignmentRegExp, fileContent,
         (matchArray: RegExpExecArray) => matchArray[1])
-      targetNodeName = assignmentValues[0]
+      nodeName = assignmentValues[0]
     }
   }
 
   // TODO: better use system.addOrExtendNamedNode() but without type annotations
-  const payload = { name: targetNodeName }
-  const targetExchange = new ms[elementMappings[0].nodeTypeToCreate](targetNodeName, payload, AnnotationAnalyzer.name)
-  system.nodes.push(targetExchange)
+  const payload = { name: nodeName }
+  const node = new ms[elementMapping.nodeTypeToCreate](nodeName, payload, AnnotationAnalyzer.name)
+  system.nodes.push(node)
 
-  system.edges.push(new AsyncEventFlow(service, targetExchange,
-    undefined, AnnotationAnalyzer.name))
+  if (elementMapping.nodeTypeDirection === 'target') {
+    // TODO: make AsyncEventFlow configurable
+    system.edges.push(new AsyncEventFlow(service, node,
+      undefined, AnnotationAnalyzer.name))
+  } else if (elementMapping.nodeTypeDirection === 'source') {
+    system.edges.push(new AsyncEventFlow(node, service,
+      undefined, AnnotationAnalyzer.name))
+  } else {
+    // TODO: log error
+  }
 }
-
 function getAllPatternMatches<MatchType>(pattern: RegExp, content: string,
   matchTransformer: ((matchArray: RegExpExecArray) => MatchType)): MatchType[] {
   const allMatches: MatchType[] = []
