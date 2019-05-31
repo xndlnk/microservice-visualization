@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import { ConfigService } from '../../config/Config.service'
 import { System, AsyncEventFlow } from '../../model/ms'
 import { RabbitMqManagementApiService } from '../api/api.service'
+import { Metadata } from '../../model/core'
 
 type Binding = {
   exchange: string
@@ -42,13 +43,17 @@ export class ExchangesFromApiProducer {
     bindings
       .filter(binding => binding.exchange !== '')
       .forEach(binding => {
+        const metadata: Metadata = {
+          transformer: ExchangesFromApiProducer.name,
+          context: 'queue ' + binding.queue + ' bound to exchange ' + binding.exchange
+        }
         const sourceExchangName = binding.exchange
-        const sourceExchange = system.addMessageExchange(sourceExchangName, undefined, ExchangesFromApiProducer.name)
+        const sourceExchange = system.addMessageExchange(sourceExchangName, undefined, metadata)
 
         const targetServiceName = binding.queue.substring(0, binding.queue.indexOf('.'))
-        const targetService = system.addMicroService(targetServiceName, undefined, ExchangesFromApiProducer.name)
+        const targetService = system.addMicroService(targetServiceName, undefined, metadata)
 
-        system.edges.push(new AsyncEventFlow(sourceExchange, targetService, undefined, ExchangesFromApiProducer.name))
+        system.edges.push(new AsyncEventFlow(sourceExchange, targetService, undefined, metadata))
 
         this.logger.log('added async event flow: message exchange ' + sourceExchangName + ' -> microservice ' + targetServiceName)
       })

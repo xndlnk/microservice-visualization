@@ -1,13 +1,13 @@
 import { Logger } from '@nestjs/common'
 
-import { Node, Content, Edge } from './core'
+import { Node, Content, Edge, Metadata } from './core'
 
 const logger = new Logger('core-typed')
 
 export class TypedNode<Payload> extends Node {
 
-  constructor(id: string, payload: Payload, transformerName: string, typeName: string) {
-    super(id, new Content(typeName, transformerName, payload))
+  constructor(id: string, payload: Payload, metadata: Metadata, typeName: string) {
+    super(id, new Content(typeName, metadata, payload))
   }
 
   public getNodes<NodeType extends Node>(type: Type<NodeType>): NodeType[] {
@@ -26,7 +26,7 @@ export class TypedNode<Payload> extends Node {
   }
 
   public addOrExtendNamedNode<NodeType extends TypedNode<Payload>>(
-    type: TypeExtendsTypedNode<NodeType, Payload>, name: string, extraPayload: any = {}, transformerName?: string): NodeType {
+    type: TypeExtendsTypedNode<NodeType, Payload>, name: string, extraPayload: any = {}, metadata?: Metadata): NodeType {
 
     const existingNode = this.findNodeWithNameInPayload<NodeType>(type, name)
     if (existingNode) {
@@ -37,7 +37,7 @@ export class TypedNode<Payload> extends Node {
       return existingNode
     }
 
-    const node = new type(this.id + '__' + type.name + '_' + name, { name, ...extraPayload }, transformerName,
+    const node = new type(this.id + '__' + type.name + '_' + name, { name, ...extraPayload }, metadata,
       // keep type name as last parameter because classes inheriting from TypedNode omit the type name
       // in their own constructors.
       type.name)
@@ -60,15 +60,15 @@ export class TypedNode<Payload> extends Node {
 }
 
 export function createEdge<Payload>(
-  payloadType: Type<Payload>, source: Node, target: Node, payload?: Payload, transformer?: string
+  payloadType: Type<Payload>, source: Node, target: Node, payload?: Payload, metadata?: Metadata
 ): TypedEdge<Payload> {
-  return new TypedEdge<Payload>(source, target, payload, transformer, payloadType.name)
+  return new TypedEdge<Payload>(source, target, payload, metadata, payloadType.name)
 }
 
 export class TypedEdge<Payload> extends Edge {
 
-  constructor(source: Node, target: Node, payload: Payload, transformerName: string, typeName: string) {
-    super(source, target, new Content(typeName, transformerName, payload))
+  constructor(source: Node, target: Node, payload: Payload, metadata: Metadata, typeName: string) {
+    super(source, target, new Content(typeName, metadata, payload))
   }
 
   public getPayload(): Payload {
@@ -81,5 +81,5 @@ interface Type<T> extends Function {
 }
 
 interface TypeExtendsTypedNode<Type, Payload> extends Function {
-  new(id: string, payload: Payload, typeName: string, transformerName: string): Type
+  new(id: string, payload: Payload, metadata: Metadata, typeName: string): Type
 }

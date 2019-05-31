@@ -5,6 +5,7 @@ import { findFiles, getServiceNameFromPath, isNoSourceOfThisProject } from '../.
 
 import { ConfigService } from '../../config/Config.service'
 import { System, AsyncEventFlow } from '../../model/ms'
+import { Metadata } from '../../model/core'
 
 type ScanResult = {
   file: string,
@@ -23,10 +24,15 @@ export class ExchangesFromSourceCodeProducer {
   public async transform(system: System): Promise<System> {
     const scanResults = await this.scanPathForExchangesInSendConfigurations(this.config.getSourceFolder())
     for (const scanResult of scanResults) {
-      const sourceService = system.addMicroService(scanResult.serviceName, undefined, ExchangesFromSourceCodeProducer.name)
-      const targetExchange = system.addMessageExchange(scanResult.exchangeName, undefined, ExchangesFromSourceCodeProducer.name)
+      const metadata: Metadata = {
+        transformer: ExchangesFromSourceCodeProducer.name,
+        context: 'service ' + scanResult.serviceName
+      }
 
-      const eventFlow = new AsyncEventFlow(sourceService, targetExchange, undefined, ExchangesFromSourceCodeProducer.name)
+      const sourceService = system.addMicroService(scanResult.serviceName, undefined, metadata)
+      const targetExchange = system.addMessageExchange(scanResult.exchangeName, undefined, metadata)
+
+      const eventFlow = new AsyncEventFlow(sourceService, targetExchange, undefined, metadata)
       system.edges.push(eventFlow)
 
       this.logger.log(`added async event flow: ${sourceService.getPayload().name} -> ${targetExchange.getPayload().name}`)

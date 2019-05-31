@@ -50,7 +50,7 @@ describe(ExchangesFromEnvVarsProducer.name, () => {
     expect(outputSystem.getMicroServices()).toHaveLength(1)
     expect(outputSystem.getMessageExchanges()).toHaveLength(2)
     expect(outputSystem.findMessageExchange('test-outgoing-exchange')).toBeDefined()
-    expect(outputSystem.findMessageExchange('test-incoming-exchange').content.transformerName).toEqual(ExchangesFromEnvVarsProducer.name)
+    expect(outputSystem.findMessageExchange('test-incoming-exchange').content.metadata.transformer).toEqual(ExchangesFromEnvVarsProducer.name)
 
     verifyEachContentHasTransformer(outputSystem, ExchangesFromEnvVarsProducer.name)
 

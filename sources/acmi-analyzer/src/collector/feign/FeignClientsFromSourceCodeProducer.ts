@@ -5,6 +5,7 @@ import { findFiles, getServiceNameFromPath, isNoSourceOfThisProject } from '../.
 
 import { ConfigService } from '../../config/Config.service'
 import { System, SyncDataFlow } from '../../model/ms'
+import { Metadata } from 'src/model/core'
 
 @Injectable()
 export class FeignClientsFromSourceCodeProducer {
@@ -18,13 +19,17 @@ export class FeignClientsFromSourceCodeProducer {
   public async transform(system: System): Promise<System> {
     const scanResults = await this.scanPathForFeignClients(this.config.getSourceFolder())
     for (const scanResult of scanResults) {
-      const sourceService = system.addMicroService(scanResult.serviceName, undefined, this.className)
-      const targetService = system.addMicroService(scanResult.feignClient.targetServiceName, undefined, this.className)
+      const metadata: Metadata = {
+        transformer: this.className,
+        context: scanResult.serviceName
+      }
+      const sourceService = system.addMicroService(scanResult.serviceName, undefined, metadata)
+      const targetService = system.addMicroService(scanResult.feignClient.targetServiceName, undefined, metadata)
 
       // adds links in reverse to visualize information flow, TODO: make this configurable
       const definedEndpoints = scanResult.feignClient.requestMappings
         .map(mapping => ({ path: mapping.value }))
-      const dataFlow = new SyncDataFlow(targetService, sourceService, { definedEndpoints }, this.className)
+      const dataFlow = new SyncDataFlow(targetService, sourceService, { definedEndpoints }, metadata)
       system.edges.push(dataFlow)
 
       this.logger.log(`added sync data flow: ${targetService.getPayload().name} -> ${sourceService.getPayload().name}`)

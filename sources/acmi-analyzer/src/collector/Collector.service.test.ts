@@ -85,7 +85,6 @@ interface Transformable {
 function getSpyOnMethodTransform<T extends Transformable>(type: Type<T>, app: INestApplication): any {
   const service: Transformable = app.get<T>(type)
   const spy = jest.spyOn(service, 'transform')
-  // spy.mockImplementation((system) => { return Promise.resolve(new System('')) as Promise<System> })
   spy.mockImplementation(async(system) => system)
   return spy
 }

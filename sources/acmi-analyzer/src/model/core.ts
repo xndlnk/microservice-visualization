@@ -71,8 +71,12 @@ export class Edge {
 export class Content {
   constructor(
     public type: string,
-    // additional info that holds the creator of this content
-    public transformerName?: string,
+    public metadata?: Metadata,
     public payload?: any
   ) { }
+}
+
+export type Metadata = {
+  transformer: string,
+  context: string
 }

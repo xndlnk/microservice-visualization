@@ -1,5 +1,5 @@
 import { TypedNode, TypedEdge } from './core-typed'
-import { Node } from './core'
+import { Node, Metadata } from './core'
 
 /**
  * this model provides type-safe access to nodes in a microservice system.
@@ -7,14 +7,14 @@ import { Node } from './core'
 
 export class System extends TypedNode<NamePayload> {
 
-  constructor(id: string, transformerName?: string) {
-    super(id, { name: id }, transformerName, System.name)
+  constructor(id: string, metadata?: Metadata) {
+    super(id, { name: id }, metadata, System.name)
   }
 
   // TODO: these public methods could be generated from a model definition in the future
 
-  public addMicroService(name: string, extraPayload: any = {}, transformerName?: string): MicroService {
-    return this.addOrExtendNamedNode<MicroService>(MicroService, name, extraPayload, transformerName)
+  public addMicroService(name: string, extraPayload: any = {}, metadata?: Metadata): MicroService {
+    return this.addOrExtendNamedNode<MicroService>(MicroService, name, extraPayload, metadata)
   }
 
   public getMicroServices(): MicroService[] {
@@ -25,8 +25,8 @@ export class System extends TypedNode<NamePayload> {
     return this.findNodeWithNameInPayload<MicroService>(MicroService, name)
   }
 
-  public addMessageExchange(name: string, extraPayload: any = {}, transformerName?: string): MessageExchange {
-    return this.addOrExtendNamedNode<MessageExchange>(MessageExchange, name, extraPayload, transformerName)
+  public addMessageExchange(name: string, extraPayload: any = {}, metadata?: Metadata): MessageExchange {
+    return this.addOrExtendNamedNode<MessageExchange>(MessageExchange, name, extraPayload, metadata)
   }
 
   public getMessageExchanges(): MessageExchange[] {
@@ -47,8 +47,8 @@ export class System extends TypedNode<NamePayload> {
 }
 
 export class MicroService extends TypedNode<MicroServicePayload> {
-  constructor(id: string, payload: MicroServicePayload, transformerName?: string) {
-    super(id, payload, transformerName, MicroService.name)
+  constructor(id: string, payload: MicroServicePayload, metadata?: Metadata) {
+    super(id, payload, metadata, MicroService.name)
   }
 }
 
@@ -67,8 +67,8 @@ type EnvEntry = {
 }
 
 export class MessageExchange extends TypedNode<NamePayload> {
-  constructor(id: string, payload: NamePayload, transformerName?: string) {
-    super(id, payload, transformerName, MessageExchange.name)
+  constructor(id: string, payload: NamePayload, metadata?: Metadata) {
+    super(id, payload, metadata, MessageExchange.name)
   }
 }
 
@@ -82,8 +82,8 @@ type AsyncEventFlowPayload = {
 
 // TODO: can this be simplified? too much boilerplate code for constructor
 export class AsyncEventFlow extends TypedEdge<AsyncEventFlowPayload> {
-  constructor(source: Node, target: Node, payload?: AsyncEventFlowPayload, transformerName?: string) {
-    super(source, target, payload, transformerName, AsyncEventFlow.name)
+  constructor(source: Node, target: Node, payload?: AsyncEventFlowPayload, metadata?: Metadata) {
+    super(source, target, payload, metadata, AsyncEventFlow.name)
   }
 }
 
@@ -96,7 +96,7 @@ type Endpoint = {
 }
 
 export class SyncDataFlow extends TypedEdge<SyncDataFlowPayload> {
-  constructor(source: Node, target: Node, payload?: SyncDataFlowPayload, transformerName?: string) {
-    super(source, target, payload, transformerName, SyncDataFlow.name)
+  constructor(source: Node, target: Node, payload?: SyncDataFlowPayload, metadata?: Metadata) {
+    super(source, target, payload, metadata, SyncDataFlow.name)
   }
 }

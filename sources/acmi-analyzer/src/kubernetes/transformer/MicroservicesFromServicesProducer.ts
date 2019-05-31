@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import { ConfigService } from '../../config/Config.service'
 import { System } from '../../model/ms'
 import { KubernetesApiService } from '../api/api.service'
+import { Metadata } from 'src/model/core'
 
 @Injectable()
 export class MicroservicesFromServicesProducer {
@@ -30,7 +31,12 @@ export class MicroservicesFromServicesProducer {
         // TODO: is this naming scheme with the dash in the pod name a standard or project-specific?
         // i.e. does is it need to be configurable?
         if (this.isPodExisting(pods, serviceName + '-')) {
-          system.addMicroService(serviceName, undefined, MicroservicesFromServicesProducer.name)
+          const metadata: Metadata = {
+            transformer: MicroservicesFromServicesProducer.name,
+            context: 'service ' + serviceName
+          }
+
+          system.addMicroService(serviceName, undefined, metadata)
           this.logger.log('added microservice ' + serviceName)
         } else {
           this.logger.log('not adding microservice ' + serviceName + ' because no pods were found')

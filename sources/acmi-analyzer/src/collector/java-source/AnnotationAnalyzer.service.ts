@@ -8,6 +8,7 @@ import { System, MicroService } from '../../model/ms'
 
 // tslint:disable-next-line
 import * as ms from '../../model/ms'
+import { Metadata } from 'src/model/core'
 
 const logger = new Logger('AnnotationAnalyzer')
 
@@ -149,6 +150,11 @@ function getActualValue(valueExpression: string, fileContent: string): string {
 function executeMappingForNode(system: System, service: MicroService,
   elementMapping: ElementMapping, nodeName: string) {
 
+  const metadata: Metadata = {
+    transformer: AnnotationAnalyzer.name,
+    context: 'service ' + service.id
+  }
+
   const payload = { name: nodeName }
   // TODO: better use system.addOrExtendNamedNode() but without type annotations
   // TODO: check for types to be present
@@ -156,15 +162,15 @@ function executeMappingForNode(system: System, service: MicroService,
   // TODO: same node must be created twice
   // const node = new ms[elementMapping.nodeTypeToCreate](nodeName, payload, AnnotationAnalyzer.name)
   // system.nodes.push(node)
-  const node = system.addMessageExchange(nodeName, undefined, AnnotationAnalyzer.name)
+  const node = system.addMessageExchange(nodeName, undefined, metadata)
 
   logger.log('added node ' + nodeName)
 
   if (elementMapping.nodeTypeDirection === 'target') {
-    const edge = new ms[elementMapping.edgeType](service, node, undefined, AnnotationAnalyzer.name)
+    const edge = new ms[elementMapping.edgeType](service, node, undefined, metadata)
     system.edges.push(edge)
   } else if (elementMapping.nodeTypeDirection === 'source') {
-    const edge = new ms[elementMapping.edgeType](node, service, undefined, AnnotationAnalyzer.name)
+    const edge = new ms[elementMapping.edgeType](node, service, undefined, metadata)
     system.edges.push(edge)
   } else {
     // TODO: log error

@@ -3,11 +3,11 @@ import * as _ from 'lodash'
 
 import { ConfigService } from '../../config/Config.service'
 import { System, AsyncEventFlow } from '../../model/ms'
+import { Metadata } from '../../model/core'
 
 @Injectable()
 export class ExchangesFromEnvVarsProducer {
-  private readonly className = ExchangesFromEnvVarsProducer.name
-  private readonly logger = new Logger(this.className)
+  private readonly logger = new Logger(ExchangesFromEnvVarsProducer.name)
 
   constructor(
     private readonly config: ConfigService
@@ -24,15 +24,20 @@ export class ExchangesFromEnvVarsProducer {
       if (env) {
         env.filter(envEntry => envEntry.name.includes('EXCHANGE'))
           .forEach(envEntry => {
+            const metadata: Metadata = {
+              transformer: ExchangesFromEnvVarsProducer.name,
+              context: 'env variable ' + envEntry.name
+            }
+
             if (envEntry.name.includes('OUTGOING')) {
-              const outgoingExchange = system.addMessageExchange(envEntry.value, undefined, this.className)
-              const edge = new AsyncEventFlow(service, outgoingExchange, undefined, this.className)
+              const outgoingExchange = system.addMessageExchange(envEntry.value, undefined, metadata)
+              const edge = new AsyncEventFlow(service, outgoingExchange, undefined, metadata)
               system.edges.push(edge)
               this.logger.log(`added outgoing exchange ${envEntry.value} for service ${service.getPayload().name}`)
             }
             if (envEntry.name.includes('INCOMING')) {
-              const incomingExchange = system.addMessageExchange(envEntry.value, undefined, this.className)
-              const eventFlow = new AsyncEventFlow(incomingExchange, service, undefined, this.className)
+              const incomingExchange = system.addMessageExchange(envEntry.value, undefined, metadata)
+              const eventFlow = new AsyncEventFlow(incomingExchange, service, undefined, metadata)
               system.edges.push(eventFlow)
               this.logger.log(`added incoming exchange ${envEntry.value} for service ${service.getPayload().name}`)
             }
