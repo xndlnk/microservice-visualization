@@ -27,12 +27,13 @@ export class GitStorage {
   async storeRepository(repositoryName: string): Promise<string | undefined> {
     for (const baseUrl of this.gitBaseUrls) {
       const url = baseUrl + '/' + repositoryName
-      // TODO: log warning if repositoryName could not be cloned from any url
       const localPath = await this.storeRepositoryFromUrl(repositoryName, url)
       if (localPath) {
         return localPath
       }
     }
+    // TODO: maybe there is some way to check if a repository should be stored?
+    this.logger.warn('could not store repository ' + repositoryName + ' from any base URL!')
   }
 
   clearRepository(directoryName: string) {
@@ -56,13 +57,13 @@ export class GitStorage {
   }
 
   private async storeRepositoryFromUrl(repositoryName: string, repositoryUrl: string): Promise<string | undefined> {
-    this.logger.log('storing repository ' + repositoryName + ' from url ' + repositoryUrl)
     const valid = await this.isRepositoryValid(repositoryUrl)
     if (!valid) {
-      this.logger.log('skipping invalid repository ' + repositoryUrl)
+      this.logger.log('could not read repository ' + repositoryUrl)
       return undefined
     }
 
+    this.logger.log('storing repository ' + repositoryUrl)
     if (this.isCloned(repositoryName)) {
       return this.updateRepository(repositoryName)
     } else {
