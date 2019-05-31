@@ -5,6 +5,11 @@ import { ConfigService } from '../../config/Config.service'
 import { System, AsyncEventFlow } from '../../model/ms'
 import { RabbitMqManagementApiService } from '../api/api.service'
 
+type Binding = {
+  exchange: string
+  queue: string
+}
+
 @Injectable()
 export class ExchangesFromApiProducer {
   private readonly logger = new Logger(ExchangesFromApiProducer.name)
@@ -15,12 +20,13 @@ export class ExchangesFromApiProducer {
   ) { }
 
   public async transform(system: System): Promise<System> {
-    const queues = await this.getQueueNames()
+    const queueNames = await this.getQueueNames()
 
-    const bindingPromises = queues.map(queue => this.getBinding(queue))
-    const bindings = await Promise.all(bindingPromises)
+    const bindingsPromises: Promise<Binding[]>[] = queueNames.map(queue => this.getBindings(queue))
+    const bindings: Binding[][] = await Promise.all(bindingsPromises)
+    const allBindings: Binding[] = _.flatMap(bindings)
 
-    this.addEdgesFromBindings(system, bindings)
+    this.addEdgesFromBindings(system, allBindings)
 
     return system
   }
@@ -32,7 +38,7 @@ export class ExchangesFromApiProducer {
     return queues.map(queue => { return queue.name })
   }
 
-  private addEdgesFromBindings(system: System, bindings) {
+  private addEdgesFromBindings(system: System, bindings: Binding[]) {
     bindings
       .filter(binding => binding.exchange !== '')
       .forEach(binding => {
@@ -49,17 +55,20 @@ export class ExchangesFromApiProducer {
     return system
   }
 
-  private async getBinding(queueName) {
+  private async getBindings(queueName): Promise<Binding[]> {
     const bindingsData = await this.apiService.getBindings(queueName)
 
-    let binding = { 'exchange': '', 'queue': queueName }
-    const firstBindingHavingSource = bindingsData.find(element => { return element.source !== '' })
-    if (firstBindingHavingSource) {
-      binding = { 'exchange': firstBindingHavingSource.source, 'queue': queueName }
-    }
-    this.logger.log('found binding of queue ' + binding.queue + ' to exchange ' + binding.exchange)
+    const bindings: Binding[] = bindingsData.filter(element => element.source !== '')
+      .map(element => {
+        const binding = {
+          'exchange': element.source,
+          'queue': queueName
+        }
+        this.logger.log('found binding of queue ' + binding.queue + ' to exchange ' + binding.exchange)
+        return binding
+      })
 
-    return binding
+    return bindings
   }
 
 }

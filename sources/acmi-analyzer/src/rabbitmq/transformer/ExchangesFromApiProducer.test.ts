@@ -20,7 +20,7 @@ describe(ExchangesFromApiProducer.name, () => {
     }).compile()
   })
 
-  it('transforms', async() => {
+  it('creates message exchanges and flows for each queue binding', async() => {
 
     const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
     jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
@@ -33,17 +33,19 @@ describe(ExchangesFromApiProducer.name, () => {
     expect(outputSystem).not.toBeNull()
 
     expect(outputSystem.getMicroServices()).toHaveLength(1)
-    expect(outputSystem.getMessageExchanges()).toHaveLength(1)
+    expect(outputSystem.getMessageExchanges()).toHaveLength(2)
 
-    const receiverServiceName = 'receiver-service'
-    const sourceExchangeName = 'source-exchange'
+    expect(outputSystem.getMicroServices()[0].getName()).toEqual('receiver-service')
+    expect(outputSystem.getMessageExchanges()[0].getName()).toEqual('source-exchange-1')
+    expect(outputSystem.getMessageExchanges()[1].getName()).toEqual('source-exchange-2')
 
-    expect(outputSystem.getMicroServices()[0].getPayload().name).toEqual(receiverServiceName)
-    expect(outputSystem.getMessageExchanges()[0].getPayload().name).toEqual(sourceExchangeName)
+    expect(outputSystem.getAsyncEventFlows()).toHaveLength(2)
 
-    expect(outputSystem.getAsyncEventFlows()).toHaveLength(1)
     expect(outputSystem.getAsyncEventFlows()[0].source.id).toEqual(outputSystem.getMessageExchanges()[0].id)
     expect(outputSystem.getAsyncEventFlows()[0].target.id).toEqual(outputSystem.getMicroServices()[0].id)
+
+    expect(outputSystem.getAsyncEventFlows()[1].source.id).toEqual(outputSystem.getMessageExchanges()[1].id)
+    expect(outputSystem.getAsyncEventFlows()[1].target.id).toEqual(outputSystem.getMicroServices()[0].id)
 
     verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
   })

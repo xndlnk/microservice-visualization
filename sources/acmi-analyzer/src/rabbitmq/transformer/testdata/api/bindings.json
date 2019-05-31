@@ -6,7 +6,13 @@
     "destination_type": "queue"
   },
   {
-    "source": "source-exchange",
+    "source": "source-exchange-1",
+    "vhost": "/",
+    "destination": "receiver-service.routingKey.publish.update",
+    "destination_type": "queue"
+  },
+  {
+    "source": "source-exchange-2",
     "vhost": "/",
     "destination": "receiver-service.routingKey.publish.update",
     "destination_type": "queue"
