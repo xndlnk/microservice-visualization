@@ -13,7 +13,9 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "~/*": ["src/*"]
+            "~/*": [
+                "src/*"
+            ]
         },
         "lib": [
             "es2015",
@@ -21,10 +23,14 @@
             "dom",
             "dom.iterable",
             "es2015.promise"
+        ],
+        "types": [
+            "mocha"
         ]
     },
     "exclude": [
         "node_modules",
-        "**/*.js"
+        "**/*.js",
+        "build"
     ]
 }
