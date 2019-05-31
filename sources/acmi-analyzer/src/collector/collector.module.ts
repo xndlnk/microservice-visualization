@@ -12,6 +12,7 @@ import { ConfigModule } from '../config/config.module'
 import { KubernetesModule } from '../kubernetes/kubernetes.module'
 import { RabbitMqModule } from '../rabbitmq/rabbitmq.module'
 import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnalysis.module'
+import { AnnotationAnalyzer } from './java-source/AnnotationAnalyzer.service'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnal
     CollectorService,
     ExcludedNodesRemover,
     FeignClientsFromSourceCodeProducer,
+    AnnotationAnalyzer,
     // INFO: actually this is no collector. we keep here for compatibility reasons
     // but it might be removed in the future.
     CabinetTransformer,

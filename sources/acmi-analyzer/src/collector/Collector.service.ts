@@ -26,6 +26,7 @@ export class CollectorService {
     system = await this.rabbitMqCollector.transform(system)
 
     system = await this.getProvider('FeignClientsFromSourceCodeProducer').transform(system)
+    system = await this.getProvider('AnnotationAnalyzer').transform(system)
 
     // INFO: actually this is no collector. we keep here for compatibility reasons
     // but it might be removed in the future.

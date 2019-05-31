@@ -13,6 +13,7 @@ import { KubernetesCollectorService } from '../kubernetes/collector/KubernetesCo
 
 import { RabbitMqModule } from '../rabbitmq/rabbitmq.module'
 import { RabbitMqCollectorService } from '../rabbitmq/collector/RabbitMqCollector.service'
+import { AnnotationAnalyzer } from './java-source/AnnotationAnalyzer.service'
 
 describe(CollectorService.name, () => {
   let app: INestApplication
@@ -43,6 +44,10 @@ describe(CollectorService.name, () => {
     const spyOnFeignProducer = jest.spyOn(feignProducer, 'transform')
     spyOnFeignProducer.mockImplementation(async(system) => system)
 
+    const annotationAnalyzer = app.get<AnnotationAnalyzer>(AnnotationAnalyzer)
+    const spyOnAnnotationAnalyzer = jest.spyOn(annotationAnalyzer, 'transform')
+    spyOnAnnotationAnalyzer.mockImplementation(async(system) => system)
+
     const excludedNodesRemover = app.get<ExcludedNodesRemover>(ExcludedNodesRemover)
     const spyOnExcludedNodesRemover = jest.spyOn(excludedNodesRemover, 'transform')
     spyOnExcludedNodesRemover.mockImplementation(async(system) => system)
@@ -59,9 +64,11 @@ describe(CollectorService.name, () => {
     expect(spyOnKubernetesCollector).toHaveBeenCalled()
     expect(spyOnRabbitMqCollector).toHaveBeenCalled()
 
+    expect(spyOnFeignProducer).toHaveBeenCalled()
+    expect(spyOnAnnotationAnalyzer).toHaveBeenCalled()
+
     expect(spyOnExcludedNodesRemover).toHaveBeenCalled()
     expect(spyOnCabinetLabelsTransformer).toHaveBeenCalled()
-    expect(spyOnFeignProducer).toHaveBeenCalled()
   })
 })
 
