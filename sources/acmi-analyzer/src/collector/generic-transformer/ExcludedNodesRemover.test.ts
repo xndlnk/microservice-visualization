@@ -28,5 +28,8 @@ describe(ExcludedNodesRemover.name, () => {
     expect(system.nodes).toHaveLength(1)
     expect(system.edges).toHaveLength(0)
     expect(system.nodes[0].content.payload.name).toEqual('B')
+
+    expect(system.content.metadata.transformer).toEqual(ExcludedNodesRemover.name)
+    expect(system.content.metadata.info).toEqual('removed: A, C')
   })
 })

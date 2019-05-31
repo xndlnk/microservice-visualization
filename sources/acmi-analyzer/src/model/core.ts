@@ -78,5 +78,6 @@ export class Content {
 
 export type Metadata = {
   transformer: string,
-  context: string
+  context: string,
+  info?: string
 }

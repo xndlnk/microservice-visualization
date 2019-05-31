@@ -27,15 +27,22 @@ export class ExcludedNodesRemover {
         return true
       })
 
+    const nodesRemoved: string[] = []
     system.nodes = system.nodes
       .filter(node => {
         const nodeName = node.content.payload.name
         if (namesToRemove.includes(nodeName)) {
+          nodesRemoved.push(nodeName)
           this.logger.log('removing excluded node named ' + nodeName)
           return false
         }
         return true
       })
+    system.content.metadata = {
+      transformer: ExcludedNodesRemover.name,
+      context: 'system.nodes',
+      info: 'removed: ' + nodesRemoved.join(', ')
+    }
 
     return system
   }
