@@ -4,10 +4,12 @@ import * as fs from 'fs'
 import { findFiles, getServiceNameFromPath, isNoSourceOfThisProject } from '../../source-code-analysis/file-analysis/analysis'
 
 import { ConfigService } from '../../config/Config.service'
-import { System, AsyncEventFlow, MicroService } from '../../model/ms'
+import { System, MicroService } from '../../model/ms'
 
 // tslint:disable-next-line
 import * as ms from '../../model/ms'
+
+const logger = new Logger('AnnotationAnalyzer')
 
 @Injectable()
 export class AnnotationAnalyzer {
@@ -41,14 +43,16 @@ export class AnnotationAnalyzer {
 
           const elementMappings: ElementMapping[] = [
             {
-              elementDefiningNodeName: 'sendToExchange',
+              elementName: 'sendToExchange',
               nodeTypeToCreate: 'MessageExchange',
-              nodeTypeDirection: 'target'
+              nodeTypeDirection: 'target',
+              edgeType: 'AsyncEventFlow'
             },
             {
-              elementDefiningNodeName: 'receiveFromExchange',
+              elementName: 'receiveFromExchange',
               nodeTypeToCreate: 'MessageExchange',
-              nodeTypeDirection: 'source'
+              nodeTypeDirection: 'source',
+              edgeType: 'AsyncEventFlow'
             }
           ]
 
@@ -59,9 +63,28 @@ export class AnnotationAnalyzer {
 }
 
 type ElementMapping = {
-  elementDefiningNodeName: string
+  /**
+   * name of the annotation element that defines the node name as its value
+   */
+  elementName: string
+
+  /**
+   * class name of the node to create for the element
+   */
   nodeTypeToCreate: string
-  nodeTypeDirection: string // source or target
+
+  /**
+   * specifies if the node will be the source or the target of the microservice
+   * that contains the annotation in its source code.
+   * values: only source or target
+   */
+  nodeTypeDirection: string
+
+  /**
+   * specifies the class name of the edge that will be created between the
+   * current microservice and the node
+   */
+  edgeType: string
 }
 
 function transformEachAnnotation(system: System, service: MicroService,
@@ -72,6 +95,10 @@ function transformEachAnnotation(system: System, service: MicroService,
   const annotationBodies = getAllPatternMatches<string>(annotationRegExp, fileContent,
     (matchArray: RegExpExecArray) => matchArray[1])
 
+  if (annotationBodies.length > 0) {
+    logger.log('analyzing annotation bodies in service ' + service.getName())
+  }
+
   annotationBodies.forEach(body => transformEachElement(system, service, fileContent,
     body, elementMappings))
 }
@@ -79,9 +106,12 @@ function transformEachAnnotation(system: System, service: MicroService,
 function transformEachElement(system: System, service: MicroService, fileContent: string,
   annotationBody: string, elementMappings: ElementMapping[]) {
 
+  logger.log('analyzing annotation body:\n' + annotationBody)
+
   for (const elementMapping of elementMappings) {
-    // TODO: process multiple mappings
-    const elementPattern = elementMapping.elementDefiningNodeName + '\\s*=\\s*([^\\),]+)'
+    logger.log('analyzing element:\n' + elementMapping.elementName)
+
+    const elementPattern = elementMapping.elementName + '\\s*=\\s*([^\\),]+)'
     const elementRegExp = new RegExp(elementPattern, 'g')
     const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
       (matchArray: RegExpExecArray) => matchArray[1])
@@ -94,24 +124,12 @@ function transformEachElement(system: System, service: MicroService, fileContent
 function transformElementValueExpression(system: System, service: MicroService, fileContent: string,
   elementMapping: ElementMapping, valueExpression: string) {
 
+  logger.log('analyzing value expression:\n' + valueExpression)
+
   const nodeName = getActualValue(valueExpression, fileContent)
   if (!nodeName) return
 
-  // TODO: better use system.addOrExtendNamedNode() but without type annotations
-  const payload = { name: nodeName }
-  const node = new ms[elementMapping.nodeTypeToCreate](nodeName, payload, AnnotationAnalyzer.name)
-  system.nodes.push(node)
-
-  if (elementMapping.nodeTypeDirection === 'target') {
-    // TODO: make AsyncEventFlow configurable
-    system.edges.push(new AsyncEventFlow(service, node,
-      undefined, AnnotationAnalyzer.name))
-  } else if (elementMapping.nodeTypeDirection === 'source') {
-    system.edges.push(new AsyncEventFlow(node, service,
-      undefined, AnnotationAnalyzer.name))
-  } else {
-    // TODO: log error
-  }
+  executeMappingForNode(system, service, elementMapping, nodeName)
 }
 
 function getActualValue(valueExpression: string, fileContent: string): string {
@@ -125,6 +143,31 @@ function getActualValue(valueExpression: string, fileContent: string): string {
     const assignmentValues = getAllPatternMatches<string>(assignmentRegExp, fileContent,
       (matchArray: RegExpExecArray) => matchArray[1])
     return assignmentValues.length > 0 ? assignmentValues[0] : undefined
+  }
+}
+
+function executeMappingForNode(system: System, service: MicroService,
+  elementMapping: ElementMapping, nodeName: string) {
+
+  const payload = { name: nodeName }
+  // TODO: better use system.addOrExtendNamedNode() but without type annotations
+  // TODO: check for types to be present
+
+  // TODO: same node must be created twice
+  // const node = new ms[elementMapping.nodeTypeToCreate](nodeName, payload, AnnotationAnalyzer.name)
+  // system.nodes.push(node)
+  const node = system.addMessageExchange(nodeName, undefined, AnnotationAnalyzer.name)
+
+  logger.log('added node ' + nodeName)
+
+  if (elementMapping.nodeTypeDirection === 'target') {
+    const edge = new ms[elementMapping.edgeType](service, node, undefined, AnnotationAnalyzer.name)
+    system.edges.push(edge)
+  } else if (elementMapping.nodeTypeDirection === 'source') {
+    const edge = new ms[elementMapping.edgeType](node, service, undefined, AnnotationAnalyzer.name)
+    system.edges.push(edge)
+  } else {
+    // TODO: log error
   }
 }
 

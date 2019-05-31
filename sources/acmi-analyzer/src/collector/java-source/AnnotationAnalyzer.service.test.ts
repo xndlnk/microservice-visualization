@@ -52,6 +52,25 @@ describe(AnnotationAnalyzer.name, () => {
     verifyEachContentHasTransformer(outputSystem, AnnotationAnalyzer.name)
   })
 
+  it('re-uses exchanges when they already exist', async() => {
+    const config = app.get<ConfigService>(ConfigService)
+    jest.spyOn(config, 'getSourceFolder').mockImplementation(
+      () => process.cwd() + '/src/collector/java-source/testdata/source-folder'
+    )
+
+    const inputSystem = new System('test')
+    inputSystem.addMicroService('service1')
+    inputSystem.addMessageExchange('source-exchange-X')
+
+    const transformer = app.get<AnnotationAnalyzer>(AnnotationAnalyzer)
+    const outputSystem = await transformer.transform(inputSystem)
+
+    expect(outputSystem.findMicroService('service1')).toBeDefined()
+    expect(outputSystem.nodes.filter(node => node.getName() === 'source-exchange-X')).toHaveLength(1)
+
+    verifyEachContentHasTransformer(outputSystem, AnnotationAnalyzer.name)
+  })
+
   it('ignores source of services which are not part of the input system', async() => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
