@@ -38,7 +38,7 @@ export class CollectorController {
     for (const microservice of microservices) {
       // TODO: this could be faster when we let store be executed in parallel until a certain limit is reached.
       // see https://stackoverflow.com/questions/53144401/limit-the-number-of-concurrent-child-processes-spawned-in-a-loop-in-node-js
-      await this.gitStorage.gitStorage.storeRepository(microservice.getName())
+      await this.gitStorage.storeRepository(microservice.getName())
     }
     this.logger.log('finished storing system source')
   }

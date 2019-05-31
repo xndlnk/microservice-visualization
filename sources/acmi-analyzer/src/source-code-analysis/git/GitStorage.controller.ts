@@ -4,20 +4,17 @@ import { GitStorage, StorageStatus } from './GitStorage'
 
 @Controller('source')
 export class GitStorageController {
-  private readonly sourceStorage: GitStorage
 
   constructor(
-    private readonly sourceStorageService: GitStorageService
-  ) {
-    this.sourceStorage = sourceStorageService.gitStorage
-  }
+    private readonly gitStorage: GitStorageService
+  ) { }
 
   // parallel request to the same endpoint will be handled one after the other, i.e. sequentially.
   // in contrast, requests to different endpoints are handled in parallel.
 
   @Get('status')
   async getStorageStatus(): Promise<StorageStatus[]> {
-    return this.sourceStorage.getStorageStatus()
+    return this.gitStorage.getStorageStatus()
   }
 
   @Get('store/repository/:repositoryName')
@@ -29,12 +26,12 @@ export class GitStorageController {
       return this.storeRepositorySync(repositoryName)
     }
 
-    this.sourceStorage.storeRepository(repositoryName)
+    this.gitStorage.storeRepository(repositoryName)
     return 'started storing in background ...'
   }
 
   private async storeRepositorySync(repositoryName: string): Promise<string> {
-    const localPath = await this.sourceStorage.storeRepository(repositoryName)
+    const localPath = await this.gitStorage.storeRepository(repositoryName)
     if (!localPath) {
       return 'storing failed!'
     }

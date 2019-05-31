@@ -1,13 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common'
 
 import { ConfigService } from '../../config/Config.service'
-import { GitStorage } from './GitStorage'
+import { GitStorage, StorageStatus } from './GitStorage'
 
 @Injectable()
 export class GitStorageService {
-  public readonly gitStorage: GitStorage
+  private readonly gitStorage: GitStorage
 
   constructor(private config: ConfigService) {
     this.gitStorage = new GitStorage(config.getSourceFolder(), config.getGitBaseUrls())
+  }
+
+  async storeRepository(repositoryName: string): Promise<string | undefined> {
+    return this.gitStorage.storeRepository(repositoryName)
+  }
+
+  async getStorageStatus(): Promise<StorageStatus[]> {
+    return this.gitStorage.getStorageStatus()
+  }
+
+  clearRepository(directoryName: string) {
+    this.gitStorage.clearRepository(directoryName)
   }
 }
