@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '../config/config.module'
 import { GitStorageController } from './git/GitStorage.controller'
 import { GitStorageService } from './git/GitStorage.service'
+import { SourceLocationDecorator } from './git/SourceLocationDecorator.service'
 
 @Module({
   imports: [
@@ -12,10 +13,12 @@ import { GitStorageService } from './git/GitStorage.service'
     GitStorageController
   ],
   providers: [
-    GitStorageService
+    GitStorageService,
+    SourceLocationDecorator
   ],
   exports: [
-    GitStorageService
+    GitStorageService,
+    SourceLocationDecorator
   ]
 })
 export class SourceCodeAnalysisModule { }

@@ -8,6 +8,7 @@ import * as rimraf from 'rimraf'
 
 export type StorageStatus = {
   name: string,
+  location: string,
   lastModified: Date
 }
 
@@ -46,9 +47,11 @@ export class GitStorage {
 
     const repositoriesStatus = repositories.map(async repository => {
       const stat = promisify(fs.stat)
-      const stats = await stat(this.sourceFolder + '/' + repository)
+      const location = this.sourceFolder + '/' + repository
+      const stats = await stat(location)
       return {
         name: repository,
+        location,
         lastModified: stats.mtime
       }
     })

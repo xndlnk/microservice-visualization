@@ -14,6 +14,8 @@ import { KubernetesCollectorService } from '../kubernetes/collector/KubernetesCo
 import { RabbitMqModule } from '../rabbitmq/rabbitmq.module'
 import { RabbitMqCollectorService } from '../rabbitmq/collector/RabbitMqCollector.service'
 import { AnnotationAnalyzer } from './java-source/AnnotationAnalyzer.service'
+import { System } from 'src/model/ms'
+import { SourceLocationDecorator } from '../source-code-analysis/git/SourceLocationDecorator.service'
 
 describe(CollectorService.name, () => {
   let app: INestApplication
@@ -56,6 +58,8 @@ describe(CollectorService.name, () => {
     const spyOnCabinetLabelsTransformer = jest.spyOn(cabinetTransformer, 'transform')
     spyOnCabinetLabelsTransformer.mockImplementation(async(system) => system)
 
+    const sourceLocationDecoratorSpy = getSpyOnMethodTransform<SourceLocationDecorator>(SourceLocationDecorator, app)
+
     const orchestrator = app.get<CollectorService>(CollectorService)
     const system = await orchestrator.getSystem()
 
@@ -69,16 +73,19 @@ describe(CollectorService.name, () => {
 
     expect(spyOnExcludedNodesRemover).toHaveBeenCalled()
     expect(spyOnCabinetLabelsTransformer).toHaveBeenCalled()
+
+    expect(sourceLocationDecoratorSpy).toHaveBeenCalled()
   })
 })
 
-type Transformable = {
-  transform
+interface Transformable {
+  transform(system: System): Promise<System>
 }
 
 function getSpyOnMethodTransform<T extends Transformable>(type: Type<T>, app: INestApplication): any {
-  const service = app.get<T>(type)
+  const service: Transformable = app.get<T>(type)
   const spy = jest.spyOn(service, 'transform')
-  // spy.mockImplementation(async(system) => system)
+  // spy.mockImplementation((system) => { return Promise.resolve(new System('')) as Promise<System> })
+  spy.mockImplementation(async(system) => system)
   return spy
 }

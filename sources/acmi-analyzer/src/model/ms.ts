@@ -58,6 +58,7 @@ export class MicroServicePayload {
   tenant?: string
   env?: EnvEntry[]
   labels?: any
+  sourceLocation?: string
 }
 
 type EnvEntry = {
