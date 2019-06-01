@@ -4,7 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
-    "allowJs": false,
+    "allowJs": true,
     "noImplicitAny": false,
     // "strict": true,
     "forceConsistentCasingInFileNames": true,
