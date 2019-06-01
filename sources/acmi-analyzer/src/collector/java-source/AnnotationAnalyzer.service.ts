@@ -14,8 +14,7 @@ const logger = new Logger('AnnotationAnalyzer')
 
 @Injectable()
 export class AnnotationAnalyzer {
-  private readonly className = AnnotationAnalyzer.name
-  private readonly logger = new Logger(this.className)
+  private readonly logger = new Logger(AnnotationAnalyzer.name)
 
   constructor(
     private readonly config: ConfigService
@@ -81,10 +80,6 @@ function transformEachAnnotation(system: System, service: MicroService,
   const annotationBodies = getAllPatternMatches<string>(annotationRegExp, fileContent,
     (matchArray: RegExpExecArray) => matchArray[1])
 
-  if (annotationBodies.length > 0) {
-    logger.log('analyzing annotation bodies in service ' + service.getName())
-  }
-
   annotationBodies.forEach(body => transformEachElement(system, service, fileContent,
     body, elementMappings))
 }
@@ -92,11 +87,9 @@ function transformEachAnnotation(system: System, service: MicroService,
 function transformEachElement(system: System, service: MicroService, fileContent: string,
   annotationBody: string, elementMappings: ElementMapping[]) {
 
-  logger.log('analyzing annotation body:\n' + annotationBody)
+  logger.log('analyzing annotation body in service ' + service.getName() + ':\n' + annotationBody)
 
   for (const elementMapping of elementMappings) {
-    logger.log('analyzing element:\n' + elementMapping.elementName)
-
     const elementPattern = elementMapping.elementName + '\\s*=\\s*([^\\),]+)'
     const elementRegExp = new RegExp(elementPattern, 'g')
     const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
@@ -109,8 +102,6 @@ function transformEachElement(system: System, service: MicroService, fileContent
 
 function transformElementValueExpression(system: System, service: MicroService, fileContent: string,
   elementMapping: ElementMapping, valueExpression: string) {
-
-  logger.log('analyzing value expression:\n' + valueExpression)
 
   const nodeName = getActualValue(valueExpression, fileContent)
   if (!nodeName) return
@@ -148,14 +139,15 @@ function executeMappingForNode(system: System, service: MicroService,
   // const node = new ms[elementMapping.nodeTypeToCreate](nodeName, payload, AnnotationAnalyzer.name)
   // system.nodes.push(node)
   const node = system.addMessageExchange(nodeName, undefined, metadata)
-
-  logger.log('added node ' + nodeName)
+  logger.log('added ' + elementMapping.nodeTypeToCreate + ' with name ' + nodeName)
 
   if (elementMapping.nodeTypeDirection === 'target') {
     const edge = new ms[elementMapping.edgeType](service, node, undefined, metadata)
     system.edges.push(edge)
+    logger.log('added ' + elementMapping.edgeType + ': ' + service.id + ' -> ' + node.id)
   } else if (elementMapping.nodeTypeDirection === 'source') {
     const edge = new ms[elementMapping.edgeType](node, service, undefined, metadata)
+    logger.log('added ' + elementMapping.edgeType + ': ' + node.id + ' -> ' + service.id)
     system.edges.push(edge)
   } else {
     // TODO: log error

@@ -65,7 +65,7 @@ export class CustomCollectorService {
       transformer: 'custom git sources to microservices',
       context: this.configService.getSourceFolder()
     }
-    const system = new System('source')
+    const system = new System('System')
     storageStatus.forEach(status => {
       system.addMicroService(status.name, undefined, metadata)
     })

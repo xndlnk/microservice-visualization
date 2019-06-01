@@ -5,7 +5,8 @@
 ### Library-based Customization
 
 - 🔷 build npm library with Nest modules
-- 🔷 allow to provide custom collector
+  - export file-analysis
+  - export k8s and rabbitmq transformers
 - ️❇️ generalize java annotation analyzer
 
 ### Improved Debugging
