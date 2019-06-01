@@ -6,7 +6,7 @@ import { CabinetTransformer } from './generic-transformer/CabinetTransformer'
 import { MicroserviceWithMessageExchangeMerger } from './generic-transformer/MicroserviceWithMessageExchangeMerger'
 import { ConfigModule } from '../config/config.module'
 import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnalysis.module'
-import { AnnotationAnalyzer } from './java-source/AnnotationAnalyzer.service'
+import { AnnotationAnalyzer, ElementMapping } from './java-source/AnnotationAnalyzer.service'
 
 @Module({
   imports: [
@@ -33,6 +33,6 @@ import { AnnotationAnalyzer } from './java-source/AnnotationAnalyzer.service'
 class TransformerModule { }
 
 export {
-  TransformerModule, ExcludedNodesRemover, FeignClientsFromSourceCodeProducer, AnnotationAnalyzer,
+  TransformerModule, ExcludedNodesRemover, FeignClientsFromSourceCodeProducer, AnnotationAnalyzer, ElementMapping,
   CabinetTransformer, MicroserviceWithMessageExchangeMerger
 }

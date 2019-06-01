@@ -4,7 +4,7 @@ import { ConfigService } from '../../config/Config.service'
 
 import { System, AsyncEventFlow } from '../../model/ms'
 import { verifyEachContentHasTransformer } from '../../test/verifiers'
-import { AnnotationAnalyzer } from './AnnotationAnalyzer.service'
+import { AnnotationAnalyzer, ElementMapping } from './AnnotationAnalyzer.service'
 
 describe(AnnotationAnalyzer.name, () => {
   let app: TestingModule
@@ -25,6 +25,21 @@ describe(AnnotationAnalyzer.name, () => {
     }).compile()
   })
 
+  const elementMappings: ElementMapping[] = [
+    {
+      elementName: 'sendToExchange',
+      nodeTypeToCreate: 'MessageExchange',
+      nodeTypeDirection: 'target',
+      edgeType: 'AsyncEventFlow'
+    },
+    {
+      elementName: 'receiveFromExchange',
+      nodeTypeToCreate: 'MessageExchange',
+      nodeTypeDirection: 'source',
+      edgeType: 'AsyncEventFlow'
+    }
+  ]
+
   it('creates an async info flow for multiple annotations in the same file', async() => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
@@ -35,7 +50,7 @@ describe(AnnotationAnalyzer.name, () => {
     inputSystem.addMicroService('service1')
 
     const transformer = app.get<AnnotationAnalyzer>(AnnotationAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem)
+    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
@@ -63,7 +78,7 @@ describe(AnnotationAnalyzer.name, () => {
     inputSystem.addMessageExchange('source-exchange-X')
 
     const transformer = app.get<AnnotationAnalyzer>(AnnotationAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem)
+    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.nodes.filter(node => node.getName() === 'source-exchange-X')).toHaveLength(1)
@@ -80,7 +95,7 @@ describe(AnnotationAnalyzer.name, () => {
     const inputSystem = new System('test')
 
     const transformer = app.get<AnnotationAnalyzer>(AnnotationAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem)
+    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
 
     expect(outputSystem.findMicroService('service1')).toBeUndefined()
     expect(outputSystem.findMessageExchange('target-exchange')).toBeUndefined()
@@ -96,7 +111,7 @@ describe(AnnotationAnalyzer.name, () => {
     inputSystem.addMicroService('service1')
 
     const transformer = app.get<AnnotationAnalyzer>(AnnotationAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem)
+    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('source-exchange-X')).toBeDefined()

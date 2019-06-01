@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
+import { ModuleRef } from '@nestjs/core'
 import * as _ from 'lodash'
 
 import { System, MicroService } from '../model/ms'
-import { ModuleRef } from '@nestjs/core'
 import { KubernetesCollectorService } from '../kubernetes/collector/KubernetesCollector.service'
 import { RabbitMqCollectorService } from '../rabbitmq/collector/RabbitMqCollector.service'
 
@@ -26,7 +26,6 @@ export class CollectorService {
     system = await this.rabbitMqCollector.transform(system)
 
     system = await this.getProvider('FeignClientsFromSourceCodeProducer').transform(system)
-    system = await this.getProvider('AnnotationAnalyzer').transform(system)
     system = await this.getProvider('SourceLocationDecorator').transform(system)
 
     // INFO: actually this is no collector. we keep here for compatibility reasons

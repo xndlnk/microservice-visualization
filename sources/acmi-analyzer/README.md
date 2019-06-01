@@ -1,6 +1,6 @@
 # acmi-analyzer
 
-The acmi-analyzer is the analysis part of the architecture analyzer for microservice systems (acmi). It can discover the architecture of a microservice system by collecting information about the system from different sources.
+The acmi-analyzer can discover the architecture of a microservice system by collecting information about the system from different sources.
 
 ## Installation
 

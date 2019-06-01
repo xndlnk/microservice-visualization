@@ -21,12 +21,12 @@ export class AnnotationAnalyzer {
     private readonly config: ConfigService
   ) { }
 
-  public async transform(system: System): Promise<System> {
-    await this.transformSourcesInPath(system, this.config.getSourceFolder())
+  public async transform(system: System, annotation: string, elementMappings: ElementMapping[]): Promise<System> {
+    await this.transformSourcesInPath(system, this.config.getSourceFolder(), annotation, elementMappings)
     return system
   }
 
-  private async transformSourcesInPath(system: System, path: string) {
+  private async transformSourcesInPath(system: System, path: string, annotation: string, elementMappings: ElementMapping[]) {
     this.logger.log('scanning java files in ' + path)
     const javaFiles = await findFiles(path, '.java')
     this.logger.log('found ' + javaFiles.length + ' java files')
@@ -42,28 +42,13 @@ export class AnnotationAnalyzer {
         } else {
           const fileContent = fs.readFileSync(file, 'utf8')
 
-          const elementMappings: ElementMapping[] = [
-            {
-              elementName: 'sendToExchange',
-              nodeTypeToCreate: 'MessageExchange',
-              nodeTypeDirection: 'target',
-              edgeType: 'AsyncEventFlow'
-            },
-            {
-              elementName: 'receiveFromExchange',
-              nodeTypeToCreate: 'MessageExchange',
-              nodeTypeDirection: 'source',
-              edgeType: 'AsyncEventFlow'
-            }
-          ]
-
-          transformEachAnnotation(system, service, 'EventProcessor', fileContent, elementMappings)
+          transformEachAnnotation(system, service, annotation, fileContent, elementMappings)
         }
       })
   }
 }
 
-type ElementMapping = {
+export type ElementMapping = {
   /**
    * name of the annotation element that defines the node name as its value
    */
