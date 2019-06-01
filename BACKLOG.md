@@ -2,26 +2,19 @@
 
 ## Next Tasks
 
-### Library-based Customization
-
-- 🔷 build npm library with Nest modules
-  - export file-analysis
-  - export k8s and rabbitmq transformers
-- ️❇️ generalize java annotation analyzer
-
 ### Improved Debugging
 
-- ️❇️ add debug mode to viewer
-- ️❇️ display system name in viewer title
 - ️❇️ display removed nodes from metadata
 - ️❇️ use red color for nodes without source and make this a configurable option
+- ️❇️ add debug mode to viewer
 - ️❇️ add no-cache action to viewer
 
 ### Release v1.0
 
 - ️🔷 move service exchange merger from analyzer to viewer and make it a selectable action of the view
 - 🔷 mark old analyzer library as deprecated
-- 🔷 rename viewer to acmi-viewer-d3, align package.json scripts: yarn start...
+- 🔷 rename components to tadis...
+- 🔷 align package.json scripts: yarn start...
 - 🔷 create new release bundle of analyzer + viewer with equal versions
 - 🔷 update documentation
 

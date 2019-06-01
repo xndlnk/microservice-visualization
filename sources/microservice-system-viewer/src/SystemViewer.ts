@@ -22,6 +22,7 @@ export function load() {
     .get(systemUrl)
     .then((response) => {
       const rawSystem = response.data
+      displaySystemTitle(rawSystem)
       displaySystem(rawSystem)
     })
     .catch((error) => {
@@ -46,14 +47,22 @@ export function load() {
 
 function displayVersion() {
   axios.default
-  .get(getBaseUrlInCurrentEnvironment() + '/version')
-  .then((response) => {
-    const version = response.data
-    select('#title')
-      .select('a')
-      .attr('href', 'https://github.com/MaibornWolff/microservice-visualization/releases/tag/v' + version)
-      .text('Viewer v' + version)
-  })
+    .get(getBaseUrlInCurrentEnvironment() + '/version')
+    .then((response) => {
+      const version = response.data
+      select('#title')
+        .select('a')
+        .attr('href', 'https://github.com/MaibornWolff/microservice-visualization/releases/tag/v' + version)
+        .text('Viewer v' + version)
+    })
+}
+
+function displaySystemTitle(rawSystem: INode) {
+  const system = Node.ofRawNode(rawSystem)
+  if (system.getName() && system.getName() !== '') {
+    select('#system-title')
+      .text('System Architecture of ' + system.getName())
+  }
 }
 
 function displaySystem(rawSystem: INode) {
