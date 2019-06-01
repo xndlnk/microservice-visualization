@@ -21,4 +21,6 @@ import { SourceLocationDecorator } from './git/SourceLocationDecorator.service'
     SourceLocationDecorator
   ]
 })
-export class SourceCodeAnalysisModule { }
+class SourceCodeAnalysisModule { }
+
+export { SourceCodeAnalysisModule, GitStorageService, SourceLocationDecorator }

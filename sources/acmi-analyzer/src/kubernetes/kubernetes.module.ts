@@ -24,4 +24,6 @@ import { KubernetesCollectorService } from './collector/KubernetesCollector.serv
     KubernetesCollectorService
   ]
 })
-export class KubernetesModule { }
+class KubernetesModule { }
+
+export { KubernetesModule, KubernetesCollectorService }

@@ -1,10 +1,5 @@
 import { Module } from '@nestjs/common'
-
-import { CollectorService } from '../collector/Collector.service'
-import { CollectorController } from '../collector/Collector.controller'
-import { ConfigModule } from '../config/config.module'
-import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnalysis.module'
-import { TransformerModule } from '../collector/transformer.module'
+import { CollectorService, ConfigModule, CollectorController, SourceCodeAnalysisModule } from 'acmi-analyzer'
 
 import { CustomCollectorService } from './CustomCollector.service'
 
@@ -16,8 +11,7 @@ const customCollectorProvider = {
 @Module({
   imports: [
     ConfigModule,
-    SourceCodeAnalysisModule,
-    TransformerModule
+    SourceCodeAnalysisModule
   ],
   controllers: [
     CollectorController

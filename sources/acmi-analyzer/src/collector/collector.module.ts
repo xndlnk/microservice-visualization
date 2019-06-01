@@ -23,4 +23,6 @@ import { TransformerModule } from './transformer.module'
     CollectorService
   ]
 })
-export class CollectorModule { }
+class CollectorModule { }
+
+export { CollectorModule, CollectorService, CollectorController }

@@ -24,4 +24,6 @@ import { RabbitMqCollectorService } from './collector/RabbitMqCollector.service'
     RabbitMqCollectorService
   ]
 })
-export class RabbitMqModule { }
+class RabbitMqModule { }
+
+export { RabbitMqModule, RabbitMqCollectorService }

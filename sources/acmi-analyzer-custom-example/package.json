@@ -1,0 +1,53 @@
+{
+  "name": "acmi-analyzer-custom-example",
+  "version": "0.13.7",
+  "description": "this example shows how the acmi-analyzer can be used as a library to write a customer analyzer.",
+  "files": [
+    "build/src"
+  ],
+  "license": "Apache-2.0",
+  "author": "Andreas Blunk, MaibornWolff GmbH",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start:prod": "node build/src/main.js",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "@nestjs/common": "^5.4.0",
+    "@nestjs/core": "^5.4.0",
+    "acmi-analyzer": "^0.13.7",
+    "dotenv": "^7.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^5.4.0",
+    "@types/express": "^4.16.0",
+    "@types/jest": "^23.3.13",
+    "@types/node": "^11.11.3",
+    "@types/supertest": "^2.0.7",
+    "jest": "^23.6.0",
+    "supertest": "^3.4.1",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^8.0.3",
+    "tsconfig-paths": "^3.8.0",
+    "tslint": "5.14.0",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.3.3333"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".test.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}

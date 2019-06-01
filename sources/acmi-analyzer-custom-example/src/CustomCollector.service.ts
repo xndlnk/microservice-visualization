@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import * as _ from 'lodash'
-
-import { System, MicroService } from '../model/ms'
+import { System, MicroService } from 'acmi-analyzer'
 
 @Injectable()
 export class CustomCollectorService {

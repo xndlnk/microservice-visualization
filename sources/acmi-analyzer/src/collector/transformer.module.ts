@@ -30,4 +30,9 @@ import { AnnotationAnalyzer } from './java-source/AnnotationAnalyzer.service'
     MicroserviceWithMessageExchangeMerger
   ]
 })
-export class TransformerModule { }
+class TransformerModule { }
+
+export {
+  TransformerModule, ExcludedNodesRemover, FeignClientsFromSourceCodeProducer, AnnotationAnalyzer,
+  CabinetTransformer, MicroserviceWithMessageExchangeMerger
+}
