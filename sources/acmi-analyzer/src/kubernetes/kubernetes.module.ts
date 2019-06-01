@@ -21,9 +21,20 @@ import { KubernetesCollectorService } from './collector/KubernetesCollector.serv
     KubernetesCollectorService
   ],
   exports: [
+    KubernetesApiService,
+    EnvVarsFromPodsDecorator,
+    LabelsFromDeploymentsDecorator,
+    MicroservicesFromServicesProducer,
     KubernetesCollectorService
   ]
 })
 class KubernetesModule { }
 
-export { KubernetesModule, KubernetesCollectorService }
+export {
+  KubernetesModule,
+  KubernetesApiService,
+  EnvVarsFromPodsDecorator,
+  LabelsFromDeploymentsDecorator,
+  MicroservicesFromServicesProducer,
+  KubernetesCollectorService
+}

@@ -4,6 +4,7 @@ import { ConfigModule } from '../config/config.module'
 import { GitStorageController } from './git/GitStorage.controller'
 import { GitStorageService } from './git/GitStorage.service'
 import { SourceLocationDecorator } from './git/SourceLocationDecorator.service'
+import * as fileAnalysis from './file-analysis/analysis'
 
 @Module({
   imports: [
@@ -23,4 +24,4 @@ import { SourceLocationDecorator } from './git/SourceLocationDecorator.service'
 })
 class SourceCodeAnalysisModule { }
 
-export { SourceCodeAnalysisModule, GitStorageService, SourceLocationDecorator }
+export { SourceCodeAnalysisModule, GitStorageService, SourceLocationDecorator, fileAnalysis }

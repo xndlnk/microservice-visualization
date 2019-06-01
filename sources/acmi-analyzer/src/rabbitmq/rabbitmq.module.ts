@@ -21,9 +21,20 @@ import { RabbitMqCollectorService } from './collector/RabbitMqCollector.service'
     RabbitMqCollectorService
   ],
   exports: [
+    RabbitMqManagementApiService,
+    ExchangesFromApiProducer,
+    ExchangesFromEnvVarsProducer,
+    ExchangesFromSourceCodeProducer,
     RabbitMqCollectorService
   ]
 })
 class RabbitMqModule { }
 
-export { RabbitMqModule, RabbitMqCollectorService }
+export {
+  RabbitMqModule,
+  RabbitMqManagementApiService,
+  ExchangesFromApiProducer,
+  ExchangesFromEnvVarsProducer,
+  ExchangesFromSourceCodeProducer,
+  RabbitMqCollectorService
+}
