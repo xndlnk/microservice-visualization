@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing'
 import { INestApplication, Type } from '@nestjs/common'
 
-import { CollectorModule } from './collector.module'
 import { CollectorService } from './Collector.service'
+import { CollectorModule } from './collector.module'
 
 import { ExcludedNodesRemover } from './generic-transformer/ExcludedNodesRemover'
 import { CabinetTransformer } from './generic-transformer/CabinetTransformer'

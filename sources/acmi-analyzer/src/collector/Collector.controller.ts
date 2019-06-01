@@ -1,4 +1,4 @@
-import { Get, Controller, Logger, Query } from '@nestjs/common'
+import { Get, Controller, Logger, Query, Inject } from '@nestjs/common'
 
 import { CollectorService } from './Collector.service'
 import { GitStorageService } from '../source-code-analysis/git/GitStorage.service'
