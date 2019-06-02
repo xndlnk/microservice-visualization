@@ -2,10 +2,6 @@
 
 ## Next Tasks
 
-### Improved Debugging
-
-- ️❇️ add debug mode to viewer
-
 ### Release v1.0
 
 - ️🔷 move service exchange merger from analyzer to viewer and make it a selectable action of the view
@@ -14,6 +10,10 @@
 - 🔷 align package.json scripts: yarn start...
 - 🔷 create new release bundle of analyzer + viewer with equal versions
 - 🔷 update documentation
+
+### Improved Debugging
+
+- ️❇️ add debug mode to viewer
 
 ### Others
 
