@@ -95,12 +95,35 @@ type RequestMapping = {
 }
 
 function getRequestMappings(fileContent: string): RequestMapping[] {
+  const requestBodyList = getAllPatternMatches(
+    /@RequestMapping\s*\(([^\)]+)\)/ig,
+    fileContent,
+    matchArray => matchArray[1])
+
   const mappings = []
-  const pattern = /@RequestMapping\s*\(\s*(value\s*=)?\s*"(.+)"/ig
-  let matches = pattern.exec(fileContent)
-  while (matches != null) {
-    mappings.push({ value: matches[2] })
-    matches = pattern.exec(fileContent)
-  }
+  requestBodyList.forEach(requestBody => {
+    const valueElements = getAllPatternMatches(
+      /value\s*=\s*"([^"]+)"/ig,
+      requestBody,
+      matchArray => matchArray[1])
+
+    if (valueElements.length > 0) {
+      mappings.push({ value: valueElements[0] })
+    }
+  })
+
   return mappings
+}
+
+function getAllPatternMatches<MatchType>(pattern: RegExp, content: string,
+  matchTransformer: ((matchArray: RegExpExecArray) => MatchType)): MatchType[] {
+  const allMatches: MatchType[] = []
+
+  let matches = pattern.exec(content)
+  while (matches != null) {
+    allMatches.push(matchTransformer(matches))
+    matches = pattern.exec(content)
+  }
+
+  return allMatches
 }

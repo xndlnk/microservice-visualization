@@ -28,7 +28,6 @@ describe(FeignClientsFromSourceCodeProducer.name, () => {
   it('transforms', async() => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
-      // TODO: move test data to feign folder
       () => process.cwd() + '/src/collector/feign/testdata/source-folder'
     )
 
@@ -52,6 +51,10 @@ describe(FeignClientsFromSourceCodeProducer.name, () => {
       .toEqual([
         { path: '/rest/path/1' },
         { path: '/rest/path/2' }
+      ])
+    expect(outputSystem.getSyncDataFlows()[1].getPayload().definedEndpoints)
+      .toEqual([
+        { path: '/target-service-2/{zc}/' }
       ])
 
     verifyEachContentHasTransformer(outputSystem, FeignClientsFromSourceCodeProducer.name)
