@@ -32,6 +32,11 @@ export class MenuActions {
       new NodeActions(this.systemRenderer, this.graphService).install()
     })
 
+    d3.select('#reload-no-cache-link').on('click', () => {
+      const url = getBaseUrlInCurrentEnvironment() + '/html?no-cache=1'
+      window.open(url, '_self')
+    })
+
     d3.select('#svg-link').on('click', () => {
       const queryPosition = window.location.href.lastIndexOf('?')
       const query = queryPosition > -1 ? window.location.href.substr(queryPosition) : ''

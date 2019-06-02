@@ -5,7 +5,6 @@
 ### Improved Debugging
 
 - ️❇️ add debug mode to viewer
-- ️❇️ add no-cache action to viewer
 
 ### Release v1.0
 

@@ -9,10 +9,14 @@ export class SystemProvider {
   private lastFetchedSystem = null
   private lastFetchedTimestamp = null
 
-  constructor(private systemFetcher: SystemFetcher) {}
+  constructor(private systemFetcher: SystemFetcher) { }
 
   async getSystem(query?: any): Promise<Node> {
     let rawSystem: INode = null
+
+    if (query['no-cache']) {
+      this.systemFetcher.invalidateCache()
+    }
 
     if (query.demo || this.useDemoFile()) {
       console.log('using demo system from local storage')

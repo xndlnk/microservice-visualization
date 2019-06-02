@@ -17,6 +17,11 @@ export class SystemFetcher {
     }
   }
 
+  invalidateCache() {
+    this.cache.flushAll()
+    console.log('flushed cache')
+  }
+
   async fetchSystem(): Promise<INode> {
     if (this.isProduction()) {
       let cachedResponse = this.cache.get(this.SYSTEM_CACHE_KEY)
