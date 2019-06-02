@@ -22,14 +22,14 @@ export class SystemRenderer {
 
   renderSystem(system: Node, postRenderActions?: () => void) {
     const transition = d3.transition()
-        .delay(100)
-        .duration(1000)
+      .delay(100)
+      .duration(1000)
 
     d3.select('#graph')
       .graphviz()
       .transition(transition)
-      .width(window.innerWidth - 3 * 20)
-      .height(window.innerHeight - 100)
+      .width(window.innerWidth - 3 * 25)
+      .height(window.innerHeight - 200)
       .fit(true)
       .renderDot(this.systemToDotConverter.convertSystemToDot(system), function() {
         this.resetZoom()

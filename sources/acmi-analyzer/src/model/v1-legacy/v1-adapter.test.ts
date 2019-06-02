@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing'
 
 import { System, AsyncEventFlow, SyncDataFlow } from '../ms'
 import { adaptToV1 } from './v1-adapter'
+import { Metadata } from '../core'
 
 describe('adaptToV1', () => {
 
@@ -52,19 +53,25 @@ describe('adaptToV1', () => {
     expect(cdEdge.type).toEqual('SyncInfoFlow')
   })
 
-  it('adapts payloads to properties', async() => {
+  it('puts payload fields and metadata into v1-properties', async() => {
     const system = new System('system')
-    const serviceA = system.addMicroService('A')
-    const exchangeB = system.addMessageExchange('B')
+    const metadata: Metadata = {
+      transformer: 'T',
+      context: 'C'
+    }
+    const serviceA = system.addMicroService('A', { x: '1' }, metadata)
+    const exchangeB = system.addMessageExchange('B', { y: '2' })
     system.edges.push(new AsyncEventFlow(serviceA, exchangeB))
-
-    serviceA.content.payload.x = '1'
-    exchangeB.content.payload.y = '2'
 
     const adaptedSystem = adaptToV1(system)
 
     expect(adaptedSystem.getNodes()).toHaveLength(2)
     expect(adaptedSystem.getNodes().find(node => node.getName() === 'A').getProp('x', null)).toEqual('1')
     expect(adaptedSystem.getNodes().find(node => node.getName() === 'B').getProp('y', null)).toEqual('2')
+
+    expect(adaptedSystem.getNodes()
+      .find(node => node.getName() === 'A')
+      .getProp('metadata', null)
+    ).toEqual(metadata)
   })
 })

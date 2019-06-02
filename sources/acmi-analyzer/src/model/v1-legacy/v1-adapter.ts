@@ -1,7 +1,8 @@
+import { Logger } from '@nestjs/common'
+
 import { System, SyncDataFlow, AsyncEventFlow } from '../ms'
 import { Node } from '../core'
 import * as v1 from './model'
-import { Logger } from '@nestjs/common'
 
 const logger = new Logger('v1-adapter')
 
@@ -13,6 +14,7 @@ export function adaptToV1(system: System): v1.Node {
 
 function adaptNodeWithNestedNodes(node: Node): v1.Node {
   const v1Node = new v1.Node(node.id, node.content.payload.name, node.content.type, [], [], node.content.payload)
+  v1Node.addProp('metadata', node.content.metadata)
 
   node.nodes.forEach(childNode => {
     const v1ChildNode = adaptNodeWithNestedNodes(childNode)

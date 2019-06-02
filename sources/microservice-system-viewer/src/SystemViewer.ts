@@ -22,8 +22,10 @@ export function load() {
     .get(systemUrl)
     .then((response) => {
       const rawSystem = response.data
-      displaySystemTitle(rawSystem)
-      displaySystem(rawSystem)
+      const system = Node.ofRawNode(rawSystem)
+      displaySystemTitle(system)
+      displayNodesRemoved(system)
+      displaySystem(system)
     })
     .catch((error) => {
       replaceSpinnerByGraphBox()
@@ -57,16 +59,25 @@ function displayVersion() {
     })
 }
 
-function displaySystemTitle(rawSystem: INode) {
-  const system = Node.ofRawNode(rawSystem)
+function displaySystemTitle(system: Node) {
   if (system.getName() && system.getName() !== '') {
     select('#system-title')
       .text('System Architecture of ' + system.getName())
   }
 }
 
-function displaySystem(rawSystem: INode) {
-  const system = Node.ofRawNode(rawSystem)
+function displayNodesRemoved(system: Node) {
+  const metadata = system.getProp('metadata', null)
+  if (metadata && metadata.transformer === 'ExcludedNodesRemover') {
+    select('#nodes-removed-info')
+      .text('some nodes are hidden in this view: ' + metadata.info)
+  } else {
+    select('#nodes-removed-info')
+      .text('')
+  }
+}
+
+function displaySystem(system: Node) {
   GraphService.deepResolveNodesReferencedInEdges(system)
 
   setTimeout(function() {

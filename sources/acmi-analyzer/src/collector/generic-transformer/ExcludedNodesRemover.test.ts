@@ -30,6 +30,6 @@ describe(ExcludedNodesRemover.name, () => {
     expect(system.nodes[0].content.payload.name).toEqual('B')
 
     expect(system.content.metadata.transformer).toEqual(ExcludedNodesRemover.name)
-    expect(system.content.metadata.info).toEqual('removed: A, C')
+    expect(system.content.metadata.info).toEqual('filtered A, C')
   })
 })

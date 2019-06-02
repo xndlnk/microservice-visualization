@@ -41,7 +41,7 @@ export class ExcludedNodesRemover {
     system.content.metadata = {
       transformer: ExcludedNodesRemover.name,
       context: 'system.nodes',
-      info: 'removed: ' + nodesRemoved.join(', ')
+      info: 'filtered ' + nodesRemoved.join(', ')
     }
 
     return system
