@@ -35,6 +35,6 @@ describe(SourceLocationDecorator.name, () => {
     const system = await decorator.transform(inputSystem)
 
     expect(system.findMicroService('service1').getPayload().sourceLocation).toEqual('/source/service1')
-    expect(system.findMicroService('service2').getPayload().sourceLocation).toBeUndefined()
+    expect(system.findMicroService('service2').getPayload().sourceLocation).toEqual('')
   })
 })

@@ -83,7 +83,7 @@ export class Node {
 
   getProp(propName: string, alternativeValue: any): any {
     let value = this.properties ? this.properties[propName] : undefined
-    return value ? value : alternativeValue
+    return value !== undefined ? value : alternativeValue
   }
 
   addProp(propName: string, value: any): any {

@@ -4,7 +4,6 @@
 
 ### Improved Debugging
 
-- ️❇️ use red color for nodes without source and make this a configurable option
 - ️❇️ show endpoints in synch info flow
 - ️❇️ add debug mode to viewer
 - ️❇️ add no-cache action to viewer

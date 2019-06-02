@@ -61,14 +61,15 @@ ${dotSubGraphs}
     return dotGraph
   }
 
-  private convertNodesToDot(nodes: Node[], identation: number): string {
-    return nodes
+  private convertNodesToDot(nodes: Node[], indentation: number): string {
+    const dotNodes = nodes
       .map((node) => {
         const id = makeId(node.id)
         const styling = this.getNodeStyling(node)
         return `${id} [${styling},fontname="Arial"]`
       })
-      .join(';\n' + addSpaces(identation)) + (nodes.length > 0 ? ';' : '')
+
+    return dotNodes.join(';\n' + addSpaces(indentation)) + (nodes.length > 0 ? ';' : '')
   }
 
   private getNodeStyling(node: Node): string {
@@ -91,7 +92,8 @@ ${dotSubGraphs}
       const lightGreen = '#9eebcf'
       color = lightGreen
     }
-    if (node.getProp('forked', null)) {
+    const sourceLocation = node.getProp('sourceLocation', null)
+    if (typeof sourceLocation === 'string' && sourceLocation.length === 0) {
       const lightRed = '#ff725c'
       color = color + ':' + lightRed
     }

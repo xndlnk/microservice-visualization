@@ -21,6 +21,13 @@ export class SourceLocationDecorator {
         service.getPayload().sourceLocation = status.location
       }
     })
+    this.setLocationUnknownForServicesWithoutSource(system)
     return system
+  }
+
+  private setLocationUnknownForServicesWithoutSource(system: System) {
+    system.getMicroServices()
+      .filter(service => service.getPayload().sourceLocation === undefined)
+      .forEach(service => service.getPayload().sourceLocation = '')
   }
 }

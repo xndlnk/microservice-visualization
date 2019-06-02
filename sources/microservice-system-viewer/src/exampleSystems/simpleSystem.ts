@@ -5,8 +5,22 @@ export const system: INode = {
   name: 'simple',
   type: 'System',
   nodes: [
-    { id: 'source1', name: 'source1', type: 'Microservice' },
-    { id: 'source2', name: 'source2', type: 'Microservice' },
+    {
+      id: 'source1',
+      name: 'source1',
+      type: 'Microservice',
+      properties: {
+        sourceLocation: '/sources/source1'
+      }
+    },
+    {
+      id: 'source2',
+      name: 'source2',
+      type: 'Microservice',
+      properties: {
+        sourceLocation: ''
+      }
+    },
     { id: 'sink1', name: 'sink1', type: 'Microservice' },
     { id: 'sink2', name: 'sink2', type: 'Microservice' },
     {
