@@ -4,12 +4,14 @@
 
 ### Release v1.0
 
-- ️🔷 move service exchange merger from analyzer to viewer and make it a selectable action of the view
-- 🔷 mark old analyzer library as deprecated
 - 🔷 rename components to tadis...
-- 🔷 align package.json scripts: yarn start...
 - 🔷 create new release bundle of analyzer + viewer with equal versions
+- 🔷 mark old analyzer library as deprecated
 - 🔷 update documentation
+
+### Improved Service Split
+
+- ️🔷 move service exchange merger from analyzer to viewer and make it a selectable action of the view
 
 ### Improved Debugging
 
@@ -17,6 +19,7 @@
 
 ### Others
 
+- ❇️ feign client transformer supports @RequestParam annotation in parameter list
 - ❇️ add metadata for transformers adding payload fields `payload.metadata.fieldName: Metadata`
 - 🔷 enable strict type checking
 - ️❇️ allow manual additions but clearly mark them as manual (pink color)
