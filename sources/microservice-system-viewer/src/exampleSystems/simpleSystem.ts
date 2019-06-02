@@ -10,6 +10,7 @@ export const system: INode = {
       name: 'source1',
       type: 'Microservice',
       properties: {
+        shared: true,
         sourceLocation: '/sources/source1'
       }
     },
@@ -39,8 +40,15 @@ export const system: INode = {
         }
       ]
     },
-    { id: 'b', name: 'b', type: 'Microservice' },
-    { id: 'd', name: 'd', type: 'Microservice' }
+    {
+      id: 'b',
+      name: 'b',
+      type: 'Microservice',
+      properties: {
+        reduced: true
+      }
+    },
+    { id: 'd', name: 'd', type: 'MessageExchange' }
   ],
   edges: [
     {
