@@ -128,4 +128,8 @@ export class Edge {
   getTarget() {
     return this.target
   }
+
+  getProperties() {
+    return this.properties
+  }
 }

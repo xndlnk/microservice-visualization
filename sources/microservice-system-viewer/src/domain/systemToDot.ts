@@ -120,10 +120,21 @@ ${dotSubGraphs}
   private getEdgeStyling(edge: Edge): string {
     const id = makeId(edge.sourceId + '_' + edge.targetId)
     if (edge.type === 'SyncInfoFlow') {
-      return `[id="${id}",color=red,arrowhead=normal]`
+      const optionalLabel = this.getEndpointsLabelOrEmpty(edge)
+      return `[id="${id}",color=red,arrowhead=normal${optionalLabel}]`
     } else {
       return `[id="${id}"]`
     }
+  }
+
+  private getEndpointsLabelOrEmpty(edge: Edge): string {
+    if (edge.properties && edge.properties.definedEndpoints) {
+      const text = edge.properties.definedEndpoints
+        .map(endpoint => (endpoint.path as string).split('/').join('/\n'))
+        .join(',\n')
+      return `,label="${text}"`
+    }
+    return ''
   }
 }
 

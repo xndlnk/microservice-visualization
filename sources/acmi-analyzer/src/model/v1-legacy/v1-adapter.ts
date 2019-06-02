@@ -29,7 +29,8 @@ function addAdaptedEdgesNested(originNode: Node, v1Node: v1.Node) {
     if (!edge.content) {
       logger.warn('edge is missing content: ' + `${edge.source.id} -> ${edge.target.id}`)
     }
-    const v1Edge = new v1.Edge(edge.source.id, edge.target.id, adaptEdgeType(edge.content.type))
+    const v1Edge = new v1.Edge(edge.source.id, edge.target.id,
+      adaptEdgeType(edge.content.type), edge.content.payload)
     v1Node.getEdges().push(v1Edge)
   })
 

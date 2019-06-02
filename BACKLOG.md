@@ -4,7 +4,6 @@
 
 ### Improved Debugging
 
-- ️❇️ show endpoints in synch info flow
 - ️❇️ add debug mode to viewer
 - ️❇️ add no-cache action to viewer
 

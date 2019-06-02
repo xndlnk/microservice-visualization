@@ -99,7 +99,7 @@ export class Edge {
   private source: Node = null
   private target: Node = null
 
-  private properties: Props
+  public properties: Props
 
   constructor(sourceId: string, targetId: string, type: string, properties?: Props) {
     this.sourceId = sourceId

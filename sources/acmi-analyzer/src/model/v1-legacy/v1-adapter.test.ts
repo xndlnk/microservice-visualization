@@ -61,7 +61,11 @@ describe('adaptToV1', () => {
     }
     const serviceA = system.addMicroService('A', { x: '1' }, metadata)
     const exchangeB = system.addMessageExchange('B', { y: '2' })
-    system.edges.push(new AsyncEventFlow(serviceA, exchangeB))
+    const eventFlow = new AsyncEventFlow(serviceA, exchangeB)
+    eventFlow.content.payload = {
+      x: '1'
+    }
+    system.edges.push(eventFlow)
 
     const adaptedSystem = adaptToV1(system)
 
@@ -73,5 +77,7 @@ describe('adaptToV1', () => {
       .find(node => node.getName() === 'A')
       .getProp('metadata', null)
     ).toEqual(metadata)
+
+    expect(adaptedSystem.getEdges()[0].getProperties().x).toEqual('1')
   })
 })
