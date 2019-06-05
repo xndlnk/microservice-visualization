@@ -23,7 +23,16 @@ export const system: INode = {
       }
     },
     { id: 'sink1', name: 'sink1', type: 'Microservice' },
-    { id: 'sink2', name: 'sink2', type: 'Microservice' },
+    {
+      id: 'sink2',
+      name: 'sink2',
+      type: 'Microservice',
+      properties: {
+        metadata: {
+          transformerName: 'ManualElementsProducer'
+        }
+      }
+    },
     {
       id: 'subsystem1',
       name: 'subsystem1',
@@ -89,7 +98,12 @@ export const system: INode = {
     {
       sourceId: 'b',
       targetId: 'sink2',
-      type: 'AsyncInfoFlow'
+      type: 'AsyncInfoFlow',
+      properties: {
+        metadata: {
+          transformerName: 'ManualElementsProducer'
+        }
+      }
     }
   ]
 }

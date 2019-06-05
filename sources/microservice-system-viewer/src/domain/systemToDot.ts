@@ -6,6 +6,8 @@ export interface Options {
 }
 
 export class SystemToDotConverter {
+  private readonly manualElementsTransformerName = 'ManualElementsProducer'
+
   constructor(private options?: Options) { }
 
   convertSystemToDot(system: Node): string {
@@ -78,11 +80,18 @@ ${dotSubGraphs}
 
     if (node.type === 'MessageExchange') {
       return `shape=cylinder,style=filled,fillcolor=lightgrey,id="${node.id}",label="${node.getName()}"${optionalUrl}`
+    } else if (this.isNodeManuallyAdded(node)) {
+      return `shape=box,style=dashed,fillcolor="white",id="${node.id}",label="${node.getName()}"${optionalUrl}`
     } else {
       // TODO: develop concept for supporting configurable styling based on properties.
       const color = this.getFillColorForNode(node)
       return `shape=box,style=striped,fillcolor="${color}",id="${node.id}",label="${node.getName()}"${optionalUrl}`
     }
+  }
+
+  private isNodeManuallyAdded(node: Node): boolean {
+    const metadata = node.getProp('metadata', null)
+    return metadata && metadata.transformerName === this.manualElementsTransformerName
   }
 
   private getFillColorForNode(node: Node): string {
@@ -119,12 +128,27 @@ ${dotSubGraphs}
 
   private getEdgeStyling(edge: Edge): string {
     const id = makeId(edge.sourceId + '_' + edge.targetId)
+    const optionalStyle = this.getEdgeStyleOrEmpty(edge)
     if (edge.type === 'SyncInfoFlow') {
       const optionalLabel = this.getEndpointsLabelOrEmpty(edge)
-      return `[id="${id}",color=red,arrowhead=normal${optionalLabel}]`
+      return `[id="${id}",color=red,arrowhead=normal${optionalLabel}${optionalStyle}]`
     } else {
-      return `[id="${id}"]`
+      return `[id="${id}"${optionalStyle}]`
     }
+  }
+
+  private getEdgeStyleOrEmpty(edge: Edge): string {
+    if (this.isEdgeManuallyAdded(edge)) {
+      return ',style=dashed'
+    } else {
+      return ''
+    }
+  }
+
+  private isEdgeManuallyAdded(edge: Edge): boolean {
+    return edge.properties
+      && edge.properties.metadata
+      && edge.properties.metadata.transformerName === this.manualElementsTransformerName
   }
 
   private getEndpointsLabelOrEmpty(edge: Edge): string {
