@@ -43,7 +43,7 @@ export class CabinetTransformer {
   }
 
   private getOrElseCreateCabinetNode(system: System, cabinetName: string): System {
-    const existingNode = system.findNodeWithNameInPayload<System>(System, cabinetName)
+    const existingNode = system.findTypedNodeWithName<System>(System, cabinetName)
     if (existingNode) return existingNode
 
     const newNode = new System(cabinetName)

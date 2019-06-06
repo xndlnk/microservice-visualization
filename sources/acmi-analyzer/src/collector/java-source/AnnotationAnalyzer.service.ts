@@ -47,11 +47,16 @@ export class AnnotationAnalyzer {
   }
 }
 
+/**
+ * Specifies a mapping of an annotation element to nodes and edges.
+ */
 export type ElementMapping = {
   /**
-   * name of the annotation element that defines the node name as its value
+   * name of the annotation element from which a node is derived.
+   * the value of the annotation element defines the name of the node.
+   * the node will be created if it does not already exist or else an existing node will be re-used.
    */
-  elementName: string
+  elementToDeriveNodeFrom: string
 
   /**
    * class name of the node to create for the element
@@ -90,12 +95,12 @@ function transformEachElement(system: System, service: MicroService, fileContent
   logger.log('analyzing annotation body in service ' + service.getName() + ':\n' + annotationBody)
 
   for (const elementMapping of elementMappings) {
-    const elementPattern = elementMapping.elementName + '\\s*=\\s*([^\\),]+)'
+    const elementPattern = elementMapping.elementToDeriveNodeFrom + '\\s*=\\s*([^\\),]+)'
     const elementRegExp = new RegExp(elementPattern, 'g')
-    const elementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
+    const matchingElementValues = getAllPatternMatches<string>(elementRegExp, annotationBody,
       (matchArray: RegExpExecArray) => matchArray[1])
 
-    elementValues.forEach(value => transformElementValueExpression(system, service, fileContent,
+    matchingElementValues.forEach(value => transformElementValueExpression(system, service, fileContent,
       elementMapping, value))
   }
 }
@@ -130,16 +135,9 @@ function executeMappingForNode(system: System, service: MicroService,
     transformer: AnnotationAnalyzer.name,
     context: 'service ' + service.id
   }
+  const node = system.addOrExtendTypedNode(elementMapping.nodeTypeToCreate, nodeName, undefined, metadata)
 
-  const payload = { name: nodeName }
-  // TODO: better use system.addOrExtendNamedNode() but without type annotations
-  // TODO: check for types to be present
-
-  // TODO: same node must be created twice
-  // const node = new ms[elementMapping.nodeTypeToCreate](nodeName, payload, AnnotationAnalyzer.name)
-  // system.nodes.push(node)
-  const node = system.addMessageExchange(nodeName, undefined, metadata)
-  logger.log('added ' + elementMapping.nodeTypeToCreate + ' with name ' + nodeName)
+  logger.log('ensured node of type ' + elementMapping.nodeTypeToCreate + ' and name ' + nodeName + ' exists.')
 
   if (elementMapping.nodeTypeDirection === 'target') {
     const edge = new ms[elementMapping.edgeType](service, node, undefined, metadata)

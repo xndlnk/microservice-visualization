@@ -2,6 +2,9 @@ import { Logger } from '@nestjs/common'
 
 import { Node, Content, Edge, Metadata } from './core'
 
+// tslint:disable-next-line
+import * as ms from './ms'
+
 const logger = new Logger('core-typed')
 
 export class TypedNode<Payload> extends Node {
@@ -16,19 +19,21 @@ export class TypedNode<Payload> extends Node {
       .map(node => node as NodeType)
   }
 
-  public findNodeWithNameInPayload<NodeType extends Node>(type: Type<NodeType>, name: string): NodeType {
-    const node = this.nodes
-      .find(node => node.content.type === type.name && node.content.payload.name === name)
-    if (node) {
-      return node as NodeType
-    }
-    return undefined
+  public addOrExtendTypedNode(
+    type: string, name: string, extraPayload: any = {}, metadata?: Metadata): Node {
+
+    const node = this.ensureContainsNodeOfTypeAndName(type, name, extraPayload, metadata)
+
+    // TODO: does not work for methods inherited from TypedNode
+    Object.assign(node, new ms[type](node.id, node.content.payload, metadata))
+
+    return node
   }
 
   public addOrExtendNamedNode<NodeType extends TypedNode<Payload>>(
     type: TypeExtendsTypedNode<NodeType, Payload>, name: string, extraPayload: any = {}, metadata?: Metadata): NodeType {
 
-    const existingNode = this.findNodeWithNameInPayload<NodeType>(type, name)
+    const existingNode = this.findTypedNodeWithName<NodeType>(type, name)
     if (existingNode) {
       if (extraPayload) {
         Object.getOwnPropertyNames(extraPayload)
@@ -46,6 +51,11 @@ export class TypedNode<Payload> extends Node {
     }
     this.nodes.push(node)
     return node
+  }
+
+  public findTypedNodeWithName<NodeType extends TypedNode<Payload>>(
+    type: Type<NodeType>, name: string): NodeType {
+    return this.findNodeOfTypeWithName(type.name, name) as NodeType
   }
 
   public getEdges<EdgeType extends Edge>(type: Type<EdgeType>): EdgeType[] {

@@ -14,6 +14,41 @@ export class Node {
     this.edges = edges || []
   }
 
+  ensureContainsNodeOfTypeAndName(typeName: string, nodeName: string, extraPayload: any = {}, metadata?: Metadata): Node {
+
+    const existingNode = this.findNodeOfTypeWithName(typeName, nodeName)
+    if (existingNode) {
+      if (extraPayload) {
+        Object.getOwnPropertyNames(extraPayload)
+          .forEach(payloadPropertyName => existingNode.content.payload[payloadPropertyName] = extraPayload[payloadPropertyName])
+      }
+      return existingNode
+    }
+
+    const id = this.id + '__' + typeName + '_' + nodeName
+    const content = {
+      type: typeName,
+      metadata,
+      payload: {
+        name: nodeName,
+        ...extraPayload
+      }
+    }
+
+    const node = new Node(id, content)
+    this.nodes.push(node)
+    return node
+  }
+
+  findNodeOfTypeWithName(typeName: string, nodeName: string): Node {
+    const node = this.nodes
+      .find(node => node.content.type === typeName && node.content.payload && node.content.payload.name === nodeName)
+    if (node) {
+      return node
+    }
+    return undefined
+  }
+
   findContainedNodeByIdRecursive(nodeId: string): Node | undefined {
     if (this.id === nodeId) {
       return this

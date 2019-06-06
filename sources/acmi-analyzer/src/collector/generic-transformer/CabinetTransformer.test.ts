@@ -43,7 +43,7 @@ describe(CabinetTransformer.name, () => {
     expect(system.edges[0].source.id).toEqual(serviceA.id)
     expect(system.edges[0].target.id).toEqual(serviceB.id)
 
-    const cabinetX = system.findNodeWithNameInPayload<System>(System, 'X')
+    const cabinetX = system.findTypedNodeWithName<System>(System, 'X')
     expect(cabinetX.edges).toHaveLength(1)
     expect(cabinetX.edges[0].source.id).toEqual(serviceA.id)
     expect(cabinetX.edges[0].target.id).toEqual(serviceC.id)

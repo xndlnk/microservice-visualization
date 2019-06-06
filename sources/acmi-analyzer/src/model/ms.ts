@@ -22,7 +22,7 @@ export class System extends TypedNode<NamePayload> {
   }
 
   public findMicroService(name: string): MicroService {
-    return this.findNodeWithNameInPayload<MicroService>(MicroService, name)
+    return this.findTypedNodeWithName<MicroService>(MicroService, name)
   }
 
   public addMessageExchange(name: string, extraPayload: any = {}, metadata?: Metadata): MessageExchange {
@@ -34,7 +34,7 @@ export class System extends TypedNode<NamePayload> {
   }
 
   public findMessageExchange(name: string): MessageExchange {
-    return this.findNodeWithNameInPayload<MessageExchange>(MessageExchange, name)
+    return this.findTypedNodeWithName<MessageExchange>(MessageExchange, name)
   }
 
   public getSyncDataFlows(): SyncDataFlow[] {
