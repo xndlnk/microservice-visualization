@@ -4,7 +4,7 @@ import { INestApplication, Type } from '@nestjs/common'
 import {
   System, KubernetesCollectorService, RabbitMqCollectorService, FeignClientsFromSourceCodeProducer,
   SourceLocationDecorator, CabinetTransformer, ExcludedNodesRemover, GitStorageService, AnnotationAnalyzer
-} from 'acmi-analyzer'
+} from 'tadis-analyzer'
 
 import { CustomCollectorService } from './CustomCollector.service'
 import { CustomCollectorModule } from './CustomCollector.module'

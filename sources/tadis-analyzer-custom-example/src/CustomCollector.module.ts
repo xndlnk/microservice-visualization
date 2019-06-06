@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common'
 import {
   CollectorService, ConfigModule, CollectorController, SourceCodeAnalysisModule,
   KubernetesModule, RabbitMqModule, TransformerModule
-} from 'acmi-analyzer'
+} from 'tadis-analyzer'
 
 import { CustomCollectorService } from './CustomCollector.service'
 

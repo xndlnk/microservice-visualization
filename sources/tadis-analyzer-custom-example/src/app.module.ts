@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from 'acmi-analyzer'
+import { ConfigModule } from 'tadis-analyzer'
 
 import { CustomCollectorModule } from './CustomCollector.module'
 

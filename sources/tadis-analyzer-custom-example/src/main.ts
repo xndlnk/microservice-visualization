@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { Logger } from '@nestjs/common'
-import { ConfigService } from 'acmi-analyzer'
+import { ConfigService } from 'tadis-analyzer'
 
 import { AppModule } from './app.module'
 

@@ -1,7 +1,7 @@
 {
-  "name": "acmi-analyzer-custom-example",
+  "name": "tadis-analyzer-custom-example",
   "version": "0.13.7",
-  "description": "this example shows how the acmi-analyzer can be used as a library to write a customer analyzer.",
+  "description": "this is a custom example analyzer that imports the npm package of the generic tadis-analyzer.",
   "files": [
     "build/src"
   ],
@@ -18,7 +18,7 @@
   "dependencies": {
     "@nestjs/common": "^5.4.0",
     "@nestjs/core": "^5.4.0",
-    "acmi-analyzer": "^0.13.7",
+    "tadis-analyzer": "^0.13.7",
     "dotenv": "^7.0.0"
   },
   "devDependencies": {

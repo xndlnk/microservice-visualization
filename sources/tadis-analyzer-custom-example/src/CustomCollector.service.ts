@@ -4,7 +4,7 @@ import {
   System, MicroService, Metadata, KubernetesCollectorService, RabbitMqCollectorService,
   FeignClientsFromSourceCodeProducer, AnnotationAnalyzer, SourceLocationDecorator,
   ExcludedNodesRemover, MicroserviceWithMessageExchangeMerger, CabinetTransformer, ElementMapping, GitStorageService, ConfigService
-} from 'acmi-analyzer'
+} from 'tadis-analyzer'
 
 @Injectable()
 export class CustomCollectorService {

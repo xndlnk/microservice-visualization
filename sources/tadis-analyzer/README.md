@@ -1,6 +1,6 @@
-# acmi-analyzer
+# tadis-analyzer
 
-The acmi-analyzer can discover the architecture of a microservice system by collecting information about the system from different sources.
+The tadis-analyzer can discover the architecture of a microservice system by collecting information about the system from different sources.
 
 ## Installation
 

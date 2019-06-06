@@ -1,7 +1,7 @@
 {
-  "name": "acmi-analyzer",
+  "name": "tadis-analyzer",
   "version": "0.13.7",
-  "description": "analysis part of the architecture analyzer for microservice systems",
+  "description": "generic analyzer of the tool for architecture discovery",
   "main": "build/src/lib.js",
   "types": "build/src/lib.d.ts",
   "files": [
