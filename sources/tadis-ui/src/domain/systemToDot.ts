@@ -154,7 +154,14 @@ ${dotSubGraphs}
   private getEndpointsLabelOrEmpty(edge: Edge): string {
     if (edge.properties && edge.properties.definedEndpoints) {
       const text = edge.properties.definedEndpoints
-        .map(endpoint => (endpoint.path as string).split('/').join('/\n'))
+        .map(endpoint => {
+          const path = endpoint.path as string
+          if (path.startsWith('/')) {
+            return path.substr(0, 1) + path.substr(1).split('/').join('/\n')
+          } else {
+            return path.split('/').join('/\n')
+          }
+        })
         .join(',\n')
       return `,label="${text}"`
     }
