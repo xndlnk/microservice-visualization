@@ -28,6 +28,7 @@ export class SystemToDotConverter {
     ranksep=1;
     newrank=true;
     splines=polyline;
+    edge [fontname="Arial"];
   ${dotNodes}
 ${dotSubGraphs}
   ${dotLinks}
