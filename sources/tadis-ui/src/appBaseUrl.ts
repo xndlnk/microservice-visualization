@@ -1,4 +1,4 @@
-export const appBaseUrl = '/msvis'
+export const appBaseUrl = '/tadis'
 
 export function getBaseUrlInCurrentEnvironment() {
   let appBaseUrlStart = window.location.href.lastIndexOf(appBaseUrl)
