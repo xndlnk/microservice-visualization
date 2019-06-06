@@ -4,7 +4,6 @@
   "description": "",
   "scripts": {
     "test": "lerna run test",
-    "publish": "lerna run dist && lerna publish",
     "release-notes": "gren release --override -D commits -C readme,trying"
   },
   "author": "Andreas Blunk, MaibornWolff GmbH",
