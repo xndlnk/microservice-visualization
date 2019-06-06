@@ -37,13 +37,13 @@ export class CustomCollectorService {
 
     const elementMappings: ElementMapping[] = [
       {
-        elementName: 'sendToExchange',
+        elementToDeriveNodeFrom: 'sendToExchange',
         nodeTypeToCreate: 'MessageExchange',
         nodeTypeDirection: 'target',
         edgeType: 'AsyncEventFlow'
       },
       {
-        elementName: 'receiveFromExchange',
+        elementToDeriveNodeFrom: 'receiveFromExchange',
         nodeTypeToCreate: 'MessageExchange',
         nodeTypeDirection: 'source',
         edgeType: 'AsyncEventFlow'
