@@ -33,7 +33,8 @@ export class MenuActions {
     })
 
     d3.select('#reload-no-cache-link').on('click', () => {
-      const url = getBaseUrlInCurrentEnvironment() + '/html?no-cache=1'
+      const url = getBaseUrlInCurrentEnvironment() + '/html/?no-cache=1'
+      window.alert(url)
       window.open(url, '_self')
     })
 
