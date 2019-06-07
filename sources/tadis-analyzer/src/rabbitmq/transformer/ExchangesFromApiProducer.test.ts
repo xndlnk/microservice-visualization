@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { ConfigService } from '../../config/Config.service'
 
-import { System } from '../../model/ms'
+import { System, MessageQueue } from '../../model/ms'
 import { ExchangesFromApiProducer } from './ExchangesFromApiProducer'
 import { RabbitMqManagementApiService } from '../api/api.service'
 
@@ -20,7 +20,7 @@ describe(ExchangesFromApiProducer.name, () => {
     }).compile()
   })
 
-  it('creates message exchanges and flows for each queue binding', async() => {
+  it('creates message exchanges and flows for each queue binding to an existing microservice', async() => {
 
     const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
     jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
@@ -28,7 +28,10 @@ describe(ExchangesFromApiProducer.name, () => {
 
     const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
 
-    const outputSystem = await addExchangesFormSourceStep.transform(new System('test'))
+    const inputSystem = new System('test')
+    inputSystem.addMicroService('receiver-service')
+
+    const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
 
     expect(outputSystem).not.toBeNull()
 
@@ -46,6 +49,30 @@ describe(ExchangesFromApiProducer.name, () => {
 
     expect(outputSystem.getAsyncEventFlows()[1].source.id).toEqual(outputSystem.getMessageExchanges()[1].id)
     expect(outputSystem.getAsyncEventFlows()[1].target.id).toEqual(outputSystem.getMicroServices()[0].id)
+
+    verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
+  })
+
+  it('does not create a microservice from a queue pattern when the microservice does not exist in the input system', async() => {
+
+    const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
+    jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
+    jest.spyOn(apiService, 'getBindings').mockImplementation(async() => testBindings)
+
+    const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
+
+    const inputSystem = new System('test')
+    const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
+
+    expect(outputSystem.getMicroServices()).toHaveLength(0)
+    expect(outputSystem.getMessageExchanges()).toHaveLength(2)
+
+    const queueNode = outputSystem.nodes.find(node => node.content.type === MessageQueue.name)
+    expect(queueNode).toBeDefined()
+    expect(queueNode.getName()).toEqual('receiver-service')
+
+    expect(outputSystem.getAsyncEventFlows()[0].source.id).toEqual(outputSystem.getMessageExchanges()[0].id)
+    expect(outputSystem.getAsyncEventFlows()[0].target.id).toEqual(queueNode.id)
 
     verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
   })

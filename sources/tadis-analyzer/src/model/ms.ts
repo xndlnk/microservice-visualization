@@ -72,6 +72,12 @@ export class MessageExchange extends TypedNode<NamePayload> {
   }
 }
 
+export class MessageQueue extends TypedNode<NamePayload> {
+  constructor(id: string, payload: NamePayload, metadata?: Metadata) {
+    super(id, payload, metadata, MessageQueue.name)
+  }
+}
+
 export class NamePayload {
   name: string
 }

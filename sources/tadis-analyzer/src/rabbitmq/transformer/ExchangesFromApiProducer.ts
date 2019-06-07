@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as _ from 'lodash'
 
 import { ConfigService } from '../../config/Config.service'
-import { System, AsyncEventFlow } from '../../model/ms'
+import { System, AsyncEventFlow, MessageQueue } from '../../model/ms'
 import { RabbitMqManagementApiService } from '../api/api.service'
-import { Metadata } from '../../model/core'
+import { Metadata, Node } from '../../model/core'
 
 type Binding = {
   exchange: string
@@ -50,14 +50,29 @@ export class ExchangesFromApiProducer {
         const sourceExchangName = binding.exchange
         const sourceExchange = system.addMessageExchange(sourceExchangName, undefined, metadata)
 
-        const targetServiceName = binding.queue.substring(0, binding.queue.indexOf('.'))
-        const targetService = system.addMicroService(targetServiceName, undefined, metadata)
+        const targetNode = this.ensureTargetNodeExists(binding, system)
 
-        system.edges.push(new AsyncEventFlow(sourceExchange, targetService, undefined, metadata))
+        system.edges.push(new AsyncEventFlow(sourceExchange, targetNode, undefined, metadata))
 
-        this.logger.log('added async event flow: message exchange ' + sourceExchangName + ' -> microservice ' + targetServiceName)
+        this.logger.log('added async event flow: message exchange ' + sourceExchangName + ' -> microservice ' + targetNode.getName())
       })
     return system
+  }
+
+  private ensureTargetNodeExists(binding: Binding, system: System): Node {
+    const queuePrefix = binding.queue.substring(0, binding.queue.indexOf('.'))
+    const existingService = system.findMicroService(queuePrefix)
+    if (existingService) {
+      return existingService
+    } else {
+      const metadata: Metadata = {
+        transformer: ExchangesFromApiProducer.name,
+        context: 'queue ' + binding.queue + ' bound to exchange ' + binding.exchange
+      }
+      const queueNode = new MessageQueue(binding.queue, { name: queuePrefix }, metadata)
+      system.nodes.push(queueNode)
+      return queueNode
+    }
   }
 
   private async getBindings(queueName): Promise<Binding[]> {

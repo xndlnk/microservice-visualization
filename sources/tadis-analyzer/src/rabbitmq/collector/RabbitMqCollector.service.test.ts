@@ -32,6 +32,7 @@ describe(RabbitMqCollectorService.name, () => {
     jest.spyOn(rabbitMqApiService, 'getBindings').mockImplementation(async() => testBindings)
 
     const inputSystem = new System('')
+    inputSystem.addMicroService('receiver-service')
     const service = inputSystem.addMicroService('test-microservice', { p: 1 })
     service.getPayload().env = [
       {
