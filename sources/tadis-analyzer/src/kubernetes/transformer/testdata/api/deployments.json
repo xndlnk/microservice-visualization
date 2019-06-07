@@ -128,6 +128,128 @@
           "progressDeadlineSeconds": 600
         },
         "status": {}
+      },
+      {
+        "metadata": {
+          "name": "test-microservice2",
+          "namespace": "test-ns",
+          "resourceVersion": "15867734",
+          "generation": 2,
+          "labels": {
+            "app": "test-microservice2",
+            "cabinet": "test-cabinet2",
+            "chart": "xms-1.26",
+            "heritage": "Tiller",
+            "release": "test-ns"
+          },
+          "annotations": {
+            "deployment.kubernetes.io/revision": "1"
+          }
+        },
+        "spec": {
+          "replicas": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "test-microservice2",
+              "release": "test-ns"
+            }
+          },
+          "template": {
+            "metadata": {
+              "creationTimestamp": null,
+              "labels": {
+                "app": "test-microservice2",
+                "release": "test-ns"
+              }
+            },
+            "spec": {
+              "volumes": [
+                {
+                  "name": "logback-config",
+                  "configMap": {
+                    "name": "test-microservice2-logback-console-json",
+                    "defaultMode": 420
+                  }
+                }
+              ],
+              "containers": [
+                {
+                  "name": "xms",
+                  "image": "dockerregistry:5000/de/test-microservice2:0.2.60",
+                  "command": [],
+                  "args": [],
+                  "ports": [
+                    {
+                      "name": "http",
+                      "containerPort": 8080,
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "env": [
+                    {
+                      "name": "CACHE_SIZE",
+                      "value": "10000"
+                    },
+                    {
+                      "name": "CACHE_TIME_TO_LIVE_SECONDS",
+                      "value": "3600"
+                    },
+                    {
+                      "name": "OUTGOING_EXCHANGE",
+                      "value": "test-outgoing-exchange"
+                    },
+                    {
+                      "name": "OUTGOING_ROUTING_KEY",
+                      "value": "test.outgoing.publish.update"
+                    },
+                    {
+                      "name": "EXCHANGE_INCOMING",
+                      "value": "test-incoming-exchange"
+                    },
+                    {
+                      "name": "ROUTING_KEY_INCOMING",
+                      "value": "test.incoming.publish.update"
+                    },
+                    {
+                      "name": "SERVICE_ENVIRONMENT",
+                      "value": "dev"
+                    }
+                  ],
+                  "resources": {
+                    "limits": {
+                      "cpu": "1600m",
+                      "memory": "1536Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "300Mi"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "name": "logback-config",
+                      "mountPath": "/logback-console.xml",
+                      "subPath": "logback-console.xml"
+                    }
+                  ],
+                  "terminationMessagePath": "/dev/termination-log",
+                  "terminationMessagePolicy": "File",
+                  "imagePullPolicy": "IfNotPresent"
+                }
+              ]
+            }
+          },
+          "strategy": {
+            "type": "RollingUpdate",
+            "rollingUpdate": {
+              "maxUnavailable": "25%",
+              "maxSurge": "25%"
+            }
+          },
+          "revisionHistoryLimit": 10,
+          "progressDeadlineSeconds": 600
+        },
+        "status": {}
       }
     ]
   }

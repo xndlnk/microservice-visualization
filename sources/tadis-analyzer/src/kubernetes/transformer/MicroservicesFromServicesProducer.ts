@@ -28,8 +28,6 @@ export class MicroservicesFromServicesProducer {
       const system = new System(namespace)
       services.items.forEach(item => {
         const serviceName = item.metadata.name
-        // TODO: is this naming scheme with the dash in the pod name a standard or project-specific?
-        // i.e. does is it need to be configurable?
         if (this.isPodExisting(pods, serviceName + '-')) {
           const metadata: Metadata = {
             transformer: MicroservicesFromServicesProducer.name,

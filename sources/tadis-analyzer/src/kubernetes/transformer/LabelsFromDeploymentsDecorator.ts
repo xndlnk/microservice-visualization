@@ -37,8 +37,7 @@ export class LabelsFromDeploymentsDecorator {
   private findAssociatedMicroService(system: System, deployment: any): MicroService | undefined {
     for (const service of system.getMicroServices()) {
       const serviceName = service.getPayload().name
-      if (_.has(deployment, 'metadata.name')
-        && deployment.metadata.name.startsWith(serviceName)) {
+      if (_.has(deployment, 'metadata.name') && deployment.metadata.name === serviceName) {
         return service
       }
     }
