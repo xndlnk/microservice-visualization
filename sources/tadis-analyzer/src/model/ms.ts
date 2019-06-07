@@ -58,7 +58,6 @@ export class MicroService extends TypedNode<MicroServicePayload> {
 
 export class MicroServicePayload {
   name: string
-  cabinet?: string
   tenant?: string
   env?: EnvEntry[]
   labels?: any
@@ -70,7 +69,11 @@ type EnvEntry = {
   value: string
 }
 
-export class MessageExchange extends TypedNode<NamePayload> {
+export class MessageExchangePayload {
+  name: string
+}
+
+export class MessageExchange extends TypedNode<MessageExchangePayload> {
   constructor(id: string, payload: NamePayload, metadata?: Metadata) {
     super(id, payload, metadata, MessageExchange.name)
   }

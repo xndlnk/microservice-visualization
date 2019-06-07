@@ -4,7 +4,6 @@
 
 ### Release v1.0
 
-- ️❇️ cabinet transformation: move each exchange which is the target of a node coming from a cabinet to this cabinet
 - 🔷 update documentation
 
 ### Improved Service Split

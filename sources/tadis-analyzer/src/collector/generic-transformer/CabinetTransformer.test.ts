@@ -6,7 +6,7 @@ jest.mock('../../config/Config.service')
 
 describe(CabinetTransformer.name, () => {
 
-  it('service with cabinet label is moved to sub-system node', async() => {
+  it('moves service with cabinet label to sub-system node', async() => {
     const inputSystem = new System('system')
     const serviceA = inputSystem.addMicroService('A')
     serviceA.getPayload().labels = { cabinet: 'X' }
@@ -24,7 +24,7 @@ describe(CabinetTransformer.name, () => {
     expect(system.nodes[1].content.payload.name).toEqual('B')
   })
 
-  it('edges of moved nodes are moved', async() => {
+  it('moves edges of moved nodes', async() => {
     const inputSystem = new System('system')
 
     const serviceA = inputSystem.addMicroService('A')
@@ -47,5 +47,27 @@ describe(CabinetTransformer.name, () => {
     expect(cabinetX.edges).toHaveLength(1)
     expect(cabinetX.edges[0].source.id).toEqual(serviceA.id)
     expect(cabinetX.edges[0].target.id).toEqual(serviceC.id)
+  })
+
+  it('moves outgoing exchanges of services contained in a cabinet to the cabinet', async() => {
+    const inputSystem = new System('system')
+
+    const exchangeA = inputSystem.addMessageExchange('A')
+
+    const serviceB = inputSystem.addMicroService('B')
+    serviceB.getPayload().labels = { cabinet: 'X' }
+
+    const exchangeC = inputSystem.addMessageExchange('C')
+
+    inputSystem.edges.push(new AsyncEventFlow(exchangeA, serviceB))
+    inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeC))
+
+    const cabinetTransformer = new CabinetTransformer()
+    const system = await cabinetTransformer.transform(inputSystem)
+
+    expect(system.findMessageExchange('A')).toBeDefined()
+
+    const cabinetX = system.nodes.find(node => node.getName() === 'X')
+    expect(cabinetX.nodes.find(node => node.getName() === 'C'))
   })
 })
