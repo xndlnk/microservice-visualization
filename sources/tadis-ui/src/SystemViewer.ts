@@ -69,12 +69,13 @@ function displaySystemTitle(system: Node) {
 function displayNodesRemoved(system: Node) {
   const metadata = system.getProp('metadata', null)
   if (metadata && metadata.transformer === 'ExcludedNodesRemover') {
-    select('#nodes-removed-info')
-      .text('some nodes are hidden in this view: ' + metadata.info)
+    select('#node-filter-info')
+      .text(metadata.info)
   } else {
-    select('#nodes-removed-info')
-      .text('')
+    select('#node-filter-info')
+      .text('none')
   }
+  console.log('displayNodesRemoved')
 }
 
 function displaySystem(system: Node) {
