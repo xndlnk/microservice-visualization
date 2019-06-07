@@ -31,7 +31,7 @@ export class ExcludedNodesRemover {
     system.nodes = system.nodes
       .filter(node => {
         const nodeName = node.content.payload.name
-        if (namesToRemove.includes(nodeName)) {
+        if (this.shouldBeRemoved(namesToRemove, nodeName)) {
           nodesRemoved.push(nodeName)
           this.logger.log('removing excluded node named ' + nodeName)
           return false
@@ -41,10 +41,20 @@ export class ExcludedNodesRemover {
     system.content.metadata = {
       transformer: ExcludedNodesRemover.name,
       context: 'system.nodes',
-      info: 'filtered ' + nodesRemoved.join(', ')
+      info: nodesRemoved.join(', ')
     }
 
     return system
+  }
+
+  private shouldBeRemoved(namesToRemove: string[], nodeName: string): boolean {
+    for (const nameToRemove of namesToRemove) {
+      const regexp = new RegExp(nameToRemove)
+      if (nodeName.match(regexp)) {
+        return true
+      }
+    }
+    return false
   }
 
 }
