@@ -77,6 +77,37 @@ describe(ExchangesFromApiProducer.name, () => {
     verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
   })
 
+  it('creates queues for queues which do not match the name pattern', async() => {
+
+    const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
+    jest.spyOn(apiService, 'getQueues').mockImplementation(async() => ([
+      {
+        'name': 'no-service-prefix'
+      }
+    ]))
+    jest.spyOn(apiService, 'getBindings').mockImplementation(async() => ([
+      {
+        'source': 'source-exchange-1',
+        'vhost': '/',
+        'destination': 'no-service-prefix',
+        'destination_type': 'queue'
+      }]))
+
+    const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
+
+    const inputSystem = new System('test')
+    const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
+
+    expect(outputSystem.getMicroServices()).toHaveLength(0)
+    expect(outputSystem.getMessageExchanges()).toHaveLength(1)
+
+    const queueNode = outputSystem.nodes.find(node => node.content.type === MessageQueue.name)
+    expect(queueNode).toBeDefined()
+    expect(queueNode.getName()).toEqual('no-service-prefix')
+
+    verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
+  })
+
   it('does not create empty exchanges when there are only empty source properties in bindings', async() => {
 
     const apiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
