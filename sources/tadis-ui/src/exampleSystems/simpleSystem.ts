@@ -8,7 +8,7 @@ export const system: INode = {
     {
       id: 'source1',
       name: 'source1',
-      type: 'Microservice',
+      type: 'MicroService',
       properties: {
         shared: true,
         sourceLocation: '/sources/source1'
@@ -17,16 +17,16 @@ export const system: INode = {
     {
       id: 'source2',
       name: 'source2',
-      type: 'Microservice',
+      type: 'MicroService',
       properties: {
         sourceLocation: ''
       }
     },
-    { id: 'sink1', name: 'sink1', type: 'Microservice' },
+    { id: 'sink1', name: 'sink1', type: 'MicroService' },
     {
       id: 'sink2',
       name: 'sink2',
-      type: 'Microservice',
+      type: 'MicroService',
       properties: {
         metadata: {
           transformerName: 'ManualElementsProducer'
@@ -38,8 +38,12 @@ export const system: INode = {
       name: 'subsystem1',
       type: 'System',
       nodes: [
-        { id: 'a', name: 'a', type: 'Microservice' },
-        { id: 'c', name: 'c', type: 'Microservice' }
+        {
+          id: 'a',
+          name: 'a',
+          type: 'MessageQueue'
+        },
+        { id: 'c', name: 'c', type: 'MicroService' }
       ],
       edges: [
         {
@@ -52,7 +56,7 @@ export const system: INode = {
     {
       id: 'b',
       name: 'b',
-      type: 'Microservice',
+      type: 'MicroService',
       properties: {
         reduced: true
       }

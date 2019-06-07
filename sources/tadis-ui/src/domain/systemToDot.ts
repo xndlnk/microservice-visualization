@@ -83,10 +83,12 @@ ${dotSubGraphs}
       return `shape=cylinder,style=filled,fillcolor=lightgrey,id="${node.id}",label="${node.getName()}"${optionalUrl}`
     } else if (this.isNodeManuallyAdded(node)) {
       return `shape=box,style=dashed,fillcolor="white",id="${node.id}",label="${node.getName()}"${optionalUrl}`
-    } else {
+    } else if (node.type === 'MicroService') {
       // TODO: develop concept for supporting configurable styling based on properties.
       const color = this.getFillColorForNode(node)
       return `shape=box,style=striped,fillcolor="${color}",id="${node.id}",label="${node.getName()}"${optionalUrl}`
+    } else {
+      return `shape=egg,style=filled,fillcolor="white",id="${node.id}",label="${node.getName()}"${optionalUrl}`
     }
   }
 

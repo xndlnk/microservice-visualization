@@ -19,6 +19,7 @@ export class ConfigService {
       if (!fs.existsSync(this.getSourceFolder())) {
         throw new Error('SOURCE_FOLDER does not exist: ' + this.getSourceFolder())
       }
+      this.logger.log('using KUBERNETES_NAMESPACE: ' + this.getKubernetesNamespace())
     } else {
       this.envConfig = {}
     }
