@@ -13,7 +13,7 @@ import { System } from '../../model/ms'
 describe(RabbitMqCollectorService.name, () => {
   let app: INestApplication
 
-  beforeAll(async () => {
+  beforeAll(async() => {
     const testingModule = await Test.createTestingModule({
       imports: [RabbitMqModule]
     }).compile()
@@ -21,15 +21,15 @@ describe(RabbitMqCollectorService.name, () => {
     await app.init()
   })
 
-  it('collects system using all transformers', async () => {
+  it('collects system using all transformers', async() => {
     const config = app.get<ConfigService>(ConfigService)
     jest.spyOn(config, 'getSourceFolder').mockImplementation(
       () => process.cwd() + '/src/rabbitmq/transformer/testdata/source-folder'
     )
 
     const rabbitMqApiService = app.get<RabbitMqManagementApiService>(RabbitMqManagementApiService)
-    jest.spyOn(rabbitMqApiService, 'getQueues').mockImplementation(async () => testQueues)
-    jest.spyOn(rabbitMqApiService, 'getBindings').mockImplementation(async () => testBindings)
+    jest.spyOn(rabbitMqApiService, 'getQueues').mockImplementation(async() => testQueues)
+    jest.spyOn(rabbitMqApiService, 'getBindings').mockImplementation(async() => testBindings)
 
     const inputSystem = new System('')
     const service = inputSystem.addMicroService('test-microservice', { p: 1 })

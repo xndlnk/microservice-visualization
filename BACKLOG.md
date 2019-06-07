@@ -4,9 +4,6 @@
 
 ### Release v1.0
 
-- 🔷 rename components to tadis...
-- 🔷 create new release bundle of analyzer + viewer with equal versions
-- 🔷 mark old analyzer library as deprecated
 - 🔷 update documentation
 
 ### Improved Service Split

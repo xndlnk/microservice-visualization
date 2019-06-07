@@ -1,3 +1,7 @@
+## WARNING: This package is no longer maintained. It is replaced by [tadis-analyzer](../tadis-analyzer).
+
+---
+
 # microservice-system-analyzer
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
