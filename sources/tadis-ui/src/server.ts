@@ -81,6 +81,11 @@ function addRestHandlers(app: express.Express) {
         return { 'path': element.route.path, 'method': method }
       })
 
+    endpoints.push({
+      method: 'GET',
+      path: '' + appBaseUrl + '/html/'
+    })
+
     const endpointHtml = endpoints.map(endpoint => `${endpoint.method}: <a href="${endpoint.path}">${endpoint.path}</a>`).join('<br/>')
 
     res.send(`<h1>API</h1>${endpointHtml}`)
