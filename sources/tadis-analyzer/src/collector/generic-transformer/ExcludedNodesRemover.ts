@@ -19,8 +19,8 @@ export class ExcludedNodesRemover {
       .filter(edge => {
         const sourceNodeName = edge.source.content.payload.name
         const targetNodeName = edge.target.content.payload.name
-        if (namesToRemove.includes(sourceNodeName)
-          || namesToRemove.includes(targetNodeName)) {
+        if (this.shouldBeRemoved(namesToRemove, sourceNodeName)
+          || this.shouldBeRemoved(namesToRemove, targetNodeName)) {
           this.logger.log(`removing edge ${sourceNodeName} -> ${targetNodeName} of excluded node`)
           return false
         }
@@ -41,7 +41,7 @@ export class ExcludedNodesRemover {
     system.content.metadata = {
       transformer: ExcludedNodesRemover.name,
       context: 'system.nodes',
-      info: nodesRemoved.join(', ')
+      info: _.uniq(nodesRemoved).join(', ')
     }
 
     return system
