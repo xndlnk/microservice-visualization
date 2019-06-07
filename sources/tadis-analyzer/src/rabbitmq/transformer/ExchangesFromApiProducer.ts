@@ -60,16 +60,19 @@ export class ExchangesFromApiProducer {
   }
 
   private ensureTargetNodeExists(binding: Binding, system: System): Node {
-    const targetNodeName = this.getTargetNodeName(binding, system)
-    const existingService = system.findMicroService(targetNodeName)
-    if (existingService) {
-      return existingService
+    if (binding.queue.indexOf('.') >= 0) {
+      const queuePrefix = binding.queue.substring(0, binding.queue.indexOf('.'))
+      const existingService = system.findMicroService(queuePrefix)
+      if (existingService) {
+        return existingService
+      }
     }
 
     const metadata: Metadata = {
       transformer: ExchangesFromApiProducer.name,
       context: 'queue ' + binding.queue + ' bound to exchange ' + binding.exchange
     }
+    const targetNodeName = binding.queue
     const queueNode = system.addOrExtendNamedNode<MessageQueue>(MessageQueue, targetNodeName, undefined, metadata)
     return queueNode
   }
