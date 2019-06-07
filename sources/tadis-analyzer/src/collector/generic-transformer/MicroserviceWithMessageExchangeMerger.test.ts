@@ -75,6 +75,21 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
     expect(system.nodes).toContain(exchangeB)
   })
 
+  it('does not merge exchanges which are connected to nodes of same name but of a type different from MicroService', async() => {
+    const inputSystem = new System('system')
+    const exchangeA = inputSystem.addMessageExchange('A')
+    const queueA = inputSystem.addMessageQueue('A')
+
+    inputSystem.edges.push(new AsyncEventFlow(exchangeA, queueA))
+
+    const merger = new MicroserviceWithMessageExchangeMerger()
+    const system = await merger.transform(inputSystem)
+
+    expect(system.nodes).toHaveLength(2)
+    expect(system.nodes).toContain(exchangeA)
+    expect(system.nodes).toContain(queueA)
+  })
+
   it('merges properties of service and exchange', async() => {
     const inputSystem = new System('system')
     const serviceB = inputSystem.addMicroService('B', { p: 1 })

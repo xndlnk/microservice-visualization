@@ -37,6 +37,10 @@ export class System extends TypedNode<NamePayload> {
     return this.findTypedNodeWithName<MessageExchange>(MessageExchange, name)
   }
 
+  public addMessageQueue(name: string, extraPayload: any = {}, metadata?: Metadata): MicroService {
+    return this.addOrExtendNamedNode<MessageQueue>(MessageQueue, name, extraPayload, metadata)
+  }
+
   public getSyncDataFlows(): SyncDataFlow[] {
     return this.getEdges<SyncDataFlow>(SyncDataFlow)
   }

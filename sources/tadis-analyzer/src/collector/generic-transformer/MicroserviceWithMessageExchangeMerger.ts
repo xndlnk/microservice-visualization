@@ -83,10 +83,16 @@ export class MicroserviceWithMessageExchangeMerger {
   }
 
   private isSourceOfSameNameMicroService(exchange: MessageExchange, system: System): boolean {
-    return system.edges.find(edge => edge.source.id === exchange.id && edge.target.hasSameNameAs(exchange)) !== undefined
+    return system.edges.find(edge => edge.source.id === exchange.id
+      && edge.target.hasSameNameAs(exchange)
+      && edge.target.content.type === MicroService.name
+    ) !== undefined
   }
 
   private isTargetOfSameNameMicroService(exchange: MessageExchange, system: System): boolean {
-    return system.edges.find(edge => edge.target.id === exchange.id && edge.source.hasSameNameAs(exchange)) !== undefined
+    return system.edges.find(edge => edge.target.id === exchange.id
+      && edge.source.hasSameNameAs(exchange)
+      && edge.source.content.type === MicroService.name
+    ) !== undefined
   }
 }
