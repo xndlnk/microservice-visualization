@@ -4,7 +4,20 @@
 
 ### Release v1.0
 
+- 🔷 document code
+- 🔷 review code with focus on future changes that should have minimal compatability issues
 - 🔷 update documentation
+  - purpose
+  - approach
+  - model (generic + specific)
+  - ui
+  - available analyzer modules
+  - custom analyzers
+  - how to run
+    - env configuration variables
+    - build
+    - deployment
+    - debugging
 
 ### Improved Service Split
 
@@ -19,7 +32,7 @@
 - ❇️ feign client transformer supports @RequestParam annotation in parameter list
 - ❇️ add metadata for transformers adding payload fields `payload.metadata.fieldName: Metadata`
 - 🔷 enable strict type checking
-- ️❇️ allow manual additions but clearly mark them as manual (pink color)
+- ️❇️ allow manual additions but clearly mark them as manual
 - ️❇️ develop source analysis DSL
 - ️❇️ define feign and java annotation analyzer by using source analysis DSL
 - ️❇️ add self-analysis of the analyzer <- ⚠️ analysis DSL

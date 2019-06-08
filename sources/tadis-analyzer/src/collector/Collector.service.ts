@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 import { System, MicroService } from '../model/ms'
 import { KubernetesCollectorService } from '../kubernetes/collector/KubernetesCollector.service'
 import { RabbitMqCollectorService } from '../rabbitmq/collector/RabbitMqCollector.service'
+import { SubSystemTransformerService } from './transformer.module'
 
 @Injectable()
 export class CollectorService {
@@ -12,7 +13,8 @@ export class CollectorService {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly kubernetesCollector: KubernetesCollectorService,
-    private readonly rabbitMqCollector: RabbitMqCollectorService
+    private readonly rabbitMqCollector: RabbitMqCollectorService,
+    private readonly subSystemTransformer: SubSystemTransformerService
   ) { }
 
   public async getAllMicroservices(): Promise<MicroService[]> {
@@ -32,7 +34,7 @@ export class CollectorService {
     // but it might be removed in the future.
     system = await this.getProvider('ExcludedNodesRemover').transform(system)
     system = await this.getProvider('MicroserviceWithMessageExchangeMerger').transform(system)
-    system = await this.getProvider('CabinetTransformer').transform(system)
+    system = await this.subSystemTransformer.transform(system, SubSystemTransformerService.getSubSystemNameFromCabinetLabel)
 
     return system
   }

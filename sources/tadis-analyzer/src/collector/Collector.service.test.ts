@@ -5,7 +5,7 @@ import { CollectorService } from './Collector.service'
 import { CollectorModule } from './collector.module'
 
 import { ExcludedNodesRemover } from './generic-transformer/ExcludedNodesRemover'
-import { CabinetTransformer } from './generic-transformer/CabinetTransformer'
+import { SubSystemTransformerService } from './generic-transformer/SubSystemTransformer'
 import { FeignClientsFromSourceCodeProducer } from './feign/FeignClientsFromSourceCodeProducer'
 
 import { KubernetesModule } from '../kubernetes/kubernetes.module'
@@ -49,7 +49,7 @@ describe(CollectorService.name, () => {
     const spyOnExcludedNodesRemover = jest.spyOn(excludedNodesRemover, 'transform')
     spyOnExcludedNodesRemover.mockImplementation(async(system) => system)
 
-    const cabinetTransformer = app.get<CabinetTransformer>(CabinetTransformer)
+    const cabinetTransformer = app.get<SubSystemTransformerService>(SubSystemTransformerService)
     const spyOnCabinetLabelsTransformer = jest.spyOn(cabinetTransformer, 'transform')
     spyOnCabinetLabelsTransformer.mockImplementation(async(system) => system)
 
