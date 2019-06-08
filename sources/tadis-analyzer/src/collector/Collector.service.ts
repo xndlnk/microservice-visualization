@@ -5,7 +5,7 @@ import * as _ from 'lodash'
 import { System, MicroService } from '../model/ms'
 import { KubernetesCollectorService } from '../kubernetes/collector/KubernetesCollector.service'
 import { RabbitMqCollectorService } from '../rabbitmq/collector/RabbitMqCollector.service'
-import { SubSystemTransformerService } from './transformer.module'
+import { SubSystemTransformerService } from '../msa/common/MsaCommon.module'
 
 @Injectable()
 export class CollectorService {

@@ -2,16 +2,17 @@ import { Module } from '@nestjs/common'
 
 import { FeignClientsFromSourceCodeProducer } from './feign/FeignClientsFromSourceCodeProducer'
 import { ExcludedNodesRemover } from './generic-transformer/ExcludedNodesRemover'
-import { SubSystemTransformerService } from './generic-transformer/SubSystemTransformer'
 import { MicroserviceWithMessageExchangeMerger } from './generic-transformer/MicroserviceWithMessageExchangeMerger'
 import { ConfigModule } from '../config/config.module'
 import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnalysis.module'
 import { AnnotationAnalyzer, ElementMapping } from './java-source/AnnotationAnalyzer.service'
+import { MsaCommonModule } from '../msa/common/MsaCommon.module'
 
 @Module({
   imports: [
     ConfigModule,
-    SourceCodeAnalysisModule
+    SourceCodeAnalysisModule,
+    MsaCommonModule
   ],
   providers: [
     ExcludedNodesRemover,
@@ -19,14 +20,12 @@ import { AnnotationAnalyzer, ElementMapping } from './java-source/AnnotationAnal
     AnnotationAnalyzer,
     // INFO: actually this is no collector. we keep here for compatibility reasons
     // but it might be removed in the future.
-    SubSystemTransformerService,
     MicroserviceWithMessageExchangeMerger
   ],
   exports: [
     ExcludedNodesRemover,
     FeignClientsFromSourceCodeProducer,
     AnnotationAnalyzer,
-    SubSystemTransformerService,
     MicroserviceWithMessageExchangeMerger
   ]
 })
@@ -34,5 +33,5 @@ class TransformerModule { }
 
 export {
   TransformerModule, ExcludedNodesRemover, FeignClientsFromSourceCodeProducer, AnnotationAnalyzer, ElementMapping,
-  SubSystemTransformerService, MicroserviceWithMessageExchangeMerger
+  MicroserviceWithMessageExchangeMerger
 }

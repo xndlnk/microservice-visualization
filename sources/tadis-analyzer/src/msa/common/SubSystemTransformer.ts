@@ -21,6 +21,7 @@ export class SubSystemTransformerService {
     return undefined
   }
 
+  // TODO: the transformer could be made more generic by transforming nodes of any kind instead of just systems
   public async transform(system: System, getSubSystemName: mapNodeToSubSystemNameFunction): Promise<System> {
     const transformer = new SubSystemTransformer(getSubSystemName)
     return transformer.moveNodesToTheirSubSystems(system)

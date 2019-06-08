@@ -5,7 +5,7 @@ import { CollectorService } from './Collector.service'
 import { CollectorModule } from './collector.module'
 
 import { ExcludedNodesRemover } from './generic-transformer/ExcludedNodesRemover'
-import { SubSystemTransformerService } from './generic-transformer/SubSystemTransformer'
+import { SubSystemTransformerService } from '../msa/common/SubSystemTransformer'
 import { FeignClientsFromSourceCodeProducer } from './feign/FeignClientsFromSourceCodeProducer'
 
 import { KubernetesModule } from '../kubernetes/kubernetes.module'
@@ -15,13 +15,14 @@ import { RabbitMqModule } from '../rabbitmq/rabbitmq.module'
 import { RabbitMqCollectorService } from '../rabbitmq/collector/RabbitMqCollector.service'
 import { System } from 'src/model/ms'
 import { SourceLocationDecorator } from '../source-code-analysis/git/SourceLocationDecorator.service'
+import { MsaCommonModule } from '../msa/common/MsaCommon.module'
 
 describe(CollectorService.name, () => {
   let app: INestApplication
 
   beforeAll(async() => {
     const testingModule = await Test.createTestingModule({
-      imports: [CollectorModule, KubernetesModule, RabbitMqModule]
+      imports: [CollectorModule, KubernetesModule, RabbitMqModule, MsaCommonModule]
     }).compile()
     app = testingModule.createNestApplication()
     await app.init()
