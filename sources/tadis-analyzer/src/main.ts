@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core'
 import { Logger } from '@nestjs/common'
 
-import { AppModule } from './app.module'
+import { MsaModule } from './msa/Msa.module'
 import { ConfigService } from './config/Config.service'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(MsaModule)
   const config = app.get('ConfigService') as ConfigService
 
   await app.listen(config.getPort())

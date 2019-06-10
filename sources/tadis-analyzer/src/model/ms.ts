@@ -5,6 +5,7 @@ import { Node, Metadata } from './core'
  * this model provides type-safe access to nodes in a microservice system.
  */
 
+// TODO: move to msa/model/msa.ts
 export class System extends TypedNode<NamePayload> {
 
   constructor(id: string, metadata?: Metadata) {
