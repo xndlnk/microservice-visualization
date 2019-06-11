@@ -29,9 +29,9 @@ export class MicroserviceWithOutgoingExchangeMerger {
         if (edgeTargetingSameNameMicroService) {
           const service = system.findMicroService(exchange.getName())
           if (service) {
-            this.extendPayloadOfMicroService(result, service, exchange.content.payload)
-            this.extendMetadataOfMicroService(result, service, exchange.content.metadata)
-            this.extendMetadataOfMicroService(result, service, edgeTargetingSameNameMicroService.content.metadata)
+            this.extendPayloadOfMicroService(service, exchange.content.payload)
+            this.extendMetadataOfMicroService(service, exchange.content.metadata)
+            this.extendMetadataOfMicroService(service, edgeTargetingSameNameMicroService.content.metadata)
 
             this.getOtherExchangeEdgesRedirectedToService(system, exchange, service)
               .forEach(edge => result.edges.push(edge))
@@ -79,13 +79,13 @@ export class MicroserviceWithOutgoingExchangeMerger {
     return system.nodes.filter(node => node.content.type !== MessageExchange.name)
   }
 
-  private extendPayloadOfMicroService(system: System, service: MicroService, extraPayload: any) {
+  private extendPayloadOfMicroService(service: MicroService, extraPayload: any) {
     service.content.payload.reduced = true
     Object.getOwnPropertyNames(extraPayload)
       .forEach(payloadPropertyName => service.content.payload[payloadPropertyName] = extraPayload[payloadPropertyName])
   }
 
-  private extendMetadataOfMicroService(system: System, service: MicroService, metadata: Metadata) {
+  private extendMetadataOfMicroService(service: MicroService, metadata: Metadata) {
     if (service.content.metadata) {
       service.content.metadata.transformer += '; ' + metadata.transformer
       service.content.metadata.context += '; ' + metadata.context

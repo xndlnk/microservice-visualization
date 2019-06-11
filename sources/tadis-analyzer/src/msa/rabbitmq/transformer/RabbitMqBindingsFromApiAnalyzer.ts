@@ -6,6 +6,10 @@ import { System, AsyncEventFlow, MessageQueue } from '../../../model/ms'
 import { RabbitMqManagementApiService } from '../api/api.service'
 import { Metadata, Node } from '../../../model/core'
 
+// this analyzer assumes that a queue starts with the name of the microservice
+// which the queue belongs to. after the microservice name the delimiter below follows.
+const microServiceNameDelimiter = '.'
+
 type Binding = {
   exchange: string
   queue: string
@@ -60,8 +64,8 @@ export class RabbitMqBindingsFromApiAnalyzer {
   }
 
   private ensureTargetNodeExists(binding: Binding, system: System): Node {
-    if (binding.queue.indexOf('.') >= 0) {
-      const queuePrefix = binding.queue.substring(0, binding.queue.indexOf('.'))
+    if (binding.queue.indexOf(microServiceNameDelimiter) >= 0) {
+      const queuePrefix = binding.queue.substring(0, binding.queue.indexOf(microServiceNameDelimiter))
       const existingService = system.findMicroService(queuePrefix)
       if (existingService) {
         return existingService
@@ -75,14 +79,6 @@ export class RabbitMqBindingsFromApiAnalyzer {
     const targetNodeName = binding.queue
     const queueNode = system.addOrExtendNamedNode<MessageQueue>(MessageQueue, targetNodeName, undefined, metadata)
     return queueNode
-  }
-
-  private getTargetNodeName(binding: Binding, system: System): string {
-    if (binding.queue.indexOf('.') >= 0) {
-      const queuePrefix = binding.queue.substring(0, binding.queue.indexOf('.'))
-      return queuePrefix
-    }
-    return binding.queue
   }
 
   private async getBindings(queueName): Promise<Binding[]> {

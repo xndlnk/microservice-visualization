@@ -7,6 +7,10 @@ import { ConfigService } from '../../../config/Config.service'
 import { System, AsyncEventFlow } from '../../../model/ms'
 import { Metadata } from '../../../model/core'
 
+const fileEndingToAnalyze = '.java'
+const fileNameToAnalyzeMustInclude = 'send'
+const pathToAnalyzeMustNotInclude = 'migration'
+
 type ScanResult = {
   file: string,
   serviceName: string,
@@ -42,11 +46,11 @@ export class OutgoingExchangesFromSourceCreator {
 
   private async scanPathForExchangesInSendConfigurations(path: string): Promise<ScanResult[]> {
     this.logger.log('scanning for exchange in ' + path)
-    const javaFiles = await findFiles(path, '.java')
-    this.logger.log('found ' + javaFiles.length + ' java files')
+    const filesToAnalyze = await findFiles(path, fileEndingToAnalyze)
+    this.logger.log('found ' + filesToAnalyze.length + ' files which end with ' + fileEndingToAnalyze)
 
     const sendConfigurations: ScanResult[] = []
-    javaFiles
+    filesToAnalyze
       .filter(file => isNoSourceOfThisProject(file) && isSendConfiguration(file))
       .forEach(file => {
         const exchangeNames = parseExchangeVariables(file)
@@ -62,15 +66,9 @@ export class OutgoingExchangesFromSourceCreator {
 }
 
 function isSendConfiguration(file) {
-  // TODO: make 'send' configurable
-  return getFileNameWithoutPath(file).toLowerCase().includes('send') &&
-    isNotPartOfMigration(file) &&
-    isNotPartOfTestInSourceProject(file)
-}
-
-function isNotPartOfMigration(file) {
-  // TODO: make this configurable
-  return !file.toLowerCase().includes('migration')
+  return getFileNameWithoutPath(file).toLowerCase().includes(fileNameToAnalyzeMustInclude)
+    && !file.toLowerCase().includes(pathToAnalyzeMustNotInclude)
+    && isNotPartOfTestInSourceProject(file)
 }
 
 function isNotPartOfTestInSourceProject(file) {

@@ -5,6 +5,10 @@ import { ConfigService } from '../../../config/Config.service'
 import { System, AsyncEventFlow } from '../../../model/ms'
 import { Metadata } from '../../../model/core'
 
+const exchangeEnvNameMustInclude = 'EXCHANGE'
+const outgoingEnvNameMustInclude = 'OUTGOING'
+const incomingEnvNameMustInclude = 'INCOMING'
+
 @Injectable()
 export class ExchangesFromEnvPayloadCreator {
   private readonly logger = new Logger(ExchangesFromEnvPayloadCreator.name)
@@ -22,20 +26,20 @@ export class ExchangesFromEnvPayloadCreator {
     system.getMicroServices().forEach(service => {
       const env = service.getPayload().env
       if (env) {
-        env.filter(envEntry => envEntry.name.includes('EXCHANGE'))
+        env.filter(envEntry => envEntry.name.includes(exchangeEnvNameMustInclude))
           .forEach(envEntry => {
             const metadata: Metadata = {
               transformer: ExchangesFromEnvPayloadCreator.name,
               context: 'env variable ' + envEntry.name
             }
 
-            if (envEntry.name.includes('OUTGOING')) {
+            if (envEntry.name.includes(outgoingEnvNameMustInclude)) {
               const outgoingExchange = system.addMessageExchange(envEntry.value, undefined, metadata)
               const edge = new AsyncEventFlow(service, outgoingExchange, undefined, metadata)
               system.edges.push(edge)
               this.logger.log(`added outgoing exchange ${envEntry.value} for service ${service.getPayload().name}`)
             }
-            if (envEntry.name.includes('INCOMING')) {
+            if (envEntry.name.includes(incomingEnvNameMustInclude)) {
               const incomingExchange = system.addMessageExchange(envEntry.value, undefined, metadata)
               const eventFlow = new AsyncEventFlow(incomingExchange, service, undefined, metadata)
               system.edges.push(eventFlow)
