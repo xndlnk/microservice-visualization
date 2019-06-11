@@ -6,7 +6,7 @@ import { ConfigService } from '../../config/Config.service'
 describe('SourceStorageController', () => {
   let app: TestingModule
 
-  beforeAll(async () => {
+  beforeAll(async() => {
     const configService = new ConfigService()
     jest.spyOn(configService, 'getSourceFolder').mockImplementation(
       () => process.cwd() + '/src/source-code-analysis/git/testdata/source-folder'
@@ -22,7 +22,7 @@ describe('SourceStorageController', () => {
   })
 
   describe('getStorageStatus', () => {
-    it('returns something', async () => {
+    it('returns something', async() => {
       const controller = app.get<GitStorageController>(GitStorageController)
       const status = await controller.getStorageStatus()
       expect(status).not.toBeNull()
