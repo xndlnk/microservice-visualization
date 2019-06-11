@@ -68,14 +68,13 @@ function displaySystemTitle(system: Node) {
 
 function displayNodesRemoved(system: Node) {
   const metadata = system.getProp('metadata', null)
-  if (metadata && metadata.transformer === 'ExcludedNodesRemover') {
+  if (metadata && metadata.transformer === 'StaticNodeFilter') {
     select('#node-filter-info')
       .text(metadata.info)
   } else {
     select('#node-filter-info')
       .text('none')
   }
-  console.log('displayNodesRemoved')
 }
 
 function displaySystem(system: Node) {
