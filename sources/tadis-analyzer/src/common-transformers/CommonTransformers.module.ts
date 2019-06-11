@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 
-import { ConfigModule } from '../config/config.module'
+import { ConfigModule } from '../config/Config.module'
 import { StaticNodeFilter } from './StaticNodeFilter'
-import { SubSystemTransformerService } from './SubSystemTransformer'
+import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransformer'
 
 @Module({
   imports: [
@@ -11,9 +11,13 @@ import { SubSystemTransformerService } from './SubSystemTransformer'
   controllers: [],
   providers: [
     StaticNodeFilter,
-    SubSystemTransformerService
+    SubSystemFromPayloadTransformer
   ]
 })
 class CommonTransformersModule { }
 
-export { CommonTransformersModule, StaticNodeFilter, SubSystemTransformerService }
+export {
+  CommonTransformersModule,
+  StaticNodeFilter,
+  SubSystemFromPayloadTransformer
+}

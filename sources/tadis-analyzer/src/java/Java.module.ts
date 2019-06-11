@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 
-import { ConfigModule } from '../config/config.module'
+import { ConfigModule } from '../config/Config.module'
 import { SourceCodeAnalysisModule } from 'src/source-code-analysis/SourceCodeAnalysis.module'
-import { AnnotationAnalyzer } from './AnnotationAnalyzer.service'
+import { JavaAnnotationAnalyzer } from './JavaAnnotationAnalyzer'
 
 @Module({
   imports: [
@@ -11,12 +11,12 @@ import { AnnotationAnalyzer } from './AnnotationAnalyzer.service'
   ],
   controllers: [],
   providers: [
-    AnnotationAnalyzer
+    JavaAnnotationAnalyzer
   ]
 })
 class JavaModule { }
 
 export {
   JavaModule,
-  AnnotationAnalyzer
+  JavaAnnotationAnalyzer
 }

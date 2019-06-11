@@ -8,7 +8,7 @@ import { KubernetesApiService } from '../api/api.service'
 const logger = new Logger('add-kubernetes-env-vars')
 
 @Injectable()
-export class EnvVarsFromPodsDecorator {
+export class EnvDefinitionFromPodDecorator {
 
   constructor(
     private readonly config: ConfigService,

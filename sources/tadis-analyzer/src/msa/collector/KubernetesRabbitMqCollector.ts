@@ -3,30 +3,31 @@ import { ModuleRef } from '@nestjs/core'
 import * as _ from 'lodash'
 
 import { System, MicroService } from '../../model/ms'
-import { KubernetesCollectorService } from '../kubernetes/collector/KubernetesCollector.service'
 import { SourceLocationDecorator } from '../../source-code-analysis/SourceCodeAnalysis.module'
 import { Collector } from './Collector'
-import { ExchangesFromApiProducer } from '../rabbitmq/RabbitMq.module'
+import { RabbitMqBindingsFromApiAnalyzer } from '../rabbitmq/RabbitMq.module'
+import { MicroservicesFromKubernetesCreator } from '../kubernetes/Kubernetes.module'
 
 @Injectable()
 export class KubernetesRabbitMqCollectorService implements Collector {
 
   constructor(
     private readonly moduleRef: ModuleRef,
-    private readonly kubernetesCollector: KubernetesCollectorService,
-    private readonly exchangesFromApiProducer: ExchangesFromApiProducer,
+    private readonly microservicesCreator: MicroservicesFromKubernetesCreator,
+    private readonly rabbitMqApiAnalyzer: RabbitMqBindingsFromApiAnalyzer,
     private readonly sourceLocationDecorator: SourceLocationDecorator
   ) { }
 
   public async getAllMicroservices(): Promise<MicroService[]> {
-    return this.kubernetesCollector.getAllMicroservices()
+    const system = await this.microservicesCreator.transform(new System(''))
+    return system.getMicroServices()
   }
 
   public async getSystem(): Promise<System> {
     let system = new System('')
 
-    system = await this.kubernetesCollector.transform(system)
-    system = await this.exchangesFromApiProducer.transform(system)
+    system = await this.microservicesCreator.transform(system)
+    system = await this.rabbitMqApiAnalyzer.transform(system)
 
     system = await this.sourceLocationDecorator.transform(system)
 

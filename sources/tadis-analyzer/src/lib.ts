@@ -8,7 +8,7 @@ export { transport }
 export * from './model/core'
 export * from './model/ms'
 
-export * from './config/config.module'
+export * from './config/Config.module'
 export * from './common-transformers/CommonTransformers.module'
 export * from './java/Java.module'
 export * from './source-code-analysis/SourceCodeAnalysis.module'

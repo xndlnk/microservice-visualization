@@ -13,9 +13,8 @@ import { Metadata } from 'src/model/core'
 const logger = new Logger('AnnotationAnalyzer')
 
 @Injectable()
-// JavaAnnotationTransformer
-export class AnnotationAnalyzer {
-  private readonly logger = new Logger(AnnotationAnalyzer.name)
+export class JavaAnnotationAnalyzer {
+  private readonly logger = new Logger(JavaAnnotationAnalyzer.name)
 
   constructor(
     private readonly config: ConfigService
@@ -133,7 +132,7 @@ function executeMappingForNode(system: System, service: MicroService,
   elementMapping: ElementMapping, nodeName: string) {
 
   const metadata: Metadata = {
-    transformer: AnnotationAnalyzer.name,
+    transformer: JavaAnnotationAnalyzer.name,
     context: 'service ' + service.id
   }
   const node = system.addOrExtendTypedNode(elementMapping.nodeTypeToCreate, nodeName, undefined, metadata)

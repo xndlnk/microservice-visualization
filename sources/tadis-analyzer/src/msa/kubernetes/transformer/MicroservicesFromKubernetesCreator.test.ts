@@ -1,6 +1,6 @@
 import { KubernetesApiService } from '../api/api.service'
 import { ConfigService } from '../../../config/Config.service'
-import { MicroservicesFromServicesProducer } from './MicroservicesFromServicesProducer'
+import { MicroservicesFromKubernetesCreator } from './MicroservicesFromKubernetesCreator'
 
 import { body as testBodyServices } from './testdata/api/services.json'
 import { body as testBodyPods } from './testdata/api/pods.json'
@@ -9,7 +9,7 @@ import { verifyEachContentHasTransformer } from '../../../test/verifiers'
 jest.mock('../api/api.service')
 jest.mock('../../../config/Config.service')
 
-describe(MicroservicesFromServicesProducer.name, () => {
+describe(MicroservicesFromKubernetesCreator.name, () => {
 
   beforeAll(async() => {
     ConfigService.prototype.getKubernetesNamespace = jest.fn().mockImplementation(() => {
@@ -29,7 +29,7 @@ describe(MicroservicesFromServicesProducer.name, () => {
     const config = new ConfigService()
     const apiService = new KubernetesApiService(config)
 
-    const kubernetesService = new MicroservicesFromServicesProducer(config, apiService)
+    const kubernetesService = new MicroservicesFromKubernetesCreator(config, apiService)
     const system = await kubernetesService.transform(null)
 
     expect(system).not.toBeNull()
@@ -37,6 +37,6 @@ describe(MicroservicesFromServicesProducer.name, () => {
     expect(system.nodes).toHaveLength(1)
     expect(system.nodes[0].content.payload.name).toEqual('test-microservice')
 
-    verifyEachContentHasTransformer(system, MicroservicesFromServicesProducer.name)
+    verifyEachContentHasTransformer(system, MicroservicesFromKubernetesCreator.name)
   })
 })

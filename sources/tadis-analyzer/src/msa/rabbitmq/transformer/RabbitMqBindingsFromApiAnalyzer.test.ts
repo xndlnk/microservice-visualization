@@ -3,20 +3,20 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { ConfigService } from '../../../config/Config.service'
 
 import { System, MessageQueue } from '../../../model/ms'
-import { ExchangesFromApiProducer } from './ExchangesFromApiProducer'
+import { RabbitMqBindingsFromApiAnalyzer } from './RabbitMqBindingsFromApiAnalyzer'
 import { RabbitMqManagementApiService } from '../api/api.service'
 
 import * as testQueues from './testdata/api/queues.json'
 import * as testBindings from './testdata/api/bindings.json'
 import { verifyEachContentHasTransformer } from '../../../test/verifiers'
 
-describe(ExchangesFromApiProducer.name, () => {
+describe(RabbitMqBindingsFromApiAnalyzer.name, () => {
   let app: TestingModule
 
   beforeAll(async() => {
     app = await Test.createTestingModule({
       controllers: [],
-      providers: [ConfigService, ExchangesFromApiProducer, RabbitMqManagementApiService]
+      providers: [ConfigService, RabbitMqBindingsFromApiAnalyzer, RabbitMqManagementApiService]
     }).compile()
   })
 
@@ -26,7 +26,7 @@ describe(ExchangesFromApiProducer.name, () => {
     jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
     jest.spyOn(apiService, 'getBindings').mockImplementation(async() => testBindings)
 
-    const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
+    const addExchangesFormSourceStep = app.get<RabbitMqBindingsFromApiAnalyzer>(RabbitMqBindingsFromApiAnalyzer)
 
     const inputSystem = new System('test')
     inputSystem.addMicroService('receiver-service')
@@ -50,7 +50,7 @@ describe(ExchangesFromApiProducer.name, () => {
     expect(outputSystem.getAsyncEventFlows()[1].source.id).toEqual(outputSystem.getMessageExchanges()[1].id)
     expect(outputSystem.getAsyncEventFlows()[1].target.id).toEqual(outputSystem.getMicroServices()[0].id)
 
-    verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
+    verifyEachContentHasTransformer(outputSystem, RabbitMqBindingsFromApiAnalyzer.name)
   })
 
   it('does not create a microservice from a queue pattern when the microservice does not exist in the input system', async() => {
@@ -59,7 +59,7 @@ describe(ExchangesFromApiProducer.name, () => {
     jest.spyOn(apiService, 'getQueues').mockImplementation(async() => testQueues)
     jest.spyOn(apiService, 'getBindings').mockImplementation(async() => testBindings)
 
-    const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
+    const addExchangesFormSourceStep = app.get<RabbitMqBindingsFromApiAnalyzer>(RabbitMqBindingsFromApiAnalyzer)
 
     const inputSystem = new System('test')
     const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
@@ -74,7 +74,7 @@ describe(ExchangesFromApiProducer.name, () => {
     expect(outputSystem.getAsyncEventFlows()[0].source.id).toEqual(outputSystem.getMessageExchanges()[0].id)
     expect(outputSystem.getAsyncEventFlows()[0].target.id).toEqual(queueNode.id)
 
-    verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
+    verifyEachContentHasTransformer(outputSystem, RabbitMqBindingsFromApiAnalyzer.name)
   })
 
   it('creates queues for queues which do not match the name pattern', async() => {
@@ -93,7 +93,7 @@ describe(ExchangesFromApiProducer.name, () => {
         'destination_type': 'queue'
       }]))
 
-    const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
+    const addExchangesFormSourceStep = app.get<RabbitMqBindingsFromApiAnalyzer>(RabbitMqBindingsFromApiAnalyzer)
 
     const inputSystem = new System('test')
     const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
@@ -105,7 +105,7 @@ describe(ExchangesFromApiProducer.name, () => {
     expect(queueNode).toBeDefined()
     expect(queueNode.getName()).toEqual('no-service-prefix')
 
-    verifyEachContentHasTransformer(outputSystem, ExchangesFromApiProducer.name)
+    verifyEachContentHasTransformer(outputSystem, RabbitMqBindingsFromApiAnalyzer.name)
   })
 
   it('does not create empty exchanges when there are only empty source properties in bindings', async() => {
@@ -124,7 +124,7 @@ describe(ExchangesFromApiProducer.name, () => {
       }
     ]))
 
-    const addExchangesFormSourceStep = app.get<ExchangesFromApiProducer>(ExchangesFromApiProducer)
+    const addExchangesFormSourceStep = app.get<RabbitMqBindingsFromApiAnalyzer>(RabbitMqBindingsFromApiAnalyzer)
 
     const outputSystem = await addExchangesFormSourceStep.transform(new System('test'))
 

@@ -12,9 +12,8 @@ type Binding = {
 }
 
 @Injectable()
-// RabbitMqApiBindingAnalyzer
-export class ExchangesFromApiProducer {
-  private readonly logger = new Logger(ExchangesFromApiProducer.name)
+export class RabbitMqBindingsFromApiAnalyzer {
+  private readonly logger = new Logger(RabbitMqBindingsFromApiAnalyzer.name)
 
   constructor(
     private readonly config: ConfigService,
@@ -45,7 +44,7 @@ export class ExchangesFromApiProducer {
       .filter(binding => binding.exchange !== '')
       .forEach(binding => {
         const metadata: Metadata = {
-          transformer: ExchangesFromApiProducer.name,
+          transformer: RabbitMqBindingsFromApiAnalyzer.name,
           context: 'queue ' + binding.queue + ' bound to exchange ' + binding.exchange
         }
         const sourceExchangName = binding.exchange
@@ -70,7 +69,7 @@ export class ExchangesFromApiProducer {
     }
 
     const metadata: Metadata = {
-      transformer: ExchangesFromApiProducer.name,
+      transformer: RabbitMqBindingsFromApiAnalyzer.name,
       context: 'queue ' + binding.queue + ' bound to exchange ' + binding.exchange
     }
     const targetNodeName = binding.queue

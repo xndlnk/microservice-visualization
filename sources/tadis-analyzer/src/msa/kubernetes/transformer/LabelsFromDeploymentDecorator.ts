@@ -6,8 +6,8 @@ import { System, MicroService } from '../../../model/ms'
 import { KubernetesApiService } from '../api/api.service'
 
 @Injectable()
-export class LabelsFromDeploymentsDecorator {
-  private readonly logger = new Logger(LabelsFromDeploymentsDecorator.name)
+export class LabelsFromDeploymentDecorator {
+  private readonly logger = new Logger(LabelsFromDeploymentDecorator.name)
 
   constructor(
     private readonly config: ConfigService,

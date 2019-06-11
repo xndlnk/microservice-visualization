@@ -12,7 +12,7 @@ type mapNodeToSubSystemNameFunction = (node: Node) => string
  * The associated sub-system of a node is derived from its payload.
  */
 @Injectable()
-export class SubSystemTransformerService {
+export class SubSystemFromPayloadTransformer {
 
   public static readonly getSubSystemNameFromCabinetLabel = (node: Node): string => {
     if (node.content.payload.labels) {

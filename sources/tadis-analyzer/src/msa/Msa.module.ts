@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { ConfigModule } from '../config/config.module'
+import { ConfigModule } from '../config/Config.module'
 import { CommonTransformersModule } from '../common-transformers/CommonTransformers.module'
 import { KubernetesModule } from './kubernetes/Kubernetes.module'
 import { RabbitMqModule } from './rabbitmq/RabbitMq.module'

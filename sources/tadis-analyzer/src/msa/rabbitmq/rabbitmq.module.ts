@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 
 import { RabbitMqManagementApiService } from './api/api.service'
-import { ConfigModule } from '../../config/config.module'
-import { ExchangesFromApiProducer } from './transformer/ExchangesFromApiProducer'
-import { ExchangesFromEnvVarsProducer } from './transformer/ExchangesFromEnvVarsProducer'
-import { ExchangesFromSourceCodeProducer } from './transformer/ExchangesFromSourceCodeProducer'
-import { MicroserviceWithMessageExchangeMerger } from './transformer/MicroserviceWithMessageExchangeMerger'
+import { ConfigModule } from '../../config/Config.module'
+import { RabbitMqBindingsFromApiAnalyzer } from './transformer/RabbitMqBindingsFromApiAnalyzer'
+import { ExchangesFromEnvPayloadCreator } from './transformer/ExchangesFromEnvPayloadCreator'
+import { OutgoingExchangesFromSourceCreator } from './transformer/OutgoingExchangesFromSourceCreator'
+import { MicroserviceWithOutgoingExchangeMerger } from './transformer/MicroserviceWithOutgoingExchangeMerger'
 
 @Module({
   imports: [
@@ -15,17 +15,17 @@ import { MicroserviceWithMessageExchangeMerger } from './transformer/Microservic
   ],
   providers: [
     RabbitMqManagementApiService,
-    ExchangesFromApiProducer,
-    ExchangesFromEnvVarsProducer,
-    ExchangesFromSourceCodeProducer,
-    MicroserviceWithMessageExchangeMerger
+    RabbitMqBindingsFromApiAnalyzer,
+    ExchangesFromEnvPayloadCreator,
+    OutgoingExchangesFromSourceCreator,
+    MicroserviceWithOutgoingExchangeMerger
   ],
   exports: [
     RabbitMqManagementApiService,
-    ExchangesFromApiProducer,
-    ExchangesFromEnvVarsProducer,
-    ExchangesFromSourceCodeProducer,
-    MicroserviceWithMessageExchangeMerger
+    RabbitMqBindingsFromApiAnalyzer,
+    ExchangesFromEnvPayloadCreator,
+    OutgoingExchangesFromSourceCreator,
+    MicroserviceWithOutgoingExchangeMerger
   ]
 })
 class RabbitMqModule { }
@@ -33,8 +33,8 @@ class RabbitMqModule { }
 export {
   RabbitMqModule,
   RabbitMqManagementApiService,
-  ExchangesFromApiProducer,
-  ExchangesFromEnvVarsProducer,
-  ExchangesFromSourceCodeProducer,
-  MicroserviceWithMessageExchangeMerger
+  RabbitMqBindingsFromApiAnalyzer,
+  ExchangesFromEnvPayloadCreator,
+  OutgoingExchangesFromSourceCreator,
+  MicroserviceWithOutgoingExchangeMerger
 }

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { SourceLocationDecorator } from './SourceLocationDecorator.service'
+import { SourceLocationDecorator } from './SourceLocationDecorator'
 import { GitStorageService } from './GitStorage.service'
 import { StorageStatus } from './GitStorage'
 import { System } from '../../model/ms'

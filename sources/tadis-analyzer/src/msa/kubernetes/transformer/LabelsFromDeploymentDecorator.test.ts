@@ -5,15 +5,15 @@ import { ConfigService } from '../../../config/Config.service'
 
 import { body as testBody } from './testdata/api/deployments.json'
 import { System } from '../../../model/ms'
-import { LabelsFromDeploymentsDecorator } from './LabelsFromDeploymentsDecorator'
+import { LabelsFromDeploymentDecorator } from './LabelsFromDeploymentDecorator'
 
-describe(LabelsFromDeploymentsDecorator.name, () => {
+describe(LabelsFromDeploymentDecorator.name, () => {
   let app: TestingModule
 
   beforeAll(async() => {
     app = await Test.createTestingModule({
       controllers: [],
-      providers: [ConfigService, KubernetesApiService, LabelsFromDeploymentsDecorator]
+      providers: [ConfigService, KubernetesApiService, LabelsFromDeploymentDecorator]
     }).compile()
   })
 
@@ -24,7 +24,7 @@ describe(LabelsFromDeploymentsDecorator.name, () => {
     const inputSystem = new System('test')
     inputSystem.addMicroService('test-microservice', { p: 1 })
 
-    const addLabels = app.get<LabelsFromDeploymentsDecorator>(LabelsFromDeploymentsDecorator)
+    const addLabels = app.get<LabelsFromDeploymentDecorator>(LabelsFromDeploymentDecorator)
     const outputSystem = await addLabels.transform(inputSystem)
 
     expect(outputSystem).not.toBeNull()

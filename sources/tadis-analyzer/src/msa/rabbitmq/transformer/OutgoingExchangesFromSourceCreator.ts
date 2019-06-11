@@ -14,8 +14,8 @@ type ScanResult = {
 }
 
 @Injectable()
-export class ExchangesFromSourceCodeProducer {
-  private readonly logger = new Logger(ExchangesFromSourceCodeProducer.name)
+export class OutgoingExchangesFromSourceCreator {
+  private readonly logger = new Logger(OutgoingExchangesFromSourceCreator.name)
 
   constructor(
     private readonly config: ConfigService
@@ -25,7 +25,7 @@ export class ExchangesFromSourceCodeProducer {
     const scanResults = await this.scanPathForExchangesInSendConfigurations(this.config.getSourceFolder())
     for (const scanResult of scanResults) {
       const metadata: Metadata = {
-        transformer: ExchangesFromSourceCodeProducer.name,
+        transformer: OutgoingExchangesFromSourceCreator.name,
         context: 'service ' + scanResult.serviceName
       }
 

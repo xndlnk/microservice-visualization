@@ -6,8 +6,8 @@ import { System, AsyncEventFlow } from '../../../model/ms'
 import { Metadata } from '../../../model/core'
 
 @Injectable()
-export class ExchangesFromEnvVarsProducer {
-  private readonly logger = new Logger(ExchangesFromEnvVarsProducer.name)
+export class ExchangesFromEnvPayloadCreator {
+  private readonly logger = new Logger(ExchangesFromEnvPayloadCreator.name)
 
   constructor(
     private readonly config: ConfigService
@@ -25,7 +25,7 @@ export class ExchangesFromEnvVarsProducer {
         env.filter(envEntry => envEntry.name.includes('EXCHANGE'))
           .forEach(envEntry => {
             const metadata: Metadata = {
-              transformer: ExchangesFromEnvVarsProducer.name,
+              transformer: ExchangesFromEnvPayloadCreator.name,
               context: 'env variable ' + envEntry.name
             }
 

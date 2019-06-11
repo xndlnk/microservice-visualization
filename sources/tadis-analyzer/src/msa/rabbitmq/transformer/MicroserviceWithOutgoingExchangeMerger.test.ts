@@ -1,7 +1,7 @@
-import { MicroserviceWithMessageExchangeMerger } from './MicroserviceWithMessageExchangeMerger'
+import { MicroserviceWithOutgoingExchangeMerger } from './MicroserviceWithOutgoingExchangeMerger'
 import { System, AsyncEventFlow, MicroService } from '../../../model/ms'
 
-describe(MicroserviceWithMessageExchangeMerger.name, () => {
+describe(MicroserviceWithOutgoingExchangeMerger.name, () => {
 
   it('can merge in standard case', async() => {
     const inputSystem = new System('system')
@@ -13,7 +13,7 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
     inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeB))
     inputSystem.edges.push(new AsyncEventFlow(exchangeB, serviceC))
 
-    const merger = new MicroserviceWithMessageExchangeMerger()
+    const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
     expect(system.nodes).toHaveLength(3)
@@ -34,7 +34,7 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
     inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeB))
     inputSystem.edges.push(new AsyncEventFlow(serviceX, exchangeB))
 
-    const merger = new MicroserviceWithMessageExchangeMerger()
+    const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
     expect(system.nodes).toHaveLength(2)
@@ -54,7 +54,7 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
 
     inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeB))
 
-    const merger = new MicroserviceWithMessageExchangeMerger()
+    const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
     expect(system.nodes).toHaveLength(2)
@@ -67,7 +67,7 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
 
     inputSystem.edges.push(new AsyncEventFlow(serviceA, exchangeB))
 
-    const merger = new MicroserviceWithMessageExchangeMerger()
+    const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
     expect(system.nodes).toHaveLength(2)
@@ -82,7 +82,7 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
 
     inputSystem.edges.push(new AsyncEventFlow(exchangeA, queueA))
 
-    const merger = new MicroserviceWithMessageExchangeMerger()
+    const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
     expect(system.nodes).toHaveLength(2)
@@ -97,7 +97,7 @@ describe(MicroserviceWithMessageExchangeMerger.name, () => {
 
     inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeB))
 
-    const merger = new MicroserviceWithMessageExchangeMerger()
+    const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
     expect(system.nodes).toHaveLength(1)

@@ -2,18 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { KubernetesApiService } from '../api/api.service'
 import { ConfigService } from '../../../config/Config.service'
-import { EnvVarsFromPodsDecorator } from './EnvVarsFromPodsDecorator'
+import { EnvDefinitionFromPodDecorator } from './EnvDefinitionFromPodDecorator'
 
 import { body as testBody } from './testdata/api/pods.json'
 import { System } from '../../../model/ms'
 
-describe(EnvVarsFromPodsDecorator.name, () => {
+describe(EnvDefinitionFromPodDecorator.name, () => {
   let app: TestingModule
 
   beforeAll(async() => {
     app = await Test.createTestingModule({
       controllers: [],
-      providers: [ConfigService, KubernetesApiService, EnvVarsFromPodsDecorator]
+      providers: [ConfigService, KubernetesApiService, EnvDefinitionFromPodDecorator]
     }).compile()
   })
 
@@ -24,7 +24,7 @@ describe(EnvVarsFromPodsDecorator.name, () => {
     const inputSystem = new System('test')
     inputSystem.addMicroService('test-microservice', { p: 1 })
 
-    const envService = app.get<EnvVarsFromPodsDecorator>(EnvVarsFromPodsDecorator)
+    const envService = app.get<EnvDefinitionFromPodDecorator>(EnvDefinitionFromPodDecorator)
     const outputSystem = await envService.transform(inputSystem)
 
     expect(outputSystem).not.toBeNull()

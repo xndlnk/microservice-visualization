@@ -5,8 +5,8 @@ import { System, AsyncEventFlow, MicroService, MessageExchange } from '../../../
 import { Node, Edge } from '../../../model/core'
 
 @Injectable()
-export class MicroserviceWithMessageExchangeMerger {
-  private readonly logger = new Logger(MicroserviceWithMessageExchangeMerger.name)
+export class MicroserviceWithOutgoingExchangeMerger {
+  private readonly logger = new Logger(MicroserviceWithOutgoingExchangeMerger.name)
 
   public async transform(system: System): Promise<System> {
     return this.merge(system)

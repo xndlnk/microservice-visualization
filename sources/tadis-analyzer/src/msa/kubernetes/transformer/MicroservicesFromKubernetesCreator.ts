@@ -7,8 +7,8 @@ import { KubernetesApiService } from '../api/api.service'
 import { Metadata } from 'src/model/core'
 
 @Injectable()
-export class MicroservicesFromServicesProducer {
-  private readonly logger = new Logger(MicroservicesFromServicesProducer.name)
+export class MicroservicesFromKubernetesCreator {
+  private readonly logger = new Logger(MicroservicesFromKubernetesCreator.name)
 
   constructor(
     private readonly config: ConfigService,
@@ -30,7 +30,7 @@ export class MicroservicesFromServicesProducer {
         const serviceName = item.metadata.name
         if (this.isPodExisting(pods, serviceName + '-')) {
           const metadata: Metadata = {
-            transformer: MicroservicesFromServicesProducer.name,
+            transformer: MicroservicesFromKubernetesCreator.name,
             context: 'service ' + serviceName
           }
 

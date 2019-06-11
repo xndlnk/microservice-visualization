@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
-import { ConfigModule } from '../config/config.module'
+import { ConfigModule } from '../config/Config.module'
 import { GitStorageController } from './git/GitStorage.controller'
 import { GitStorageService } from './git/GitStorage.service'
-import { SourceLocationDecorator } from './git/SourceLocationDecorator.service'
+import { SourceLocationDecorator } from './git/SourceLocationDecorator'
 import * as fileAnalysis from './file-analysis/analysis'
 
 @Module({
@@ -24,4 +24,9 @@ import * as fileAnalysis from './file-analysis/analysis'
 })
 class SourceCodeAnalysisModule { }
 
-export { SourceCodeAnalysisModule, GitStorageService, SourceLocationDecorator, fileAnalysis }
+export {
+  SourceCodeAnalysisModule,
+  GitStorageService,
+  SourceLocationDecorator,
+  fileAnalysis
+}

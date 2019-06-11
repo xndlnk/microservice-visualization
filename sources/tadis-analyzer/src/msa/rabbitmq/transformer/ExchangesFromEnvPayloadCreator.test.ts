@@ -4,18 +4,18 @@ import '../../../test/expect-extensions'
 import { verifyEachContentHasTransformer } from '../../../test/verifiers'
 
 import { ConfigService } from '../../../config/Config.service'
-import { ExchangesFromEnvVarsProducer } from './ExchangesFromEnvVarsProducer'
+import { ExchangesFromEnvPayloadCreator } from './ExchangesFromEnvPayloadCreator'
 
 import { System } from '../../../model/ms'
 
-describe(ExchangesFromEnvVarsProducer.name, () => {
+describe(ExchangesFromEnvPayloadCreator.name, () => {
   let app: TestingModule
 
   beforeAll(async() => {
     app = await Test.createTestingModule({
       controllers: [],
       providers: [
-        ConfigService, ExchangesFromEnvVarsProducer
+        ConfigService, ExchangesFromEnvPayloadCreator
       ]
     }).compile()
   })
@@ -42,7 +42,7 @@ describe(ExchangesFromEnvVarsProducer.name, () => {
       }
     ]
 
-    const envExchangesService = app.get<ExchangesFromEnvVarsProducer>(ExchangesFromEnvVarsProducer)
+    const envExchangesService = app.get<ExchangesFromEnvPayloadCreator>(ExchangesFromEnvPayloadCreator)
     const outputSystem = await envExchangesService.transform(inputSystem)
 
     expect(outputSystem).not.toBeNull()
@@ -50,9 +50,10 @@ describe(ExchangesFromEnvVarsProducer.name, () => {
     expect(outputSystem.getMicroServices()).toHaveLength(1)
     expect(outputSystem.getMessageExchanges()).toHaveLength(2)
     expect(outputSystem.findMessageExchange('test-outgoing-exchange')).toBeDefined()
-    expect(outputSystem.findMessageExchange('test-incoming-exchange').content.metadata.transformer).toEqual(ExchangesFromEnvVarsProducer.name)
+    expect(outputSystem.findMessageExchange('test-incoming-exchange').content.metadata.transformer)
+      .toEqual(ExchangesFromEnvPayloadCreator.name)
 
-    verifyEachContentHasTransformer(outputSystem, ExchangesFromEnvVarsProducer.name)
+    verifyEachContentHasTransformer(outputSystem, ExchangesFromEnvPayloadCreator.name)
 
     expect(outputSystem.edges).toHaveLength(2)
     expect(outputSystem.edges.filter(edge => edge.content.type !== undefined)).toHaveLength(2)

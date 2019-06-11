@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { ConfigService } from '../../../config/Config.service'
 
 import { System } from '../../../model/ms'
-import { ExchangesFromSourceCodeProducer } from './ExchangesFromSourceCodeProducer'
+import { OutgoingExchangesFromSourceCreator } from './OutgoingExchangesFromSourceCreator'
 import { verifyEachContentHasTransformer } from '../../../test/verifiers'
 
-describe(ExchangesFromSourceCodeProducer.name, () => {
+describe(OutgoingExchangesFromSourceCreator.name, () => {
   let app: TestingModule
   let originalEnv: NodeJS.ProcessEnv = null
 
@@ -21,7 +21,7 @@ describe(ExchangesFromSourceCodeProducer.name, () => {
   beforeAll(async() => {
     app = await Test.createTestingModule({
       controllers: [],
-      providers: [ConfigService, ExchangesFromSourceCodeProducer]
+      providers: [ConfigService, OutgoingExchangesFromSourceCreator]
     }).compile()
 
     const config = app.get<ConfigService>(ConfigService)
@@ -33,7 +33,7 @@ describe(ExchangesFromSourceCodeProducer.name, () => {
   it('transforms', async() => {
     const inputSystem = new System('test')
 
-    const addExchangesFormSourceStep = app.get<ExchangesFromSourceCodeProducer>(ExchangesFromSourceCodeProducer)
+    const addExchangesFormSourceStep = app.get<OutgoingExchangesFromSourceCreator>(OutgoingExchangesFromSourceCreator)
     const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
 
     expect(outputSystem).not.toBeNull()
@@ -44,7 +44,7 @@ describe(ExchangesFromSourceCodeProducer.name, () => {
     expect(exchangeNames).toContainEqual('exchangeInSource1')
     expect(exchangeNames).toContainEqual('exchangeInSource2')
 
-    verifyEachContentHasTransformer(outputSystem, ExchangesFromSourceCodeProducer.name)
+    verifyEachContentHasTransformer(outputSystem, OutgoingExchangesFromSourceCreator.name)
   })
 
   it('ignores source found in current project when not run in test mode', async() => {
@@ -52,7 +52,7 @@ describe(ExchangesFromSourceCodeProducer.name, () => {
 
     const inputSystem = new System('test')
 
-    const addExchangesFormSourceStep = app.get<ExchangesFromSourceCodeProducer>(ExchangesFromSourceCodeProducer)
+    const addExchangesFormSourceStep = app.get<OutgoingExchangesFromSourceCreator>(OutgoingExchangesFromSourceCreator)
     const outputSystem = await addExchangesFormSourceStep.transform(inputSystem)
 
     expect(outputSystem).not.toBeNull()

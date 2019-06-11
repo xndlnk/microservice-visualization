@@ -1,10 +1,10 @@
-import { SubSystemTransformerService } from './SubSystemTransformer'
+import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransformer'
 import { System, AsyncEventFlow } from '../model/ms'
 import { Node, Content } from '../model/core'
 
 jest.mock('../config/Config.service')
 
-describe(SubSystemTransformerService.name, () => {
+describe(SubSystemFromPayloadTransformer.name, () => {
 
   it('moves each microservice which defines a cabinet label to its sub-system', async() => {
     const inputSystem = new System('system')
@@ -12,9 +12,9 @@ describe(SubSystemTransformerService.name, () => {
     serviceA.getPayload().labels = { cabinet: 'X' }
     const serviceB = inputSystem.addMicroService('B')
 
-    const transformer = new SubSystemTransformerService()
+    const transformer = new SubSystemFromPayloadTransformer()
     const system = await transformer.transform(inputSystem,
-      SubSystemTransformerService.getSubSystemNameFromCabinetLabel)
+      SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
 
     expect(system.nodes).toHaveLength(2)
     expect(system.nodes[0].content.payload.name).toEqual('X')
@@ -37,9 +37,9 @@ describe(SubSystemTransformerService.name, () => {
     const serviceB = inputSystem.addMicroService('B')
     inputSystem.edges.push(new AsyncEventFlow(serviceA, serviceB))
 
-    const transformer = new SubSystemTransformerService()
+    const transformer = new SubSystemFromPayloadTransformer()
     const system = await transformer.transform(inputSystem,
-      SubSystemTransformerService.getSubSystemNameFromCabinetLabel)
+      SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
 
     expect(system.edges).toHaveLength(1)
     expect(system.edges[0].source.id).toEqual(serviceA.id)
@@ -66,9 +66,9 @@ describe(SubSystemTransformerService.name, () => {
     inputSystem.edges.push(new AsyncEventFlow(nodeA, serviceB))
     inputSystem.edges.push(new AsyncEventFlow(serviceB, nodeC))
 
-    const transformer = new SubSystemTransformerService()
+    const transformer = new SubSystemFromPayloadTransformer()
     const system = await transformer.transform(inputSystem,
-      SubSystemTransformerService.getSubSystemNameFromCabinetLabel)
+      SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
 
     expect(system.findNodeOfTypeWithName('T', 'A')).toBeDefined()
 
