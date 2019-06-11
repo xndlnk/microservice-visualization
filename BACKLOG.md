@@ -5,20 +5,7 @@
 ### Release v1.0
 
 - 🔷 document code
-- 🔷 review code with focus on future changes that should have minimal compatability issues
-  - replace System type by MsSystem type
 - 🔷 update documentation
-  - purpose
-  - approach
-  - model (generic + specific)
-  - ui
-  - available analyzer modules
-  - custom analyzers
-  - how to run
-    - env configuration variables
-    - build
-    - deployment
-    - debugging
 
 ### Improved Service Split
 
