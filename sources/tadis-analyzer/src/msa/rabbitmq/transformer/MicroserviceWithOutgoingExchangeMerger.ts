@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as _ from 'lodash'
 
 import { System, AsyncEventFlow, MicroService, MessageExchange } from '../../../model/ms'
-import { Node, Edge } from '../../../model/core'
+import { Node, Edge, Metadata } from '../../../model/core'
 
 @Injectable()
 export class MicroserviceWithOutgoingExchangeMerger {
@@ -25,10 +25,15 @@ export class MicroserviceWithOutgoingExchangeMerger {
       if (node.content.type === MessageExchange.name) {
         const exchange = node as MessageExchange
 
-        if (this.isTargetOfSameNameMicroService(exchange, system) || this.isSourceOfSameNameMicroService(exchange, system)) {
+        const edgeTargetingSameNameMicroService = this.findEdgeTargetingSameNameMicroService(exchange, system)
+        if (edgeTargetingSameNameMicroService
+          // TODO: remove this check
+          || this.isSourceOfSameNameMicroService(exchange, system)) {
           const service = system.findMicroService(exchange.getName())
           if (service) {
             this.extendPayloadOfMicroService(result, service, exchange.content.payload)
+            this.extendMetadataOfMicroService(result, service, exchange.content.metadata)
+            this.extendMetadataOfMicroService(result, service, edgeTargetingSameNameMicroService.content.metadata)
 
             this.getOtherExchangeEdgesRedirectedToService(system, exchange, service)
               .forEach(edge => result.edges.push(edge))
@@ -63,7 +68,7 @@ export class MicroserviceWithOutgoingExchangeMerger {
       .map(exchangeEdge => {
         const source = exchangeEdge.source === exchange ? service : exchangeEdge.source
         const target = exchangeEdge.target === exchange ? service : exchangeEdge.target
-        const newEdge = new AsyncEventFlow(source, target, exchangeEdge.content.payload)
+        const newEdge = new AsyncEventFlow(source, target, exchangeEdge.content.payload, exchangeEdge.content.metadata)
 
         this.logger.log(`redirected ${exchangeEdge.source.id} -> ${exchangeEdge.target.id}`
           + ` to ${newEdge.source.id} -> ${newEdge.target.id}`)
@@ -82,6 +87,16 @@ export class MicroserviceWithOutgoingExchangeMerger {
       .forEach(payloadPropertyName => service.content.payload[payloadPropertyName] = extraPayload[payloadPropertyName])
   }
 
+  private extendMetadataOfMicroService(system: System, service: MicroService, metadata: Metadata) {
+    if (service.content.metadata) {
+      service.content.metadata.transformer += '; ' + metadata.transformer
+      service.content.metadata.context += '; ' + metadata.context
+      service.content.metadata.info += '; ' + metadata.info
+    } else {
+      service.content.metadata = metadata
+    }
+  }
+
   private isSourceOfSameNameMicroService(exchange: MessageExchange, system: System): boolean {
     return system.edges.find(edge => edge.source.id === exchange.id
       && edge.target.hasSameNameAs(exchange)
@@ -89,10 +104,10 @@ export class MicroserviceWithOutgoingExchangeMerger {
     ) !== undefined
   }
 
-  private isTargetOfSameNameMicroService(exchange: MessageExchange, system: System): boolean {
+  private findEdgeTargetingSameNameMicroService(exchange: MessageExchange, system: System): Edge {
     return system.edges.find(edge => edge.target.id === exchange.id
       && edge.source.hasSameNameAs(exchange)
       && edge.source.content.type === MicroService.name
-    ) !== undefined
+    )
   }
 }

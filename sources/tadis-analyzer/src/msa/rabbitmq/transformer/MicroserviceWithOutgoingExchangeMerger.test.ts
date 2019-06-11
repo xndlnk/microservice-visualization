@@ -1,5 +1,6 @@
 import { MicroserviceWithOutgoingExchangeMerger } from './MicroserviceWithOutgoingExchangeMerger'
 import { System, AsyncEventFlow, MicroService } from '../../../model/ms'
+import { Metadata } from 'src/model/core'
 
 describe(MicroserviceWithOutgoingExchangeMerger.name, () => {
 
@@ -90,18 +91,46 @@ describe(MicroserviceWithOutgoingExchangeMerger.name, () => {
     expect(system.nodes).toContain(queueA)
   })
 
-  it('merges properties of service and exchange', async() => {
+  it('merges payload and metadata of service and exchange and the edge between them', async() => {
     const inputSystem = new System('system')
-    const serviceB = inputSystem.addMicroService('B', { p: 1 })
-    const exchangeB = inputSystem.addMessageExchange('B', { q: 2 })
 
-    inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeB))
+    const metadataOfServiceB: Metadata = {
+      transformer: 't1',
+      context: 'c1'
+    }
+    const serviceB = inputSystem.addMicroService('B', { p: 1 }, metadataOfServiceB)
+
+    const metadataOfExchangeB: Metadata = {
+      transformer: 't2',
+      context: 'c2'
+    }
+    const exchangeB = inputSystem.addMessageExchange('B', { q: 2 }, metadataOfExchangeB)
+
+    const metadataOfEdgeAtoB: Metadata = {
+      transformer: 't3',
+      context: 'c3'
+    }
+    inputSystem.edges.push(new AsyncEventFlow(serviceB, exchangeB, { routingKey: 'r' }, metadataOfEdgeAtoB))
+
+    const serviceC = inputSystem.addMicroService('C')
+
+    const metadataOfEdgeBtoC: Metadata = {
+      transformer: 't4',
+      context: 'c4'
+    }
+    inputSystem.edges.push(new AsyncEventFlow(exchangeB, serviceC, { routingKey: 'r' }, metadataOfEdgeBtoC))
 
     const merger = new MicroserviceWithOutgoingExchangeMerger()
     const system = await merger.transform(inputSystem)
 
-    expect(system.nodes).toHaveLength(1)
+    expect(system.nodes).toHaveLength(2)
     expect(system.nodes[0].content.payload.p).toEqual(1)
     expect(system.nodes[0].content.payload.q).toEqual(2)
+    expect(system.nodes[0].content.metadata.transformer).toEqual('t1; t2; t3')
+    expect(system.nodes[0].content.metadata.context).toEqual('c1; c2; c3')
+
+    expect(system.edges).toHaveLength(1)
+    expect(system.edges[0].content.payload).toEqual({ routingKey: 'r' })
+    expect(system.edges[0].content.metadata).toEqual(metadataOfEdgeBtoC)
   })
 })
