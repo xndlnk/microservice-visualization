@@ -166,7 +166,7 @@ ${dotSubGraphs}
           }
         })
         .join(',\n')
-      return `,label="${text}"`
+      return `,label="${text}",fontsize=10`
     }
     return ''
   }

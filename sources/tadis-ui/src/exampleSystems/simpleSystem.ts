@@ -97,7 +97,14 @@ export const system: INode = {
     {
       sourceId: 'b',
       targetId: 'sink1',
-      type: 'AsyncInfoFlow'
+      type: 'SyncInfoFlow',
+      properties: {
+        definedEndpoints: [
+          {
+            path: '/path/to/x'
+          }
+        ]
+      }
     },
     {
       sourceId: 'b',
