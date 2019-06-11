@@ -59,7 +59,6 @@ export class MicroService extends TypedNode<MicroServicePayload> {
 
 export class MicroServicePayload {
   name: string
-  tenant?: string
   env?: EnvEntry[]
   labels?: any
   sourceLocation?: string
