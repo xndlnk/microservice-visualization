@@ -1,24 +1,23 @@
 import { Module } from '@nestjs/common'
 
 import {
-  CollectorService, ConfigModule, CollectorController, SourceCodeAnalysisModule,
-  KubernetesModule, RabbitMqModule, TransformerModule
+  ConfigModule, SourceCodeAnalysisModule,
+  DefaultCollectorService, MsaModule, JavaModule, CollectorController
 } from 'tadis-analyzer'
 
 import { CustomCollectorService } from './CustomCollector.service'
 
 const customCollectorProvider = {
-  provide: CollectorService,
+  provide: DefaultCollectorService,
   useClass: CustomCollectorService
 }
 
 @Module({
   imports: [
     ConfigModule,
-    KubernetesModule,
-    RabbitMqModule,
     SourceCodeAnalysisModule,
-    TransformerModule
+    JavaModule,
+    MsaModule
   ],
   controllers: [
     CollectorController

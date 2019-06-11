@@ -12,6 +12,10 @@ import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransform
   providers: [
     StaticNodeFilter,
     SubSystemFromPayloadTransformer
+  ],
+  exports: [
+    StaticNodeFilter,
+    SubSystemFromPayloadTransformer
   ]
 })
 class CommonTransformersModule { }

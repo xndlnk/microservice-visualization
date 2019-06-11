@@ -1,39 +1,51 @@
 import { Injectable } from '@nestjs/common'
 
 import {
-  System, MicroService, Metadata, KubernetesCollectorService, RabbitMqCollectorService,
-  FeignClientsFromSourceCodeProducer, AnnotationAnalyzer, SourceLocationDecorator,
-  ExcludedNodesRemover, MicroserviceWithMessageExchangeMerger, CabinetTransformer, ElementMapping, GitStorageService, ConfigService
+  System, MicroService, Metadata, ElementMapping,
+  SourceLocationDecorator,
+  GitStorageService, ConfigService, SubSystemFromPayloadTransformer, MicroserviceWithOutgoingExchangeMerger,
+  StaticNodeFilter, JavaAnnotationAnalyzer, FeignClientAnnotationAnalyzer, MicroservicesFromKubernetesCreator,
+  RabbitMqBindingsFromApiAnalyzer, OutgoingExchangesFromSourceCreator, ExchangesFromEnvPayloadCreator,
+  EnvDefinitionFromPodDecorator, LabelsFromDeploymentDecorator
 } from 'tadis-analyzer'
 
 @Injectable()
 export class CustomCollectorService {
 
   constructor(
-    private readonly kubernetesCollector: KubernetesCollectorService,
-    private readonly rabbitMqCollector: RabbitMqCollectorService,
-    private readonly feignClientsFromSourceCodeProducer: FeignClientsFromSourceCodeProducer,
-    private readonly annotationAnalyzer: AnnotationAnalyzer,
+    private readonly microservicesCreator: MicroservicesFromKubernetesCreator,
+    private readonly envDefinitionFromPodDecorator: EnvDefinitionFromPodDecorator,
+    private readonly labelsFromDeploymentDecorator: LabelsFromDeploymentDecorator,
+    private readonly rabbitMqBindingsAnalyzer: RabbitMqBindingsFromApiAnalyzer,
+    private readonly outgoingExchangesCreator: OutgoingExchangesFromSourceCreator,
+    private readonly exchangesFromEnvPayloadCreator: ExchangesFromEnvPayloadCreator,
+    private readonly feignClientAnnotationAnalyzer: FeignClientAnnotationAnalyzer,
+    private readonly javaAnnotationAnalyzer: JavaAnnotationAnalyzer,
     private readonly sourceLocationDecorator: SourceLocationDecorator,
-    private readonly excludedNodesRemover: ExcludedNodesRemover,
-    private readonly microserviceWithMessageExchangeMerger: MicroserviceWithMessageExchangeMerger,
-    private readonly cabinetTransformer: CabinetTransformer,
+    private readonly nodeFilter: StaticNodeFilter,
+    private readonly microserviceWithOutgoingExchangeMerger: MicroserviceWithOutgoingExchangeMerger,
+    private readonly subSystemTransformer: SubSystemFromPayloadTransformer,
     private readonly gitStorage: GitStorageService,
     private readonly configService: ConfigService
   ) { }
 
   public async getAllMicroservices(): Promise<MicroService[]> {
-    return this.kubernetesCollector.getAllMicroservices()
+    const system = await this.microservicesCreator.transform(new System(''))
+    return system.getMicroServices()
   }
 
   public async getSystem(): Promise<System> {
     let system = new System('')
 
-    system = await this.getAllMicroservicesFromSourceFolder()
-    // system = await this.kubernetesCollector.transform(system)
-    // system = await this.rabbitMqCollector.transform(system)
+    system = await this.microservicesCreator.transform(system)
+    system = await this.envDefinitionFromPodDecorator.transform(system)
+    system = await this.labelsFromDeploymentDecorator.transform(system)
 
-    system = await this.feignClientsFromSourceCodeProducer.transform(system)
+    system = await this.rabbitMqBindingsAnalyzer.transform(system)
+    system = await this.exchangesFromEnvPayloadCreator.transform(system)
+    system = await this.outgoingExchangesCreator.transform(system)
+
+    system = await this.feignClientAnnotationAnalyzer.transform(system)
 
     const elementMappings: ElementMapping[] = [
       {
@@ -49,12 +61,13 @@ export class CustomCollectorService {
         edgeType: 'AsyncEventFlow'
       }
     ]
-    system = await this.annotationAnalyzer.transform(system, 'EventProcessor', elementMappings)
+    system = await this.javaAnnotationAnalyzer.transform(system, 'EventProcessor', elementMappings)
     system = await this.sourceLocationDecorator.transform(system)
 
-    system = await this.excludedNodesRemover.transform(system)
-    system = await this.microserviceWithMessageExchangeMerger.transform(system)
-    system = await this.cabinetTransformer.transform(system)
+    system = await this.nodeFilter.transform(system)
+    system = await this.microserviceWithOutgoingExchangeMerger.transform(system)
+
+    system = await this.subSystemTransformer.transform(system, SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
 
     return system
   }

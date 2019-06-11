@@ -45,5 +45,6 @@ export {
   RabbitMqModule,
   FeignClientAnnotationAnalyzer,
   DefaultCollectorService,
-  KubernetesRabbitMqCollectorService
+  KubernetesRabbitMqCollectorService,
+  CollectorController
 }
