@@ -63,6 +63,8 @@ function displaySystemTitle(system: Node) {
   if (system.getName() && system.getName() !== '') {
     select('#system-title')
       .text('System Architecture of ' + system.getName())
+    select('#head-system-title')
+      .text('System ' + system.getName())
   }
 }
 
