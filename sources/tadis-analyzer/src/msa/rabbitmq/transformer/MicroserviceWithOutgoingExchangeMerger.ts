@@ -26,9 +26,7 @@ export class MicroserviceWithOutgoingExchangeMerger {
         const exchange = node as MessageExchange
 
         const edgeTargetingSameNameMicroService = this.findEdgeTargetingSameNameMicroService(exchange, system)
-        if (edgeTargetingSameNameMicroService
-          // TODO: remove this check
-          || this.isSourceOfSameNameMicroService(exchange, system)) {
+        if (edgeTargetingSameNameMicroService) {
           const service = system.findMicroService(exchange.getName())
           if (service) {
             this.extendPayloadOfMicroService(result, service, exchange.content.payload)
@@ -95,13 +93,6 @@ export class MicroserviceWithOutgoingExchangeMerger {
     } else {
       service.content.metadata = metadata
     }
-  }
-
-  private isSourceOfSameNameMicroService(exchange: MessageExchange, system: System): boolean {
-    return system.edges.find(edge => edge.source.id === exchange.id
-      && edge.target.hasSameNameAs(exchange)
-      && edge.target.content.type === MicroService.name
-    ) !== undefined
   }
 
   private findEdgeTargetingSameNameMicroService(exchange: MessageExchange, system: System): Edge {
