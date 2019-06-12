@@ -7,6 +7,10 @@
 - 🔷 document code
 - 🔷 update documentation
 
+### Improve Debugging
+
+- ️❇️ add debug mode to viewer
+
 ### Improve RabbitMQ transformer
 
 - ️❇️ use queues API to check for consumers. if no consumers are connected to a queue, display the event flow in grey color.
@@ -14,10 +18,6 @@
 ### Improve Service Split
 
 - ️🔷 move service exchange merger from analyzer to viewer and make it a selectable action of the view
-
-### Improve Debugging
-
-- ️❇️ add debug mode to viewer
 
 ### Others
 

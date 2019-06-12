@@ -1,4 +1,4 @@
-import { Node, Edge } from './model'
+import { Node, Edge, Props } from './model'
 import * as _ from 'lodash'
 
 export interface Options {
@@ -12,6 +12,7 @@ export class SystemToDotConverter {
 
   convertSystemToDot(system: Node): string {
     let dotNodes: string = this.convertNodesToDot(this.getNonSubSystemNodes(system), 1)
+    let dotNodesDebug = this.convertNodesToDotForDebug(this.getNonSubSystemNodes(system), 1)
 
     let dotSubGraphs: string = this.getSubSystemNodes(system)
       .map((subSystem) => this.convertSubSystemToDot(subSystem))
@@ -30,6 +31,7 @@ export class SystemToDotConverter {
     splines=polyline;
     edge [fontname="Arial"];
   ${dotNodes}
+  ${dotNodesDebug}
 ${dotSubGraphs}
   ${dotLinks}
 }`
@@ -46,6 +48,7 @@ ${dotSubGraphs}
 
   private convertSubSystemToDot(node: Node): string {
     let dotNodes: string = this.convertNodesToDot(node.getNodes(), 2)
+    let dotNodesDebug = this.convertNodesToDotForDebug(node.getNodes(), 2)
     let dotEdges: string = this.convertEdgesToDot(node.getEdges(), 2)
     const url = this.getUrlOrEmpty(node)
     const optionalUrl = url ? url + ';' : ''
@@ -59,6 +62,7 @@ ${dotSubGraphs}
     id = "${node.id}";
     ${optionalUrl}
     ${dotNodes}
+    ${dotNodesDebug}
     ${dotEdges}
   }`
     return dotGraph
@@ -118,6 +122,43 @@ ${dotSubGraphs}
   private getUrlOrEmpty(node: Node): string {
     const url = this.options ? this.options.urlExtractor(node) : null
     return url ? `URL="${url}"` : ''
+  }
+
+  private convertNodesToDotForDebug(nodes: Node[], indentation: number): string {
+    const dotNodes = nodes
+      .map((node) => {
+        const id = makeId(node.id + '_debug')
+        const styling = `label=<<TABLE CELLBORDER="0" BORDER="0"><TR><TD BALIGN="LEFT">${this.convertContentToDotForDebug(node)}</TD></TR></TABLE>>, shape=box, style=filled, fillcolor=black, color=lightgrey, fontcolor=white`
+        return `${id} [${styling},fontname="Arial"]`
+      })
+
+    const dotEdges = nodes
+      .map((node) => {
+        const nodeId = makeId(node.id)
+        const debugId = makeId(node.id + '_debug')
+        return `${nodeId} -> ${debugId} [arrowhead=none, style=dashed]`
+      })
+
+    const dotRanks = nodes
+      .map((node) => {
+        const nodeId = makeId(node.id)
+        const debugId = makeId(node.id + '_debug')
+        return `{rank = same; ${nodeId}; ${debugId};}`
+      })
+
+    const dot = _.union(dotNodes, dotEdges, dotRanks)
+
+    return dot.join(';\n' + addSpaces(indentation)) + (nodes.length > 0 ? ';' : '')
+  }
+
+  private convertContentToDotForDebug(node: Node): string {
+    let cellText = `<B>type:</B><BR/>${node.type}<BR/>`
+    const metadata = node.getProp('metadata', null)
+    if (metadata && metadata.transformer) {
+      cellText += `<B>metadata.transformer:</B><BR/>${metadata.transformer}<BR/>`
+      cellText += `<B>metadata.context:</B><BR/>${metadata.context}<BR/>`
+    }
+    return cellText
   }
 
   private convertEdgesToDot(edges: Edge[], identation: number): string {

@@ -11,7 +11,12 @@ export const system: INode = {
       type: 'MicroService',
       properties: {
         shared: true,
-        sourceLocation: '/sources/source1'
+        sourceLocation: '/sources/source1',
+        metadata: {
+          transformer: 'MicroservicesFromKubernetesCreator',
+          context: 'pod source1-d6f8d5g6kl',
+          info: 'hello'
+        }
       }
     },
     {
@@ -67,7 +72,13 @@ export const system: INode = {
     {
       sourceId: 'source1',
       targetId: 'c',
-      type: 'AsyncInfoFlow'
+      type: 'AsyncInfoFlow',
+      properties: {
+        metadata: {
+          transformer: 'OutgoingExchangesFromSourceCreator',
+          context: 'service source1'
+        }
+      }
     },
     {
       sourceId: 'c',
