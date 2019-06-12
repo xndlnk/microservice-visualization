@@ -34,16 +34,11 @@ describe(SubSystemFromPayloadTransformer.name, () => {
     serviceC.getPayload().labels = { cabinet: 'X' }
     inputSystem.edges.push(new AsyncEventFlow(serviceA, serviceC))
 
-    const serviceB = inputSystem.addMicroService('B')
-    inputSystem.edges.push(new AsyncEventFlow(serviceA, serviceB))
-
     const transformer = new SubSystemFromPayloadTransformer()
     const system = await transformer.transform(inputSystem,
       SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
 
-    expect(system.edges).toHaveLength(1)
-    expect(system.edges[0].source.id).toEqual(serviceA.id)
-    expect(system.edges[0].target.id).toEqual(serviceB.id)
+    expect(system.edges).toHaveLength(0)
 
     const cabinetX = system.findTypedNodeWithName<System>(System, 'X')
     expect(cabinetX.edges).toHaveLength(1)
@@ -74,5 +69,7 @@ describe(SubSystemFromPayloadTransformer.name, () => {
 
     const cabinetX = system.nodes.find(node => node.getName() === 'X')
     expect(cabinetX.nodes.find(node => node.getName() === 'C'))
+    expect(cabinetX.edges[0].source.id).toEqual(serviceB.id)
+    expect(cabinetX.edges[0].target.id).toEqual(nodeC.id)
   })
 })

@@ -51,8 +51,8 @@ class SubSystemTransformer {
     })
 
     system.edges.forEach(edge => {
-      const sourceSubSystem = this.getSubSystemName(edge.source)
-      const targetSubSystem = this.getSubSystemName(edge.target)
+      const sourceSubSystem = this.computeSubSystemName(system, edge.source)
+      const targetSubSystem = this.computeSubSystemName(system, edge.target)
       if (sourceSubSystem && targetSubSystem && sourceSubSystem === targetSubSystem) {
         const subSystem = this.getOrElseCreateSubSystem(transformedSystem, sourceSubSystem)
         subSystem.edges.push(edge)
