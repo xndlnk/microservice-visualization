@@ -19,7 +19,9 @@ export class SystemToDotConverter {
       .map((subSystem) => this.convertSubSystemToDot(subSystem))
       .join('\n')
 
-    let dotLinks: string = this.convertEdgesToDot(system.getEdges(), 1)
+    let dotLinks: string = !this.inDebugMode()
+      ? this.convertEdgesToDot(system.getEdges(), 1)
+      : this.convertEdgesToDotForDebug(system.getEdges(), 1)
 
     // splines=ortho;
     // splines=polyline;
@@ -50,7 +52,11 @@ ${dotSubGraphs}
   private convertSubSystemToDot(node: Node): string {
     let dotNodes: string = this.convertNodesToDot(node.getNodes(), 2)
     let dotNodesDebug = this.convertNodesToDotForDebug(node.getNodes(), 2)
-    let dotEdges: string = this.convertEdgesToDot(node.getEdges(), 2)
+
+    let dotEdges: string = !this.inDebugMode()
+      ? this.convertEdgesToDot(node.getEdges(), 2)
+      : this.convertEdgesToDotForDebug(node.getEdges(), 2)
+
     const url = this.getUrlOrEmpty(node)
     const optionalUrl = url ? url + ';' : ''
 
@@ -126,39 +132,29 @@ ${dotSubGraphs}
   }
 
   private convertNodesToDotForDebug(nodes: Node[], indentation: number): string {
-    if (this.options && !this.options.showDebug) return ''
+    if (!this.inDebugMode()) return ''
 
-    const font = ',fontname="Arial",fontsize="10"'
-
-    const dotNodes = nodes
+    const dot = nodes
       .map((node) => {
-        const id = makeId(node.id + '_debug')
-        const styling = `label=<<TABLE CELLBORDER="0" BORDER="0"><TR><TD BALIGN="LEFT">${this.convertContentToDotForDebug(node)}</TD></TR></TABLE>>, shape=box, style=filled, fillcolor=black, color=lightgrey, fontcolor=white`
-        return `${id} [${styling} ${font}]`
+        return this.createDebugDot(makeId(node.id), this.convertNodeContentToDotForDebug(node))
       })
-
-    const dotEdges = nodes
-      .map((node) => {
-        const nodeId = makeId(node.id)
-        const debugId = makeId(node.id + '_debug')
-        return `${nodeId} -> ${debugId} [arrowhead=none, style=dashed ${font}]`
-      })
-
-    const dotRanks = nodes
-      .map((node) => {
-        const nodeId = makeId(node.id)
-        const debugId = makeId(node.id + '_debug')
-        return `{rank = same; ${nodeId}; ${debugId};}`
-      })
-
-    const dot = _.union(dotNodes, dotEdges, dotRanks)
 
     return dot.join(';\n' + addSpaces(indentation)) + (nodes.length > 0 ? ';' : '')
   }
 
-  private convertContentToDotForDebug(node: Node): string {
+  private convertNodeContentToDotForDebug(node: Node): string {
     let cellText = `<B>type:</B><BR/>${node.type}<BR/>`
-    const metadata = node.getProp('metadata', null)
+    const metadata = node.getProps().metadata
+    if (metadata && metadata.transformer) {
+      cellText += `<B>metadata.transformer:</B><BR/>${metadata.transformer}<BR/>`
+      cellText += `<B>metadata.context:</B><BR/>${metadata.context}<BR/>`
+    }
+    return cellText
+  }
+
+  private convertEdgeContentToDotForDebug(edge: Edge): string {
+    let cellText = `<B>type:</B><BR/>${edge.type}<BR/>`
+    const metadata = edge.properties.metadata
     if (metadata && metadata.transformer) {
       cellText += `<B>metadata.transformer:</B><BR/>${metadata.transformer}<BR/>`
       cellText += `<B>metadata.context:</B><BR/>${metadata.context}<BR/>`
@@ -173,6 +169,39 @@ ${dotSubGraphs}
       const styling = this.getEdgeStyling(edge)
       return `${sourceId} -> ${targetId} ${styling}`
     }).join(';\n' + addSpaces(identation)) + (edges.length > 0 ? ';' : '')
+  }
+
+  private convertEdgesToDotForDebug(edges: Edge[], identation: number): string {
+    return edges.map((edge) => {
+      const sourceId = makeId(edge.sourceId)
+      const debugId = makeId(edge.sourceId + edge.targetId + '_debug')
+      const targetId = makeId(edge.targetId)
+      const styling = this.getEdgeStyling(edge)
+      const debugText = this.convertEdgeContentToDotForDebug(edge)
+
+      return `${debugId} [shape=point];
+      ${sourceId} -> ${debugId} ${styling};
+      ${debugId} -> ${targetId} ${styling};
+      ${this.createDebugDot(debugId, debugText)}`
+    }).join(';\n' + addSpaces(identation)) + (edges.length > 0 ? ';' : '')
+  }
+
+  private createDebugDot(idOfDebugPoint: string, debugTextHtml: string): string {
+    if (!this.inDebugMode()) return ''
+
+    const font = ',fontname="Arial",fontsize="10"'
+
+    const nodeId = idOfDebugPoint
+    const debugId = makeId(idOfDebugPoint + '_debug_content')
+
+    const styling = `label=<<TABLE CELLBORDER="0" BORDER="0" CELLPADDING="0"><TR><TD BALIGN="LEFT">${debugTextHtml}</TD></TR></TABLE>>, shape=box, style=filled, fillcolor=black, color=lightgrey, fontcolor=white`
+    const contentNode = `${debugId} [${styling} ${font}]`
+
+    const edgeToContentNode = `${nodeId} -> ${debugId} [arrowhead=none, style=dashed ${font}]`
+
+    const rankOfContentNode = `{rank = same; ${nodeId}; ${debugId};}`
+
+    return `${contentNode};${edgeToContentNode};${rankOfContentNode}`
   }
 
   private getEdgeStyling(edge: Edge): string {
@@ -215,6 +244,10 @@ ${dotSubGraphs}
       return `,label="${text}",fontsize=10`
     }
     return ''
+  }
+
+  private inDebugMode(): boolean {
+    return this.options && this.options.showDebug
   }
 }
 
