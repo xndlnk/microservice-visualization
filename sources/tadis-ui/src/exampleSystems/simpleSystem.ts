@@ -75,8 +75,8 @@ export const system: INode = {
       type: 'AsyncInfoFlow',
       properties: {
         metadata: {
-          transformer: 'OutgoingExchangesFromSourceCreator',
-          context: 'service source1'
+          transformer: 'OutgoingExchangesFromSourceCreator; JavaAnnotationAnalyzer; X',
+          context: 'service source1; some very long context information is given here; X'
         }
       }
     },

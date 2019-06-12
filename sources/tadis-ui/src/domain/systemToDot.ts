@@ -146,8 +146,8 @@ ${dotSubGraphs}
     let cellText = `<B>type:</B><BR/>${node.type}<BR/>`
     const metadata = node.getProps().metadata
     if (metadata && metadata.transformer) {
-      cellText += `<B>metadata.transformer:</B><BR/>${metadata.transformer}<BR/>`
-      cellText += `<B>metadata.context:</B><BR/>${metadata.context}<BR/>`
+      cellText += `<B>metadata.transformer:</B><BR/>${this.convertSemicolonsToLineBreaks(metadata.transformer)}<BR/>`
+      cellText += `<B>metadata.context:</B><BR/>${this.convertSemicolonsToLineBreaks(metadata.context)}<BR/>`
     }
     return cellText
   }
@@ -156,10 +156,14 @@ ${dotSubGraphs}
     let cellText = `<B>type:</B><BR/>${edge.type}<BR/>`
     const metadata = edge.properties.metadata
     if (metadata && metadata.transformer) {
-      cellText += `<B>metadata.transformer:</B><BR/>${metadata.transformer}<BR/>`
-      cellText += `<B>metadata.context:</B><BR/>${metadata.context}<BR/>`
+      cellText += `<B>metadata.transformer:</B><BR/>${this.convertSemicolonsToLineBreaks(metadata.transformer)}<BR/>`
+      cellText += `<B>metadata.context:</B><BR/>${this.convertSemicolonsToLineBreaks(metadata.context)}<BR/>`
     }
     return cellText
+  }
+
+  private convertSemicolonsToLineBreaks(text: string): string {
+    return text ? text.split('; ').join('<BR/>') : ''
   }
 
   private convertEdgesToDot(edges: Edge[], identation: number): string {
