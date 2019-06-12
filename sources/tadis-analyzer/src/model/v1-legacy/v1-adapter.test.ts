@@ -65,6 +65,7 @@ describe('adaptToV1', () => {
     eventFlow.content.payload = {
       x: '1'
     }
+    eventFlow.content.metadata = metadata
     system.edges.push(eventFlow)
 
     const adaptedSystem = adaptToV1(system)
@@ -79,5 +80,6 @@ describe('adaptToV1', () => {
     ).toEqual(metadata)
 
     expect(adaptedSystem.getEdges()[0].getProperties().x).toEqual('1')
+    expect(adaptedSystem.getEdges()[0].getProperties().metadata).toEqual(metadata)
   })
 })

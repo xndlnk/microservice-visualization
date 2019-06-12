@@ -31,6 +31,7 @@ function addAdaptedEdgesNested(originNode: Node, v1Node: v1.Node) {
     }
     const v1Edge = new v1.Edge(edge.source.id, edge.target.id,
       adaptEdgeType(edge.content.type), edge.content.payload)
+    v1Edge.getProperties().metadata = edge.content.metadata
     v1Node.getEdges().push(v1Edge)
   })
 
