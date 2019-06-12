@@ -3,6 +3,7 @@ import * as _ from 'lodash'
 
 export interface Options {
   urlExtractor: (node: Node) => string
+  showDebug?: boolean
 }
 
 export class SystemToDotConverter {
@@ -125,18 +126,22 @@ ${dotSubGraphs}
   }
 
   private convertNodesToDotForDebug(nodes: Node[], indentation: number): string {
+    if (this.options && !this.options.showDebug) return ''
+
+    const font = ',fontname="Arial",fontsize="10"'
+
     const dotNodes = nodes
       .map((node) => {
         const id = makeId(node.id + '_debug')
         const styling = `label=<<TABLE CELLBORDER="0" BORDER="0"><TR><TD BALIGN="LEFT">${this.convertContentToDotForDebug(node)}</TD></TR></TABLE>>, shape=box, style=filled, fillcolor=black, color=lightgrey, fontcolor=white`
-        return `${id} [${styling},fontname="Arial"]`
+        return `${id} [${styling} ${font}]`
       })
 
     const dotEdges = nodes
       .map((node) => {
         const nodeId = makeId(node.id)
         const debugId = makeId(node.id + '_debug')
-        return `${nodeId} -> ${debugId} [arrowhead=none, style=dashed]`
+        return `${nodeId} -> ${debugId} [arrowhead=none, style=dashed ${font}]`
       })
 
     const dotRanks = nodes

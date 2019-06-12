@@ -35,9 +35,10 @@ app.listen(PORT)
 console.log('running on http://localhost:' + PORT)
 
 function addRestHandlers(app: express.Express) {
-  // TODO: move these calls to a central system provider
   const systemFetcher = new SystemFetcher(process.env.SYSTEM_PROVIDER_URL, getAnalyzerServiceResolver())
   const systemProvider = new SystemProvider(systemFetcher)
+
+  // TODO: add /dot endpoint which is used instead of /system
 
   app.get(`${appBaseUrl}/system`, (req, res) => {
     systemProvider.getSystem(req.query).then(system => {
@@ -56,7 +57,8 @@ function addRestHandlers(app: express.Express) {
     systemProvider.getSystem(req.query).then(system => {
       if (system) {
         let options: ConverterOptions = {
-          urlExtractor: (node: Node) => node.getProp('url', null)
+          urlExtractor: (node: Node) => node.getProp('url', null),
+          showDebug: req.query.debug ? true : false
         }
         const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)
         const svgSystem = vizJs(dotSystem, { format: 'svg', engine: 'dot' })
