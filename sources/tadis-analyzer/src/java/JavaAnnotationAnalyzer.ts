@@ -133,7 +133,8 @@ function executeMappingForNode(system: System, service: MicroService,
 
   const metadata: Metadata = {
     transformer: JavaAnnotationAnalyzer.name,
-    context: 'service ' + service.id
+    context: 'service ' + service.id,
+    info: 'mapping of element ' + elementMapping.elementToDeriveNodeFrom + ' to target ' + nodeName
   }
   const node = system.addOrExtendTypedNode(elementMapping.nodeTypeToCreate, nodeName, undefined, metadata)
 

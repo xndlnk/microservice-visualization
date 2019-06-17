@@ -26,7 +26,7 @@ export class FeignClientAnnotationAnalyzer {
     for (const scanResult of scanResults) {
       const metadata: Metadata = {
         transformer: this.className,
-        context: scanResult.serviceName
+        context: 'service ' + scanResult.serviceName
       }
       const sourceService = system.addMicroService(scanResult.serviceName, undefined, metadata)
       const targetService = system.addMicroService(scanResult.feignClient.targetServiceName, undefined, metadata)
