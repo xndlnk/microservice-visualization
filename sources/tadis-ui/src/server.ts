@@ -38,7 +38,9 @@ function addRestHandlers(app: express.Express) {
   const systemFetcher = new SystemFetcher(process.env.SYSTEM_PROVIDER_URL, getAnalyzerServiceResolver())
   const systemProvider = new SystemProvider(systemFetcher)
 
-  // TODO: add /dot endpoint which is used instead of /system
+  // INFO: could add /dot endpoint which is used instead of /system
+  // - then /dot is used directly when rendering the system
+  // - requires to compute focus on nodes in backend of frontend as well
 
   app.get(`${appBaseUrl}/system`, (req, res) => {
     systemProvider.getSystem(req.query).then(system => {
@@ -63,6 +65,24 @@ function addRestHandlers(app: express.Express) {
         const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)
         const svgSystem = vizJs(dotSystem, { format: 'svg', engine: 'dot' })
         res.send(svgSystem)
+      } else {
+        throw new Error('fetched system was empty')
+      }
+    })
+      .catch(error => {
+        res.status(500).send('an error occured: ' + error)
+      })
+  })
+
+  app.get(`${appBaseUrl}/dot`, (req, res) => {
+    systemProvider.getSystem(req.query).then(system => {
+      if (system) {
+        let options: ConverterOptions = {
+          urlExtractor: (node: Node) => node.getProp('url', null),
+          showDebug: req.query.debug ? true : false
+        }
+        const dotSystem = new SystemToDotConverter(options).convertSystemToDot(system)
+        res.send(dotSystem)
       } else {
         throw new Error('fetched system was empty')
       }

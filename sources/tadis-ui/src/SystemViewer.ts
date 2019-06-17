@@ -10,6 +10,8 @@ import { NodeActions } from './ui/NodeActions'
 import { MenuActions } from './ui/MenuActions'
 import { LoadExampleAction } from './ui/LoadExampleAction'
 
+import { Options as SystemToDotOptions } from './domain/systemToDot'
+
 export function load() {
   displayVersion()
 
@@ -25,7 +27,12 @@ export function load() {
       const system = Node.ofRawNode(rawSystem)
       displaySystemTitle(system)
       displayNodesRemoved(system)
-      displaySystem(system)
+
+      const options: SystemToDotOptions = {
+        urlExtractor: (node: Node) => node.getProp('url', null),
+        showDebug: queryPart.includes('?debug') || queryPart.includes('&debug')
+      }
+      displaySystem(system, options)
     })
     .catch((error) => {
       replaceSpinnerByGraphBox()
@@ -79,21 +86,21 @@ function displayNodesRemoved(system: Node) {
   }
 }
 
-function displaySystem(system: Node) {
+function displaySystem(system: Node, options: SystemToDotOptions) {
   GraphService.deepResolveNodesReferencedInEdges(system)
 
   setTimeout(function() {
-    asyncLoadSystemRenderer(system)
+    asyncLoadSystemRenderer(system, options)
   }, 10)
 }
 
-function asyncLoadSystemRenderer(system: Node) {
+function asyncLoadSystemRenderer(system: Node, options: SystemToDotOptions) {
   const systemRenderer = new SystemRenderer()
   const graphService = new GraphService(system)
 
   systemRenderer.renderSystem(system, () => {
     replaceSpinnerByGraphBox()
-  })
+  }, options)
   new MenuActions(systemRenderer, graphService).install()
   new NodeActions(systemRenderer, graphService).install()
 }

@@ -37,6 +37,11 @@ export class MenuActions {
       window.open(url, '_self')
     })
 
+    d3.select('#debug-link').on('click', () => {
+      const url = getBaseUrlInCurrentEnvironment() + '/html/?debug=1'
+      window.open(url, '_self')
+    })
+
     d3.select('#svg-link').on('click', () => {
       const queryPosition = window.location.href.lastIndexOf('?')
       const query = queryPosition > -1 ? window.location.href.substr(queryPosition) : ''

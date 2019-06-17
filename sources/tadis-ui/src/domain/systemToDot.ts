@@ -203,9 +203,7 @@ ${dotSubGraphs}
 
     const edgeToContentNode = `${nodeId} -> ${debugId} [arrowhead=none, style=dashed ${font}]`
 
-    const rankOfContentNode = `{rank = same; ${nodeId}; ${debugId};}`
-
-    return `${contentNode};${edgeToContentNode};${rankOfContentNode}`
+    return `${contentNode};${edgeToContentNode}`
   }
 
   private getEdgeStyling(edge: Edge): string {
