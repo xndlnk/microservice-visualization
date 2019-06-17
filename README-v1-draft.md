@@ -4,6 +4,8 @@
 
 ## Sources
 
+The repository is organized as a mono-repo with Yarn and Lerna. Each directory in `sources` is a Yarn workspace.
+
 - [tadis-analyzer](sources/tadis-analyzer) - analyzer backend
 - [tadis-analyzer-custom-example](sources/tadis-analyzer-custom-example) - example customization of tadis-analyzer
 - [tadis-ui](sources/tadis-ui) - web-frontend based on D3 and Graphviz
@@ -44,6 +46,14 @@
 - Graphviz
 
 ### Configuration and Usage
+
+#### Setup
+
+1. You need a global installation of the following:
+  - [Node.js v10](https://nodejs.org),
+  - [Yarn](https://yarnpkg.com),
+  - [Lerna](https://github.com/lerna/lerna),
+2. Bootstrap the node package structure with `yarn install`.
 
 - build
 - deployment
@@ -173,3 +183,9 @@ How sub-system information is to be extracted from a nodes payload must be speci
 ## Future Work
 
 ## Acknowledgments
+
+## License
+
+[Apache License, Version 2.0](LICENSE)
+
+Copyright 2017-2018 Andreas Blunk, MaibornWolff GmbH

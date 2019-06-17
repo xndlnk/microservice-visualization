@@ -20,9 +20,8 @@ It shows the focussing on single nodes by displaying theirs neighours only. And 
 
 If you just want to try the viewer and play with it, do the following:
 
-- build the bundle that is used in [index.html](./src/html/index.html): `npm run dev`
-- run the server that provides the index.html: `npm run server`
-- access the [local example system](./src/exampleSystems/largeSystem.ts): `http://localhost:8080/msvis/html/?demo=1`
+- `yarn start` builds the bundle that is used in [index.html](./src/html/index.html) and runs a web server that provides the index.html and some more endpoints
+- access the [local example system](./src/exampleSystems/simpleSystem.ts): `http://localhost:8080/tadis/html/?demo=1`
 
 ### Configuration
 
@@ -30,7 +29,7 @@ The viewer needs to fetch the system that is to be visualized from a URL. There 
 
 a) Direct URL
 
-- SYSTEM_PROVIDER_URL='https://mshost:8080/msvisualizer/v1/subsystems/json'
+- SYSTEM_PROVIDER_URL='http://localhost:8081/collect/system?version=1'
 
 b) Indirect discovery through [Consul service discovery](http://consul.io/)
 
@@ -47,22 +46,21 @@ Further configuration:
 ### Running the HTTP server
 
 - local execution:
-  - `npm run dev`
-  - `npm run server`
+  - `yarn start`
 - execution via docker container:
-  - `npm run docker-build`
-  - `npm run docker-run`
+  - `yarn docker-build`
+  - `yarn docker-run`
     (expects `.env` file with environment variables in current directory)
 
 ### Accessing output
 
-- http://localhost:8080/msvis/html/
+- http://localhost:8080/tadis/html/
 
 ### Options
 
 In addition, the following options can be specified via query parameters:
 
-- `?demo=1` to use an example system as input (for demo and debugging)
-- `?last=1` to use last system successfully fetched (as fallback)
-- `?anonymize=1` to anonymize all names
-
+- `demo=1` loads an example system as input
+- `debug=1` shows debug information in the graph from metadata
+- `last=1` forces the viewer to use last system successfully fetched (as fallback)
+- `anonymize=1` anonymizes all node names

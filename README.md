@@ -1,4 +1,4 @@
-# microservice-visualization
+# Microservice Visualization with TADIS - a Tool for Architecture Discovery
 
 [![Build Status](https://travis-ci.org/MaibornWolff/microservice-visualization.svg?branch=master)](https://travis-ci.org/MaibornWolff/microservice-visualization) 
 ![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
@@ -10,16 +10,17 @@ This repository contains software for analyzing and visualizing the topology of 
 
 The repository is organized as a mono-repo with Yarn and Lerna. Each directory in `sources` is a Yarn workspace.
 
-- [microservice-system-analyzer](sources/microservice-system-analyzer) - a Node.js library for analyzing microservice systems
-- [microservice-system-viewer](sources/microservice-system-viewer) - a Docker-based microservice for visualizing systems in a web browser
+- [tadis-analyzer](sources/tadis-analyzer) - analyzer backend
+- [tadis-analyzer-custom-example](sources/tadis-analyzer-custom-example) - example customization of tadis-analyzer
+- [tadis-ui](sources/tadis-ui) - web-frontend based on D3 and Graphviz
+- [microservice-system-analyzer](sources/microservice-system-analyzer) - deprecated analyzer backend that is currently replaced by tadis-analyzer
 
 ## Setup
 
 1. You need a global installation of the following:
-  - [Node.js v8](https://nodejs.org),
+  - [Node.js v10](https://nodejs.org),
   - [Yarn](https://yarnpkg.com),
   - [Lerna](https://github.com/lerna/lerna),
-  - optionally [gren](https://github.com/github-tools/github-release-notes) (only if you want to create github release notes)
 2. Bootstrap the node package structure with `yarn install`.
 
 ## License
