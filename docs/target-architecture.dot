@@ -9,8 +9,9 @@ digraph msvisualization {
 		fontname="Arial";
         library [shape=ellipse];
         service1 [shape=box];
-				service2 [shape=box, style=filled, fillcolor="#ff8080", label="service2\n(not yet implemented)"];
-				service1 -> service2 [label="sync call"];
+				service2 [shape=box, label="service2"];
+				service1 -> service2 [label="sync call", arrowhead=vee];
+				service1 -> service2 [label="async flow", color=blue];
         service2 -> library [style=dashed, arrowhead=vee, label="use"];
         {rank = same; library; service1; service2;}
         color="#ffffcc";
@@ -20,11 +21,11 @@ digraph msvisualization {
     user [shape=egg];
 
 	subgraph cluster_generic {
-		msanalyzer [label="analyzer\n(backend)"];
-		msvisualizer [label="visualizer\n(frontend)"];
-		reactgraph [shape=ellipse,label="react-graph", style=filled, fillcolor="#ff8080"];
+		msanalyzer [label="tadis-analyzer\n(microservice\n& npm package)"];
+		msvisualizer [label="tadis-ui\n(microservice)"];
+		#reactgraph [shape=ellipse,label="react-graph", style=filled, fillcolor="#ff8080"];
 
-		msvisualizer -> reactgraph [style=dashed, arrowhead=vee];
+		#msvisualizer -> reactgraph [style=dashed, arrowhead=vee];
 
 		
 		label = "generic visualization";
@@ -35,7 +36,6 @@ digraph msvisualization {
 
 	subgraph cluster_external {
 		k8s [label="kubernetes"];
-		consul [style=filled, fillcolor="#ff8080"];
 		git;
 		rabbitmq;
 
@@ -46,18 +46,20 @@ digraph msvisualization {
 	}
 
 	subgraph cluster_thirdparty {
-		graphviz [shape=ellipse];
+		d3graphviz [shape=ellipse, label="d3-graphviz"]
 
 		label = "third party";
 		fontname="Arial";
-		color="#ffb3da";
+		color="#e6e6e6";
 		style=filled;
 	}
 
 	subgraph cluster_visualized_system {
-		ms1 [label="ms X"];
-		ms2 [label="ms Y\n(with agent)", style=filled, fillcolor="#ff8080"];
+		ms1 [label="ms 1"];
+		ms2 [label="ms 2"];
 		ci [shape=box, label="CI pipeline"];
+
+		ms1 -> ms2 [color=blue];
 
 		label = "visualized system";
 		fontname="Arial";
@@ -67,27 +69,26 @@ digraph msvisualization {
 
 	subgraph cluster_custom_visualization {
 		source [shape=cylinder, label="source storage"];
-		customanalyzer [label="custom\nanalyzer", style=filled, fillcolor="#ff8080"];
+		customanalyzer [label="tadis-analyzer\n-custom"];
 
 		label = "custom visualization";
 		fontname="Arial";
-		color="#cceeff";
+		color="#ffb3da";
 		style=filled;
 	}
 
-  msanalyzer -> consul [label="discover\nservices"];
-	msanalyzer -> k8s [label="discover services,\nget env variables"];
-	msanalyzer -> ms2 [label="get graph\nfraction via\nagent API"];
-	msanalyzer -> source [label="store,\nanalyze"];
-	msanalyzer -> git [label="clone,\nfetch"];
-	msanalyzer -> rabbitmq [label="get bindings"];
-	msvisualizer -> msanalyzer [label="get graph JSON"];
-	ci -> ms1 [label="1. build"];
-	ci -> ms2;
-	ci -> msanalyzer [label="2. compute\nconsumer\nservices"];
-	ci -> msanalyzer [label="3. trigger updates",arrowhead=open];
-	user -> msvisualizer [label="web"];
-	msvisualizer -> graphviz [style=dashed, arrowhead=vee, label="create svg"];
-	reactgraph -> graphviz [style=dashed, arrowhead=vee, label="compute layout"];
-	customanalyzer -> msanalyzer [style=dashed, arrowhead=vee, label="use as\nnpm library"];
+	msanalyzer -> k8s [label="discover services,\nget env variables", arrowhead=vee];
+	msanalyzer -> source [label="store,\nanalyze", arrowhead=vee];
+	msanalyzer -> git [label="clone,\nfetch", arrowhead=vee];
+	msanalyzer -> rabbitmq [label="get bindings", arrowhead=vee];
+	msvisualizer -> msanalyzer [label="/collect/system", arrowhead=vee];
+	ci -> ms1 [label="1. build", arrowhead=vee];
+	ci -> msanalyzer [label="3. compute\nconsumer\nservices", arrowhead=vee];
+	ci -> ms2 [label="4. trigger consumer\nintegration tests", arrowhead=vee];
+	ci -> msanalyzer [label="2. update source", arrowhead=vee];
+	user -> msvisualizer [label="browser\n/tadis/html", arrowhead=vee];
+	user -> msanalyzer [label="update source\n(/collect/source)", arrowhead=vee];
+	msvisualizer -> d3graphviz [style=dashed, arrowhead=vee, label="create svg"];
+	#reactgraph -> graphviz [style=dashed, arrowhead=vee, label="compute layout"];
+	customanalyzer -> msanalyzer [style=dashed, arrowhead=vee, label="import\nnpm package"];
 }

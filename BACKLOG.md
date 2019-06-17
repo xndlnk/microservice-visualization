@@ -6,10 +6,8 @@
 
 - 🔷 document code
 - 🔷 update documentation
-
-### Improve Debugging
-
-- ️❇️ add debug mode to viewer
+- ️❇️ add button to re-collect sources
+- ️❇️ add button to show debug info
 
 ### Improve RabbitMQ transformer
 
