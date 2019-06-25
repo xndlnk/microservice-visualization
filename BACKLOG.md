@@ -5,9 +5,6 @@
 ### Release v1.0
 
 - 🔷 document code
-- 🔷 update documentation
-- ️❇️ add button to re-collect sources
-- ️❇️ add button to show debug info
 
 ### Improve RabbitMQ transformer
 

@@ -1,4 +1,4 @@
-## WARNING: This package is no longer maintained. It is replaced by [tadis-analyzer](../tadis-analyzer).
+## WARNING: This package is no longer maintained. It is the first version of the analyzer which is based on Consul and has no Kubernetes support. This analyzer is replaced by [tadis-analyzer](../tadis-analyzer).
 
 ---
 

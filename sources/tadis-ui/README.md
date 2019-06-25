@@ -1,6 +1,6 @@
 # tadis-ui
 
-The tadis-ui is a Docker-based microservice that transforms a [system model](./src/domain/model.ts) into HTML + SVG and provides it via a HTTP server. The viewer uses [graphviz-d3](https://github.com/magjac/d3-graphviz) which is ultimately based on [Graphviz](http://www.graphviz.org/). It transforms a system model to DOT first and then from DOT to SVG.
+tadis-ui is a Docker-based microservice that transforms a [system model](./src/domain/model.ts) into HTML + SVG and provides it via a HTTP server. The viewer uses [graphviz-d3](https://github.com/magjac/d3-graphviz) which is ultimately based on [Graphviz](http://www.graphviz.org/). It transforms a system model to DOT first and then from DOT to SVG.
 
 ## Example
 
