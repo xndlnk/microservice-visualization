@@ -76,7 +76,7 @@ transform(system: System, annotation: string, elementMappings: ElementMapping[])
 - uses the [RabbitMQ Management Plugin](https://www.rabbitmq.com/management.html)
 - gets all queue to exchange bindings for each queue via `/api/queues/<vhost>/<queueName>/bindings/` (only supports vhost `/`)
 - if queue name equals `<microservice-name>.<text>` for any existing microservice
-  - then an AsyncEventFlow is created between the exchange and microservice
+  - then an AsyncEventFlow is created between the exchange and microservice
   - else a MessageQueue is created and used instead of the microservice
 
 Environment Variables:

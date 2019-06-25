@@ -1,6 +1,5 @@
 # Microservice Visualization with TADIS - a Tool for Architecture Discovery
 
-[![Build Status](https://travis-ci.org/MaibornWolff/microservice-visualization.svg?branch=master)](https://travis-ci.org/MaibornWolff/microservice-visualization) 
 ![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 [![Automated Release Notes by gren](https://img.shields.io/badge/%F0%9F%A4%96-release%20notes-00B2EE.svg)](https://github-tools.github.io/github-release-notes/)
 
