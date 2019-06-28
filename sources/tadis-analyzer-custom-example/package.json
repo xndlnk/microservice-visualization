@@ -1,6 +1,6 @@
 {
   "name": "tadis-analyzer-custom-example",
-  "version": "0.18.0",
+  "version": "1.0.0",
   "description": "this is a custom example analyzer that imports the npm package of the generic tadis-analyzer.",
   "files": [
     "build/src"
@@ -19,7 +19,7 @@
     "@nestjs/common": "^5.4.0",
     "@nestjs/core": "^5.4.0",
     "dotenv": "^7.0.0",
-    "tadis-analyzer": "^0.18.0"
+    "tadis-analyzer": "^1.0.0"
   },
   "devDependencies": {
     "@nestjs/testing": "^5.4.0",
