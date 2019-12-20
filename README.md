@@ -1,9 +1,9 @@
-# Microservice Visualization with TADIS - a Tool for Architecture Discovery
+# Microservice Visualization with TADIS (Tool for Architecture Discovery)
 
 ![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 [![Automated Release Notes by gren](https://img.shields.io/badge/%F0%9F%A4%96-release%20notes-00B2EE.svg)](https://github-tools.github.io/github-release-notes/)
 
-This repository contains software for analyzing and visualizing the topology of a microservice system.
+This repository contains software for analyzing and visualizing the topology of microservice systems.
 
 ## Architecture
 
