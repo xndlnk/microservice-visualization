@@ -1,17 +1,18 @@
 # Example Analyzer/UI Setup
 
-- TODO: include cloning source via GIT_BASE_URLS into example setup
+First checkout the repository at [https://github.com/MaibornWolff/microservice-visualization]().
 
 ## Run the Customized Analyzer
 
-1. Create `.env` file in current directory and add content below. Substitute `<cwd>` with the absolute path to the current directory.
+1. Change directory to customized-analyzer-example.
+2. Create `.env` file in current directory and add content below. Substitute `<cwd>` with the absolute path to the current directory.
 ```
 SOURCE_FOLDER=<cwd>/dummy-system-source
 PORT=8081
 ```
-2. Run `yarn install`
-3. Run `yarn start`
-4. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
+3. Run `yarn install`
+4. Run `yarn start`
+5. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
 
 ## Run the UI
 
