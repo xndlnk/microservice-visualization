@@ -1,0 +1,24 @@
+<idea-plugin>
+    <id>de.maibornwolff.tadis-intellij</id>
+    <name>TADIS</name>
+    <vendor email="andreas.blunk@maibornwolff.de" url="http://www.maibornwolff.de">MaibornWolff</vendor>
+
+    <description><![CDATA[
+    This is an IntelliJ plugin for TADIS system analysis and visualization.
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="Myplugin.Textboxes" class="de.maibornwolff.tadis.HelloAction" text="Hello" description="Says hello"/>
+        </group>
+    </actions>
+</idea-plugin>
