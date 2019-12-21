@@ -1,11 +1,31 @@
 import * as fs from 'fs'
 import * as p from 'path'
 
-/** returns an array of java files found in the given path with their full paths. */
-export async function findFiles(path, fileEnding) {
-  const files = []
+/**
+ * searches for all files in the given path recursively
+ * and filters for given file ending.
+ *
+ * @param path
+ * @param fileEnding
+ */
+export async function findFiles(path: string, fileEnding: string) {
+  const files: string[] = []
   await getFilesRecursive(path, files, fileEnding)
   return files
+}
+
+/**
+ * searches for all files in the given path recursively
+ * and filters for given file ending.
+ * ignores files which belong to the source of this software
+ * iff the software is not invoked from a unit test.
+ *
+ * @param path
+ * @param fileEnding
+ */
+export async function findFilesSafe(path: string, fileEnding: string): Promise<string[]> {
+  const allFiles = await findFiles(path, fileEnding)
+  return allFiles.filter(file => isNoSourceOfThisProject(file))
 }
 
 async function getFilesRecursive(path, allFiles, fileEnding) {
@@ -46,8 +66,13 @@ export function getServiceNameFromPath(sourcePath, file) {
   return serviceName
 }
 
-// TODO: instead of requiring each source analysis step to call this method, maybe its better to encapsulate access
-// to all stored source files in a service class.
+/**
+ * returns true if either the given file does not belong to this software
+ * or this method was called from a unit test.
+ *
+ * @param file
+ * @deprecated use findFilesSafe() instead
+ */
 export function isNoSourceOfThisProject(file) {
   const thisProjectsSourceFolder = p.resolve(process.cwd(), 'src')
   return !file.toLowerCase().includes(thisProjectsSourceFolder.toLowerCase()) || process.env.NODE_ENV === 'test'

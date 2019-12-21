@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import * as _ from 'lodash'
 import * as fs from 'fs'
-import { findFiles, getServiceNameFromPath, isNoSourceOfThisProject } from '../source-code-analysis/file-analysis/analysis'
+import { findFiles, findFilesSafe, getServiceNameFromPath, isNoSourceOfThisProject } from '../source-code-analysis/file-analysis/analysis'
 
 import { ConfigService } from '../config/Config.service'
 import { System, MicroService } from '../model/ms'
@@ -99,11 +99,8 @@ transformPatternInPath(inputSystem, systemPattern, sourcePathRoot)
 
 async function transformPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
   logger.log('scanning all files in ' + sourceFolder)
-  // TODO: extract method
-  const allFilesRaw = await findFiles(sourceFolder, null)
-  logger.log('found ' + allFilesRaw.length + ' files')
-
-  const allFiles = allFilesRaw.filter(file => isNoSourceOfThisProject(file))
+  const allFiles = await findFilesSafe(sourceFolder, null)
+  logger.log('found ' + allFiles.length + ' files')
 
   systemPattern.servicePatterns.forEach(pattern => {
     if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
