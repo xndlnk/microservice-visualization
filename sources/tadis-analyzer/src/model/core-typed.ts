@@ -5,7 +5,7 @@ import { Node, Content, Edge, Metadata } from './core'
 // tslint:disable-next-line
 import * as ms from './ms'
 
-const logger = new Logger('core-typed')
+const logContext = 'core-typed'
 
 export class TypedNode<Payload> extends Node {
 
@@ -47,7 +47,7 @@ export class TypedNode<Payload> extends Node {
       // in their own constructors.
       type.name)
     if (node.content.type !== type.name) {
-      logger.error('created node of type ' + type.name + ' but type was not set in content.')
+      Logger.error('created node of type ' + type.name + ' but type was not set in content.', null, logContext)
     }
     this.nodes.push(node)
     return node
