@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
 
 import { ConfigService } from '../config/Config.service'
-import { System, MicroService } from '../model/ms'
+import { System } from '../model/ms'
 
 // tslint:disable-next-line
 import * as ms from '../model/ms'
@@ -22,6 +22,7 @@ export class PatternAnalyzer {
   ) { }
 
   public async transformByPattern(system: System, systemPattern: SystemPattern): Promise<System> {
+    replaceVariablesInPatterns(systemPattern, this.config.getSourceFolder())
     await transformByPatternInPath(system, systemPattern, this.config.getSourceFolder())
     return system
   }
@@ -62,6 +63,26 @@ export type EdgePattern = {
   sourceNodePattern: NodePattern
   targetNodePattern: NodePattern
   edgeType: string
+}
+
+function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: string) {
+  // TODO: make immutable
+  systemPattern.servicePatterns
+    .forEach(pattern => {
+      pattern.regExp = replaceVariablesInRegExp(pattern.regExp, sourceFolder)
+      if (pattern.nameResolution) {
+        pattern.nameResolution.regExp = replaceVariablesInRegExp(pattern.nameResolution.regExp, sourceFolder)
+      }
+    })
+  systemPattern.edgePatterns
+    .forEach(pattern => {
+      pattern.sourceNodePattern.regExp = replaceVariablesInRegExp(pattern.sourceNodePattern.regExp, sourceFolder)
+      pattern.targetNodePattern.regExp = replaceVariablesInRegExp(pattern.targetNodePattern.regExp, sourceFolder)
+    })
+}
+
+function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
+  return regExp.replace('$sourceRoot', sourceFolder)
 }
 
 async function transformByPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {

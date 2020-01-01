@@ -36,13 +36,13 @@ describe(PatternAnalyzer.name, () => {
   const ws = '\\s*'
   const id = '\\w+'
 
-  const sourcePathRoot = __dirname + '/testdata/source-folder'
-
-  const javaSourceFilePattern: NodePattern = {
-    searchTextLocation: SearchTextLocation.FILE_PATH,
-    regExp: sourcePathRoot + '/([^/]+)/source\.java',
-    capturingGroupIndexForNodeName: 1,
-    nodeType: 'MicroService'
+  function javaSourceFilePattern(): NodePattern {
+    return {
+      searchTextLocation: SearchTextLocation.FILE_PATH,
+      regExp: '$sourceRoot/([^/]+)/source\.java',
+      capturingGroupIndexForNodeName: 1,
+      nodeType: 'MicroService'
+    }
   }
 
   it('creates a service from a file path', async() => {
@@ -50,7 +50,7 @@ describe(PatternAnalyzer.name, () => {
 
     const systemPattern: SystemPattern = {
       servicePatterns: [
-        javaSourceFilePattern
+        javaSourceFilePattern()
       ],
       edgePatterns: []
     }
@@ -70,7 +70,7 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: [
         {
           edgeType: 'AsyncEventFlow',
-          sourceNodePattern: javaSourceFilePattern,
+          sourceNodePattern: javaSourceFilePattern(),
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}(${id})`,
@@ -84,7 +84,7 @@ describe(PatternAnalyzer.name, () => {
         },
         {
           edgeType: 'AsyncEventFlow',
-          sourceNodePattern: javaSourceFilePattern,
+          sourceNodePattern: javaSourceFilePattern(),
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}"([^"]+)"`,
@@ -122,7 +122,7 @@ describe(PatternAnalyzer.name, () => {
       servicePatterns: [
         {
           searchTextLocation: SearchTextLocation.FILE_PATH,
-          regExp: sourcePathRoot + '/([^/]+)/source\.java',
+          regExp: '$sourceRoot/([^/]+)/source\.java',
           capturingGroupIndexForNodeName: 1,
           nodeType: 'MessageExchange'
         }
@@ -152,11 +152,11 @@ describe(PatternAnalyzer.name, () => {
             capturingGroupIndexForNodeName: 1,
             nodeType: 'MessageExchange'
           },
-          targetNodePattern: javaSourceFilePattern
+          targetNodePattern: javaSourceFilePattern()
         },
         {
           edgeType: 'AsyncEventFlow',
-          sourceNodePattern: javaSourceFilePattern,
+          sourceNodePattern: javaSourceFilePattern(),
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}"([^"]+)"`,
@@ -190,7 +190,7 @@ describe(PatternAnalyzer.name, () => {
 
     const systemPattern: SystemPattern = {
       servicePatterns: [
-        javaSourceFilePattern
+        javaSourceFilePattern()
       ],
       edgePatterns: []
     }
