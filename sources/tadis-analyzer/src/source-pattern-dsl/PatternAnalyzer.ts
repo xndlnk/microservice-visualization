@@ -68,9 +68,13 @@ export type NodePattern = {
   nameResolution?: NameResolution
 }
 
+/**
+ * a name resolution translates a node name that represents a variable to its value.
+ * the value is discovered by another regular expression applied to the current file.
+ */
 export type NameResolution = {
   searchTextLocation: SearchTextLocation
-  regExp: string // $name can be used to refer to the node name
+  regExp: string // $name can be used to refer to the node name discovered before
 }
 
 export enum SearchTextLocation {
@@ -78,6 +82,10 @@ export enum SearchTextLocation {
   FILE_CONTENT // content of file in current file path
 }
 
+/**
+ * tries to find the source node pattern first.
+ * then continues from the current file to match the target node pattern.
+ */
 export type EdgePattern = {
   sourceNodePattern: NodePattern
   targetNodePattern: NodePattern
@@ -101,11 +109,11 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 }
 
 function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string) {
-  const sourceNodeName = matchNodeName(edgePattern.sourceNodePattern, filePath)
+  const sourceNodeName = findNodeName(edgePattern.sourceNodePattern, filePath)
   if (!sourceNodeName) return
   logger.log(`found source node '${sourceNodeName}'`)
 
-  const targetNodeName = matchNodeName(edgePattern.targetNodePattern, filePath)
+  const targetNodeName = findNodeName(edgePattern.targetNodePattern, filePath)
   if (!targetNodeName) return
   logger.log(`found target node '${targetNodeName}'`)
 
@@ -124,22 +132,41 @@ function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePa
   logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
 }
 
+function findNodeName(pattern: NodePattern, filePath: string): string | null {
+  const nodeName = matchNodeName(pattern, filePath)
+  if (!pattern.nameResolution) return nodeName
+
+  const regExp = pattern.nameResolution.regExp.replace('$name', nodeName)
+  if (pattern.nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
+    const fileContent = fs.readFileSync(filePath, 'utf8')
+    return matchNodeNameByRegExp(regExp, fileContent, 1)
+  }
+}
+
 function matchNodeName(pattern: NodePattern, filePath: string): string | null {
   if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-    return matchNodeNameInSearchText(pattern, filePath)
+    return matchNodeNameByNodePattern(pattern, filePath)
   }
   if (pattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
     const fileContent = fs.readFileSync(filePath, 'utf8')
-    return matchNodeNameInSearchText(pattern, fileContent)
+    return matchNodeNameByNodePattern(pattern, fileContent)
   }
   return null
 }
 
-function matchNodeNameInSearchText(pattern: NodePattern, searchText: string): string | null {
-  const regExp = new RegExp(pattern.regExp)
+function matchNodeNameByNodePattern(pattern: NodePattern, searchText: string): string | null {
+  return matchNodeNameByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForNodeName)
+}
+
+function matchNodeNameByRegExp(
+  regExpString: string,
+  searchText: string,
+  capturingGroupIndexForNodeName: number
+): string | null {
+  const regExp = new RegExp(regExpString)
   const matches = searchText.match(regExp)
-  if (matches && matches.length >= pattern.capturingGroupIndexForNodeName) {
-    return matches[pattern.capturingGroupIndexForNodeName]
+  if (matches && matches.length >= capturingGroupIndexForNodeName) {
+    return matches[capturingGroupIndexForNodeName]
   }
   return null
 }
