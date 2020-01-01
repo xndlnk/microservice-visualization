@@ -48,19 +48,24 @@ describe(PatternAnalyzer.name, () => {
     }
   ]
 
+  const ws = '\\s*'
+  const id = '\\w+'
+
   const sourcePathRoot = __dirname + '/testdata/source-folder'
+
+  const javaSourceFilePattern: NodePattern = {
+    searchTextLocation: SearchTextLocation.FILE_PATH,
+    regExp: sourcePathRoot + '/([^/]+)/source\.java',
+    capturingGroupIndexForNodeName: 1,
+    nodeType: 'MicroService'
+  }
 
   it('creates a service from a file path', async() => {
     const inputSystem = new System('test')
 
     const systemPattern: SystemPattern = {
       servicePatterns: [
-        {
-          searchTextLocation: SearchTextLocation.FILE_PATH,
-          regExp: sourcePathRoot + '/([^/]+)/source\.java',
-          capturingGroupIndexForNodeName: 1,
-          nodeType: 'MicroService'
-        }
+        javaSourceFilePattern
       ],
       edgePatterns: []
     }
@@ -75,17 +80,6 @@ describe(PatternAnalyzer.name, () => {
 
     const inputSystem = new System('test')
 
-    const ws = '\\s*'
-    const id = '\\w+'
-    const anything = '[^]*'
-
-    const javaSourceFilePattern: NodePattern = {
-      searchTextLocation: SearchTextLocation.FILE_PATH,
-      regExp: sourcePathRoot + '/([^/]+)/source\.java',
-      capturingGroupIndexForNodeName: 1,
-      nodeType: 'MicroService'
-    }
-
     const systemPattern: SystemPattern = {
       servicePatterns: [],
       edgePatterns: [
@@ -94,7 +88,7 @@ describe(PatternAnalyzer.name, () => {
           sourceNodePattern: javaSourceFilePattern,
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
-            regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}(${id})`,
+            regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}(${id})`,
             capturingGroupIndexForNodeName: 1,
             nameResolution: {
               searchTextLocation: SearchTextLocation.FILE_CONTENT,
@@ -108,7 +102,7 @@ describe(PatternAnalyzer.name, () => {
           sourceNodePattern: javaSourceFilePattern,
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
-            regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}"([^"]+)"`,
+            regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}"([^"]+)"`,
             capturingGroupIndexForNodeName: 1,
             nodeType: 'MessageExchange'
           }
@@ -164,19 +158,44 @@ describe(PatternAnalyzer.name, () => {
   it('can create nodes from multiple elements in the same annotation', async() => {
 
     const inputSystem = new System('test')
-    inputSystem.addMicroService('service1')
+
+    const systemPattern: SystemPattern = {
+      servicePatterns: [],
+      edgePatterns: [
+        {
+          edgeType: 'AsyncEventFlow',
+          sourceNodePattern: {
+            searchTextLocation: SearchTextLocation.FILE_CONTENT,
+            regExp: `@EventProcessor${ws}\\([^)]*receiveFromExchange${ws}=${ws}"([^"]+)"`,
+            capturingGroupIndexForNodeName: 1,
+            nodeType: 'MessageExchange'
+          },
+          targetNodePattern: javaSourceFilePattern
+        },
+        {
+          edgeType: 'AsyncEventFlow',
+          sourceNodePattern: javaSourceFilePattern,
+          targetNodePattern: {
+            searchTextLocation: SearchTextLocation.FILE_CONTENT,
+            regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}"([^"]+)"`,
+            capturingGroupIndexForNodeName: 1,
+            nodeType: 'MessageExchange'
+          }
+        }
+      ]
+    }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
+    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
-    expect(outputSystem.findMessageExchange('source-exchange-X')).toBeDefined()
-    expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
+    expect(outputSystem.findMessageExchange('source-exchange-Y')).toBeDefined()
+    expect(outputSystem.findMessageExchange('target-exchange-Y')).toBeDefined()
 
     expect(outputSystem.edges.find(edge => edge.source.getName() === 'service1'
-      && edge.target.getName() === 'target-exchange-X')).toBeDefined()
+      && edge.target.getName() === 'target-exchange-Y')).toBeDefined()
 
-    expect(outputSystem.edges.find(edge => edge.source.getName() === 'source-exchange-X'
+    expect(outputSystem.edges.find(edge => edge.source.getName() === 'source-exchange-Y'
       && edge.target.getName() === 'service1')).toBeDefined()
 
     verifyEachContentHasTransformer(outputSystem, PatternAnalyzer.name)

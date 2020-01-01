@@ -33,7 +33,8 @@ async function getFilesRecursive(path, allFiles, fileEnding) {
 
   for (const entry of entries) {
     const entryWithPath = p.resolve(path, entry)
-    if (!fileEnding || entry.endsWith(fileEnding)) {
+    if (!fs.statSync(entryWithPath).isDirectory()
+      && (!fileEnding || entry.endsWith(fileEnding))) {
       allFiles.push(entryWithPath)
     }
 
