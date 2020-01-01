@@ -182,4 +182,24 @@ describe(PatternAnalyzer.name, () => {
 
     verifyEachContentHasTransformer(outputSystem, PatternAnalyzer.name)
   })
+
+  it('ignores source found in current project when not run in test mode', async() => {
+    process.env.NODE_ENV = 'non-test'
+
+    const inputSystem = new System('test')
+
+    const systemPattern: SystemPattern = {
+      servicePatterns: [
+        javaSourceFilePattern
+      ],
+      edgePatterns: []
+    }
+
+    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
+    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+
+    expect(outputSystem).not.toBeNull()
+
+    expect(outputSystem.getMicroServices()).toHaveLength(0)
+  })
 })
