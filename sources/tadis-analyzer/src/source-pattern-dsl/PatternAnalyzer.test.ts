@@ -94,6 +94,10 @@ describe(PatternAnalyzer.name, () => {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}(${id}+)`,
             capturingGroupIndexForNodeName: 1,
+            nameResolution: {
+              searchTextLocation: SearchTextLocation.FILE_CONTENT,
+              regExp: `$name${ws}=${ws}"([^"]*)"`
+            },
             nodeType: 'MicroService'
           }
         }
@@ -104,7 +108,7 @@ describe(PatternAnalyzer.name, () => {
     const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
-    expect(outputSystem.findMicroService('TARGET_EXCHANGE_NAME')).toBeDefined()
+    expect(outputSystem.findMicroService('target-exchange-X')).toBeDefined()
   })
 
   // TODO: rewrite all tests below!!

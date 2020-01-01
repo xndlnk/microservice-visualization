@@ -65,11 +65,17 @@ export type NodePattern = {
   regExp: string
   capturingGroupIndexForNodeName: number
   nodeType: string
+  nameResolution?: NameResolution
+}
+
+export type NameResolution = {
+  searchTextLocation: SearchTextLocation
+  regExp: string // $name can be used to refer to the node name
 }
 
 export enum SearchTextLocation {
   FILE_PATH,
-  FILE_CONTENT
+  FILE_CONTENT // content of file in current file path
 }
 
 export type EdgePattern = {
@@ -97,6 +103,7 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
         if (sourceNodeName) {
           logger.log(`found source node '${sourceNodeName}'`)
 
+          // TODO: refactor
           if (edgePattern.targetNodePattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
             const fileContent = fs.readFileSync(filePath, 'utf8')
             const targetNodeName = matchNodeNameInSearchText(edgePattern.targetNodePattern, fileContent)
