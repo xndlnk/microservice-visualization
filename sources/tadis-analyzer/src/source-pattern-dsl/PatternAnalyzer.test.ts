@@ -5,7 +5,7 @@ import { ConfigService } from '../config/Config.service'
 import { System, AsyncEventFlow } from '../model/ms'
 import { verifyEachContentHasTransformer } from '../test/verifiers'
 import {
-  PatternAnalyzer, ElementMapping, SystemPattern, NodePattern, EdgePattern,
+  PatternAnalyzer, SystemPattern, NodePattern,
   SearchTextLocation
 } from './PatternAnalyzer'
 
@@ -32,21 +32,6 @@ describe(PatternAnalyzer.name, () => {
       () => __dirname + '/testdata/source-folder'
     )
   })
-
-  const elementMappings: ElementMapping[] = [
-    {
-      elementToDeriveNodeFrom: 'sendToExchange',
-      nodeTypeToCreate: 'MessageExchange',
-      nodeTypeDirection: 'target',
-      edgeType: 'AsyncEventFlow'
-    },
-    {
-      elementToDeriveNodeFrom: 'receiveFromExchange',
-      nodeTypeToCreate: 'MessageExchange',
-      nodeTypeDirection: 'source',
-      edgeType: 'AsyncEventFlow'
-    }
-  ]
 
   const ws = '\\s*'
   const id = '\\w+'
@@ -128,31 +113,28 @@ describe(PatternAnalyzer.name, () => {
     verifyEachContentHasTransformer(outputSystem, PatternAnalyzer.name)
   })
 
-  // TODO: rewrite all tests below!!
   it('re-uses exchanges when they already exist', async() => {
 
     const inputSystem = new System('test')
-    inputSystem.addMicroService('service1')
-    inputSystem.addMessageExchange('source-exchange-X')
+    inputSystem.addMessageExchange('service1')
+
+    const systemPattern: SystemPattern = {
+      servicePatterns: [
+        {
+          searchTextLocation: SearchTextLocation.FILE_PATH,
+          regExp: sourcePathRoot + '/([^/]+)/source\.java',
+          capturingGroupIndexForNodeName: 1,
+          nodeType: 'MessageExchange'
+        }
+      ],
+      edgePatterns: []
+    }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
+    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
 
-    expect(outputSystem.findMicroService('service1')).toBeDefined()
-    expect(outputSystem.nodes.filter(node => node.getName() === 'source-exchange-X')).toHaveLength(1)
-
-    verifyEachContentHasTransformer(outputSystem, PatternAnalyzer.name)
-  })
-
-  it('ignores source of services which are not part of the input system', async() => {
-
-    const inputSystem = new System('test')
-
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
-
-    expect(outputSystem.findMicroService('service1')).toBeUndefined()
-    expect(outputSystem.findMessageExchange('target-exchange')).toBeUndefined()
+    expect(outputSystem.findMessageExchange('service1')).toBeDefined()
+    expect(outputSystem.nodes.filter(node => node.getName() === 'service1')).toHaveLength(1)
   })
 
   it('can create nodes from multiple elements in the same annotation', async() => {
