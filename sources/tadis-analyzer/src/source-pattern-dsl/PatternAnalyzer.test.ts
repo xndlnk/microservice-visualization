@@ -79,17 +79,19 @@ describe(PatternAnalyzer.name, () => {
     const id = '\\w+'
     const anything = '[^]*'
 
+    const javaSourceFilePattern: NodePattern = {
+      searchTextLocation: SearchTextLocation.FILE_PATH,
+      regExp: sourcePathRoot + '/([^/]+)/source\.java',
+      capturingGroupIndexForNodeName: 1,
+      nodeType: 'MicroService'
+    }
+
     const systemPattern: SystemPattern = {
       servicePatterns: [],
       edgePatterns: [
         {
           edgeType: 'AsyncEventFlow',
-          sourceNodePattern: {
-            searchTextLocation: SearchTextLocation.FILE_PATH,
-            regExp: sourcePathRoot + '/([^/]+)/source\.java',
-            capturingGroupIndexForNodeName: 1,
-            nodeType: 'MicroService'
-          },
+          sourceNodePattern: javaSourceFilePattern,
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}(${id})`,
@@ -103,12 +105,7 @@ describe(PatternAnalyzer.name, () => {
         },
         {
           edgeType: 'AsyncEventFlow',
-          sourceNodePattern: {
-            searchTextLocation: SearchTextLocation.FILE_PATH,
-            regExp: sourcePathRoot + '/([^/]+)/source\.java',
-            capturingGroupIndexForNodeName: 1,
-            nodeType: 'MicroService'
-          },
+          sourceNodePattern: javaSourceFilePattern,
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}"([^"]+)"`,
