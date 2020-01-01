@@ -28,8 +28,8 @@ export class PatternAnalyzer {
     return system
   }
 
-  public async transformPattern(system: System, systemPattern: SystemPattern): Promise<System> {
-    await transformPatternInPath(system, systemPattern, this.config.getSourceFolder())
+  public async transformByPattern(system: System, systemPattern: SystemPattern): Promise<System> {
+    await transformByPatternInPath(system, systemPattern, this.config.getSourceFolder())
     return system
   }
 
@@ -78,41 +78,70 @@ export type EdgePattern = {
   edgeType: string
 }
 
-// DEPRECATED: just for repl testing
-const inputSystem = new System('test')
-
-const sourcePathRoot = __dirname + '/testdata/source-folder'
-
-const systemPattern: SystemPattern = {
-  servicePatterns: [
-    {
-      searchTextLocation: SearchTextLocation.FILE_PATH,
-      regExp: sourcePathRoot + '/([^/]+)/source\.java',
-      capturingGroupIndexForNodeName: 1,
-      nodeType: 'MicroService'
-    }
-  ],
-  edgePatterns: []
-}
-
-transformPatternInPath(inputSystem, systemPattern, sourcePathRoot)
-
-async function transformPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
+async function transformByPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
   logger.log('scanning all files in ' + sourceFolder)
   const allFiles = await findFilesSafe(sourceFolder, null)
   logger.log('found ' + allFiles.length + ' files')
 
   systemPattern.servicePatterns.forEach(pattern => {
     if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-      allFiles.forEach(file => {
-        const regExp = new RegExp(pattern.regExp)
-        const matches = file.match(regExp)
-        if (matches && matches.length >= pattern.capturingGroupIndexForNodeName) {
-          const nodeName = matches[pattern.capturingGroupIndexForNodeName]
-          system.addOrExtendTypedNode(pattern.nodeType, nodeName)
-          logger.log(`added node with name ${nodeName} of type ${pattern.nodeType}`)
+      transformAllByFilePathPattern(system, allFiles, pattern)
+    }
+  })
+
+  systemPattern.edgePatterns.forEach(edgePattern => {
+    const sourceNodePattern = edgePattern.sourceNodePattern
+    if (sourceNodePattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
+      allFiles.forEach(filePath => {
+        const sourceNodeName = matchNodeNameInSearchText(sourceNodePattern, filePath)
+        if (sourceNodeName) {
+          logger.log(`found source node '${sourceNodeName}'`)
+
+          if (edgePattern.targetNodePattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
+            const fileContent = fs.readFileSync(filePath, 'utf8')
+            const targetNodeName = matchNodeNameInSearchText(edgePattern.targetNodePattern, fileContent)
+
+            if (targetNodeName) {
+              logger.log(`found target node '${targetNodeName}'`)
+
+              const metadata: Metadata = {
+                transformer: PatternAnalyzer.name,
+                context: `edge pattern with source node '${sourceNodeName}'`,
+                info: `matched target node '${targetNodeName}'`
+              }
+
+              const sourceNode = system.addOrExtendTypedNode(edgePattern.sourceNodePattern.nodeType, sourceNodeName)
+              const targetNode = system.addOrExtendTypedNode(edgePattern.targetNodePattern.nodeType, targetNodeName)
+
+              const edge = new ms[edgePattern.edgeType](sourceNode, targetNode, undefined, metadata)
+              system.edges.push(edge)
+
+              logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
+            }
+          }
         }
       })
+    }
+  })
+}
+
+function matchNodeNameInSearchText(pattern: NodePattern, searchText: string): string | null {
+  const regExp = new RegExp(pattern.regExp)
+  const matches = searchText.match(regExp)
+  if (matches && matches.length >= pattern.capturingGroupIndexForNodeName) {
+    return matches[pattern.capturingGroupIndexForNodeName]
+  }
+  return null
+}
+
+function transformAllByFilePathPattern(system: System, allFiles: string[], pattern: NodePattern) {
+  allFiles.forEach(file => {
+    const regExp = new RegExp(pattern.regExp)
+    const matches = file.match(regExp)
+    if (matches && matches.length >= pattern.capturingGroupIndexForNodeName) {
+      const nodeName = matches[pattern.capturingGroupIndexForNodeName]
+      system.addOrExtendTypedNode(pattern.nodeType, nodeName)
+      logger.log(`added node with name ${nodeName} of type ${pattern.nodeType}`)
     }
   })
 }

@@ -66,11 +66,48 @@ describe(PatternAnalyzer.name, () => {
     }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transformPattern(inputSystem, systemPattern)
+    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
   })
 
+  it('creates an async info flow for multiple annotations in the same file NEW', async() => {
+
+    const inputSystem = new System('test')
+
+    const ws = '\\s*'
+    const id = '\\w'
+    const anything = '[^]*'
+
+    const systemPattern: SystemPattern = {
+      servicePatterns: [],
+      edgePatterns: [
+        {
+          edgeType: 'SyncDataFlow',
+          sourceNodePattern: {
+            searchTextLocation: SearchTextLocation.FILE_PATH,
+            regExp: sourcePathRoot + '/([^/]+)/source\.java',
+            capturingGroupIndexForNodeName: 1,
+            nodeType: 'MicroService'
+          },
+          targetNodePattern: {
+            searchTextLocation: SearchTextLocation.FILE_CONTENT,
+            regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}(${id}+)`,
+            capturingGroupIndexForNodeName: 1,
+            nodeType: 'MicroService'
+          }
+        }
+      ]
+    }
+
+    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
+    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+
+    expect(outputSystem.findMicroService('service1')).toBeDefined()
+    expect(outputSystem.findMicroService('TARGET_EXCHANGE_NAME')).toBeDefined()
+  })
+
+  // TODO: rewrite all tests below!!
   it('creates an async info flow for multiple annotations in the same file', async() => {
 
     const inputSystem = new System('test')
