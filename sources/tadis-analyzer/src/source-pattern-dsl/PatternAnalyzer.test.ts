@@ -71,7 +71,7 @@ describe(PatternAnalyzer.name, () => {
     expect(outputSystem.findMicroService('service1')).toBeDefined()
   })
 
-  it('creates an async info flow for multiple annotations in the same file NEW', async() => {
+  it('creates an async info flow for multiple annotations in the same file', async() => {
 
     const inputSystem = new System('test')
 
@@ -83,7 +83,7 @@ describe(PatternAnalyzer.name, () => {
       servicePatterns: [],
       edgePatterns: [
         {
-          edgeType: 'SyncDataFlow',
+          edgeType: 'AsyncEventFlow',
           sourceNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_PATH,
             regExp: sourcePathRoot + '/([^/]+)/source\.java',
@@ -102,7 +102,7 @@ describe(PatternAnalyzer.name, () => {
           }
         },
         {
-          edgeType: 'SyncDataFlow',
+          edgeType: 'AsyncEventFlow',
           sourceNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_PATH,
             regExp: sourcePathRoot + '/([^/]+)/source\.java',
@@ -125,20 +125,6 @@ describe(PatternAnalyzer.name, () => {
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
     expect(outputSystem.findMessageExchange('target-exchange-Y')).toBeDefined()
-  })
-
-  // TODO: rewrite all tests below!!
-  it('creates an async info flow for multiple annotations in the same file', async() => {
-
-    const inputSystem = new System('test')
-    inputSystem.addMicroService('service1')
-
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, 'EventProcessor', elementMappings)
-
-    expect(outputSystem.findMicroService('service1')).toBeDefined()
-    expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
-    expect(outputSystem.findMessageExchange('target-exchange-Y')).toBeDefined()
 
     // TODO: are there better ways to test parts of objects to match in jest?
     expect(outputSystem.edges.find(edge => edge.source.getName() === 'service1'
@@ -151,6 +137,7 @@ describe(PatternAnalyzer.name, () => {
     verifyEachContentHasTransformer(outputSystem, PatternAnalyzer.name)
   })
 
+  // TODO: rewrite all tests below!!
   it('re-uses exchanges when they already exist', async() => {
 
     const inputSystem = new System('test')

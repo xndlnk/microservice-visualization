@@ -133,8 +133,11 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
     info: `matched target node '${targetNodeName}'`
   }
 
-  const sourceNode = system.addOrExtendTypedNode(edgePattern.sourceNodePattern.nodeType, sourceNodeName)
-  const targetNode = system.addOrExtendTypedNode(edgePattern.targetNodePattern.nodeType, targetNodeName)
+  const sourceNode = system.addOrExtendTypedNode(edgePattern.sourceNodePattern.nodeType,
+    sourceNodeName, null, metadata)
+
+  const targetNode = system.addOrExtendTypedNode(edgePattern.targetNodePattern.nodeType,
+    targetNodeName, null, metadata)
 
   const edge = new ms[edgePattern.edgeType](sourceNode, targetNode, undefined, metadata)
   system.edges.push(edge)
