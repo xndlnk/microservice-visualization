@@ -76,7 +76,7 @@ describe(PatternAnalyzer.name, () => {
     const inputSystem = new System('test')
 
     const ws = '\\s*'
-    const id = '\\w'
+    const id = '\\w+'
     const anything = '[^]*'
 
     const systemPattern: SystemPattern = {
@@ -92,13 +92,28 @@ describe(PatternAnalyzer.name, () => {
           },
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
-            regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}(${id}+)`,
+            regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}(${id})`,
             capturingGroupIndexForNodeName: 1,
             nameResolution: {
               searchTextLocation: SearchTextLocation.FILE_CONTENT,
               regExp: `$name${ws}=${ws}"([^"]*)"`
             },
+            nodeType: 'MessageExchange'
+          }
+        },
+        {
+          edgeType: 'SyncDataFlow',
+          sourceNodePattern: {
+            searchTextLocation: SearchTextLocation.FILE_PATH,
+            regExp: sourcePathRoot + '/([^/]+)/source\.java',
+            capturingGroupIndexForNodeName: 1,
             nodeType: 'MicroService'
+          },
+          targetNodePattern: {
+            searchTextLocation: SearchTextLocation.FILE_CONTENT,
+            regExp: `@EventProcessor${ws}\\(${anything}sendToExchange${ws}=${ws}"([^"]+)"`,
+            capturingGroupIndexForNodeName: 1,
+            nodeType: 'MessageExchange'
           }
         }
       ]
@@ -108,7 +123,8 @@ describe(PatternAnalyzer.name, () => {
     const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
-    expect(outputSystem.findMicroService('target-exchange-X')).toBeDefined()
+    expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
+    expect(outputSystem.findMessageExchange('target-exchange-Y')).toBeDefined()
   })
 
   // TODO: rewrite all tests below!!
