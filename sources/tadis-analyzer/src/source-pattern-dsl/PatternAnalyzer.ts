@@ -89,47 +89,50 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
   const allFiles = await findFilesSafe(sourceFolder, null)
   logger.log('found ' + allFiles.length + ' files')
 
-  systemPattern.servicePatterns.forEach(pattern => {
-    if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-      transformAllByFilePathPattern(system, allFiles, pattern)
-    }
+  allFiles.forEach(filePath => {
+    systemPattern.servicePatterns.forEach(servicePattern => {
+      if (servicePattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
+        transformAllByFilePathPattern(system, allFiles, servicePattern)
+      }
+    })
+
+    systemPattern.edgePatterns.forEach(edgePattern => transformByEdgePattern(system, edgePattern, filePath))
   })
+}
 
-  systemPattern.edgePatterns.forEach(edgePattern => {
-    const sourceNodePattern = edgePattern.sourceNodePattern
-    if (sourceNodePattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-      allFiles.forEach(filePath => {
-        const sourceNodeName = matchNodeNameInSearchText(sourceNodePattern, filePath)
-        if (sourceNodeName) {
-          logger.log(`found source node '${sourceNodeName}'`)
+function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string) {
+  const sourceNodeName = matchNodeName(edgePattern.sourceNodePattern, filePath)
+  if (!sourceNodeName) return
+  logger.log(`found source node '${sourceNodeName}'`)
 
-          // TODO: refactor
-          if (edgePattern.targetNodePattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
-            const fileContent = fs.readFileSync(filePath, 'utf8')
-            const targetNodeName = matchNodeNameInSearchText(edgePattern.targetNodePattern, fileContent)
+  const targetNodeName = matchNodeName(edgePattern.targetNodePattern, filePath)
+  if (!targetNodeName) return
+  logger.log(`found target node '${targetNodeName}'`)
 
-            if (targetNodeName) {
-              logger.log(`found target node '${targetNodeName}'`)
+  const metadata: Metadata = {
+    transformer: PatternAnalyzer.name,
+    context: `edge pattern with source node '${sourceNodeName}'`,
+    info: `matched target node '${targetNodeName}'`
+  }
 
-              const metadata: Metadata = {
-                transformer: PatternAnalyzer.name,
-                context: `edge pattern with source node '${sourceNodeName}'`,
-                info: `matched target node '${targetNodeName}'`
-              }
+  const sourceNode = system.addOrExtendTypedNode(edgePattern.sourceNodePattern.nodeType, sourceNodeName)
+  const targetNode = system.addOrExtendTypedNode(edgePattern.targetNodePattern.nodeType, targetNodeName)
 
-              const sourceNode = system.addOrExtendTypedNode(edgePattern.sourceNodePattern.nodeType, sourceNodeName)
-              const targetNode = system.addOrExtendTypedNode(edgePattern.targetNodePattern.nodeType, targetNodeName)
+  const edge = new ms[edgePattern.edgeType](sourceNode, targetNode, undefined, metadata)
+  system.edges.push(edge)
 
-              const edge = new ms[edgePattern.edgeType](sourceNode, targetNode, undefined, metadata)
-              system.edges.push(edge)
+  logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
+}
 
-              logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
-            }
-          }
-        }
-      })
-    }
-  })
+function matchNodeName(pattern: NodePattern, filePath: string): string | null {
+  if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
+    return matchNodeNameInSearchText(pattern, filePath)
+  }
+  if (pattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
+    const fileContent = fs.readFileSync(filePath, 'utf8')
+    return matchNodeNameInSearchText(pattern, fileContent)
+  }
+  return null
 }
 
 function matchNodeNameInSearchText(pattern: NodePattern, searchText: string): string | null {

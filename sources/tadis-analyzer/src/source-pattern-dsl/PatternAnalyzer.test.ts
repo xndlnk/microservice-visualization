@@ -71,7 +71,7 @@ describe(PatternAnalyzer.name, () => {
     expect(outputSystem.findMicroService('service1')).toBeDefined()
   })
 
-  it('creates an async info flow for multiple annotations in the same file NEW', async() => {
+  it.skip('creates an async info flow for multiple annotations in the same file NEW', async() => {
 
     const inputSystem = new System('test')
 
