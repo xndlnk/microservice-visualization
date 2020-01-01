@@ -92,13 +92,10 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
   allFiles.forEach(filePath => {
     systemPattern.servicePatterns.forEach(servicePattern => {
-      const nodeNames = findNodeName(servicePattern, filePath)
-      if (nodeNames.length === 0) return
-
-      for (const nodeName of nodeNames) {
+      findNodeNames(servicePattern, filePath).forEach(nodeName => {
         system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
         logger.log(`added node '${nodeName}'`)
-      }
+      })
     })
 
     systemPattern.edgePatterns.forEach(edgePattern => transformByEdgePattern(system, edgePattern, filePath))
@@ -106,21 +103,16 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 }
 
 function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string) {
-  const sourceNodeNames = findNodeName(edgePattern.sourceNodePattern, filePath)
-  if (sourceNodeNames.length === 0) return
+  findNodeNames(edgePattern.sourceNodePattern, filePath)
+    .forEach(sourceNodeName => {
+      logger.log(`found source node '${sourceNodeName}'`)
 
-  for (const sourceNodeName of sourceNodeNames) {
-    logger.log(`found source node '${sourceNodeName}'`)
-
-    const targetNodeNames = findNodeName(edgePattern.targetNodePattern, filePath)
-    if (targetNodeNames.length === 0) return
-
-    for (const targetNodeName of targetNodeNames) {
-      logger.log(`found target node '${targetNodeName}'`)
-
-      createEdge(system, edgePattern, sourceNodeName, targetNodeName)
-    }
-  }
+      findNodeNames(edgePattern.targetNodePattern, filePath)
+        .forEach(targetNodeName => {
+          logger.log(`found target node '${targetNodeName}'`)
+          createEdge(system, edgePattern, sourceNodeName, targetNodeName)
+        })
+    })
 }
 
 function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: string, targetNodeName: string) {
@@ -142,7 +134,7 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
   logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
 }
 
-function findNodeName(pattern: NodePattern, filePath: string): string[] {
+function findNodeNames(pattern: NodePattern, filePath: string): string[] {
   const nodeNames = matchNodeName(pattern, filePath)
   if (!pattern.nameResolution) return nodeNames
 
