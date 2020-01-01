@@ -71,8 +71,12 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
   allFiles.forEach(filePath => {
     systemPattern.servicePatterns.forEach(servicePattern => {
-      if (servicePattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-        transformAllByFilePathPattern(system, allFiles, servicePattern)
+      const nodeNames = findNodeName(servicePattern, filePath)
+      if (nodeNames.length === 0) return
+
+      for (const nodeName of nodeNames) {
+        system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
+        logger.log(`added node '${nodeName}'`)
       }
     })
 
@@ -162,18 +166,6 @@ function matchNodeNameByRegExp(regExpString: string, searchText: string,
       }
       return null
     })
-}
-
-function transformAllByFilePathPattern(system: System, allFiles: string[], pattern: NodePattern) {
-  allFiles.forEach(file => {
-    const regExp = new RegExp(pattern.regExp)
-    const matches = file.match(regExp)
-    if (matches && matches.length >= pattern.capturingGroupIndexForNodeName) {
-      const nodeName = matches[pattern.capturingGroupIndexForNodeName]
-      system.addOrExtendTypedNode(pattern.nodeType, nodeName)
-      logger.log(`added node with name ${nodeName} of type ${pattern.nodeType}`)
-    }
-  })
 }
 
 function getAllPatternMatches<MatchType>(pattern: RegExp, content: string,
