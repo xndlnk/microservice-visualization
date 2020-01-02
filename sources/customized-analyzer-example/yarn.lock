@@ -2078,6 +2078,11 @@ iconv-lite@0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
+immer@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-5.1.0.tgz#38d9eba40dbb0389b7ae7b8b99e4661df0cf89e3"
+  integrity sha512-t6gyFtTcokCuI0tX9KQZJQAkIjSqo/nTeJnwojfty69EzrorZbywwhZ8qNNlF+faajHeRnhOvM2F40KHLFCghQ==
+
 import-local@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/import-local/-/import-local-1.0.0.tgz#5e4ffdc03f4fe6c009c6729beb29631c2f8227bc"
@@ -4681,16 +4686,17 @@ symbol-tree@^3.2.2:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-tadis-analyzer@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/tadis-analyzer/-/tadis-analyzer-1.0.0.tgz#e949b5f12a4cc2077ee906d97370a41a43ac0073"
-  integrity sha512-9kCAfC2unvMesjd8yAc1dHpug0R4EKqkgX/CmCc+w5r+NU7a6eltFz/5YJhnM+Szx3NgY1cwRsU7fozV4UzluQ==
+tadis-analyzer@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/tadis-analyzer/-/tadis-analyzer-1.1.1.tgz#6a11dccde7034646fb29960ad2b7b1a26c4a48ba"
+  integrity sha512-Xcvy7opGnFf1QNxXd/Y7yjP638WMuaHfwNMAH94GPKu2NDqjVpyegLQV6oycJBi6MgmCCBuVsgw550A+O0N6BA==
   dependencies:
     "@nestjs/common" "^5.4.0"
     "@nestjs/core" "^5.4.0"
     "@nestjs/microservices" "^5.4.0"
     "@nestjs/websockets" "^5.4.0"
     dotenv "^7.0.0"
+    immer "^5.1.0"
     joi "^14.3.1"
     kubernetes-client "^6.11.1"
     lodash "^4.17.11"

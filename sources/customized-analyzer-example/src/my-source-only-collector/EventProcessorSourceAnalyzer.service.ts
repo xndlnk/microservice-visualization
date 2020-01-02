@@ -28,7 +28,7 @@ export class EventProcessorSourceAnalyzerService {
     }
 
     return {
-      servicePatterns: [],
+      nodePatterns: [],
       edgePatterns: [
         {
           edgeType: 'AsyncEventFlow',

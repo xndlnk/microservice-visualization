@@ -19,7 +19,7 @@
     "@nestjs/common": "^5.4.0",
     "@nestjs/core": "^5.4.0",
     "dotenv": "^7.0.0",
-    "tadis-analyzer": "^1.0.0"
+    "tadis-analyzer": "^1.1.1"
   },
   "devDependencies": {
     "@nestjs/testing": "^5.4.0",
