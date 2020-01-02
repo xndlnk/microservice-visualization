@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import {
-  System, MicroService, Metadata, ElementMapping,
+  System, MicroService, ElementMapping,
   SourceLocationDecorator,
   GitStorageService, ConfigService, SubSystemFromPayloadTransformer, MicroserviceWithOutgoingExchangeMerger,
   StaticNodeFilter, JavaAnnotationAnalyzer, FeignClientAnnotationAnalyzer, MicroservicesFromKubernetesCreator,
@@ -30,13 +30,12 @@ export class CustomCollectorService {
   ) { }
 
   public async getAllMicroservices(): Promise<MicroService[]> {
-    // const system = await this.microservicesCreator.transform(new System(''))
-    const system = await this.getAllMicroservicesFromSourceFolder()
+    const system = await this.microservicesCreator.transform(new System(''))
     return system.getMicroServices()
   }
 
   public async getSystem(): Promise<System> {
-    return this.getSystemFromSourceCodeOnly()
+    return this.getSystemFromKubernetesRabbitMqSourceCode()
   }
 
   private async getSystemFromKubernetesRabbitMqSourceCode(): Promise<System> {
@@ -74,53 +73,6 @@ export class CustomCollectorService {
 
     system = await this.subSystemTransformer.transform(system, SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
 
-    return system
-  }
-
-  private async getSystemFromSourceCodeOnly(): Promise<System> {
-    let system = new System('')
-
-    system = await this.getAllMicroservicesFromSourceFolder()
-
-    system = await this.outgoingExchangesCreator.transform(system)
-
-    system = await this.feignClientAnnotationAnalyzer.transform(system)
-
-    const elementMappings: ElementMapping[] = [
-      {
-        elementToDeriveNodeFrom: 'sendToExchange',
-        nodeTypeToCreate: 'MessageExchange',
-        nodeTypeDirection: 'target',
-        edgeType: 'AsyncEventFlow'
-      },
-      {
-        elementToDeriveNodeFrom: 'receiveFromExchange',
-        nodeTypeToCreate: 'MessageExchange',
-        nodeTypeDirection: 'source',
-        edgeType: 'AsyncEventFlow'
-      }
-    ]
-    system = await this.javaAnnotationAnalyzer.transform(system, 'EventProcessor', elementMappings)
-    system = await this.sourceLocationDecorator.transform(system)
-
-    system = await this.nodeFilter.transform(system)
-    system = await this.microserviceWithOutgoingExchangeMerger.transform(system)
-
-    system = await this.subSystemTransformer.transform(system, SubSystemFromPayloadTransformer.getSubSystemNameFromCabinetLabel)
-
-    return system
-  }
-
-  private async getAllMicroservicesFromSourceFolder(): Promise<System> {
-    const storageStatus = await this.gitStorage.getStorageStatus()
-    const metadata: Metadata = {
-      transformer: 'custom git sources to microservices',
-      context: this.configService.getSourceFolder()
-    }
-    const system = new System('System')
-    storageStatus.forEach(status => {
-      system.addMicroService(status.name, undefined, metadata)
-    })
     return system
   }
 }
