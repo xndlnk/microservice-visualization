@@ -7,6 +7,7 @@ import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
 import { ConfigService } from '../config/Config.service'
 import { System } from '../model/ms'
 import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
+export { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
 
 // tslint:disable-next-line
 import * as ms from '../model/ms'
