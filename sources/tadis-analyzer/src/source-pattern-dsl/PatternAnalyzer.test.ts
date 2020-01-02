@@ -56,7 +56,7 @@ describe(PatternAnalyzer.name, () => {
     }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+    const outputSystem = await transformer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
   })
@@ -96,7 +96,7 @@ describe(PatternAnalyzer.name, () => {
     }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+    const outputSystem = await transformer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
@@ -131,7 +131,7 @@ describe(PatternAnalyzer.name, () => {
     }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+    const outputSystem = await transformer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMessageExchange('service1')).toBeDefined()
     expect(outputSystem.nodes.filter(node => node.getName() === 'service1')).toHaveLength(1)
@@ -168,7 +168,7 @@ describe(PatternAnalyzer.name, () => {
     }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+    const outputSystem = await transformer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('source-exchange-Y')).toBeDefined()
@@ -196,7 +196,7 @@ describe(PatternAnalyzer.name, () => {
     }
 
     const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transformByPattern(inputSystem, systemPattern)
+    const outputSystem = await transformer.transform(inputSystem, systemPattern)
 
     expect(outputSystem).not.toBeNull()
 

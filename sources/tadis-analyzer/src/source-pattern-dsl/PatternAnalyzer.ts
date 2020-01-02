@@ -23,7 +23,7 @@ export class PatternAnalyzer {
     private readonly config: ConfigService
   ) { }
 
-  public async transformByPattern(system: System, systemPattern: SystemPattern): Promise<System> {
+  public async transform(system: System, systemPattern: SystemPattern): Promise<System> {
     const systemPatternWithoutVariables = replaceVariablesInPatterns(systemPattern, this.config.getSourceFolder())
     await transformByPatternInPath(system, systemPatternWithoutVariables, this.config.getSourceFolder())
     return system
