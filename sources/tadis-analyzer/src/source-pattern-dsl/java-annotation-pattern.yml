@@ -1,0 +1,25 @@
+.template: &javaSourceFilePattern
+  searchTextLocation: "FILE_PATH"
+  regExp: '$sourceRoot/([^/]+)/source\.java'
+  capturingGroupIndexForNodeName: 1
+  nodeType: "MicroService"
+
+variables:
+  - ws: '\\s*'
+  - id: '\\w+'
+
+servicePatterns:
+  - <<: *javaSourceFilePattern
+
+edges:
+  - type: "AsyncEventFlow"
+    sourceNode:
+      <<: *javaSourceFilePattern
+    targetNode:
+      type: "MessageExchange"
+      searchLocation: "FILE_CONTENT"
+      regExp: '@EventProcessor$ws\\([^)]*sendToExchange$ws=$ws($id)'
+      nameGroup: 1
+      nameResolution:
+        searchLocation: "FILE_CONTENT"
+        regExp: '$name$ws=$ws"([^"]*)"'
