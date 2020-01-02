@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common'
 import * as _ from 'lodash'
 import * as fs from 'fs'
+import * as immer from 'immer'
+
 import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
 
 import { ConfigService } from '../config/Config.service'
@@ -22,8 +24,8 @@ export class PatternAnalyzer {
   ) { }
 
   public async transformByPattern(system: System, systemPattern: SystemPattern): Promise<System> {
-    replaceVariablesInPatterns(systemPattern, this.config.getSourceFolder())
-    await transformByPatternInPath(system, systemPattern, this.config.getSourceFolder())
+    const systemPatternWithoutVariables = replaceVariablesInPatterns(systemPattern, this.config.getSourceFolder())
+    await transformByPatternInPath(system, systemPatternWithoutVariables, this.config.getSourceFolder())
     return system
   }
 }
@@ -65,20 +67,22 @@ export type EdgePattern = {
   edgeType: string
 }
 
-function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: string) {
-  // TODO: make immutable
-  systemPattern.servicePatterns
-    .forEach(pattern => {
-      pattern.regExp = replaceVariablesInRegExp(pattern.regExp, sourceFolder)
-      if (pattern.nameResolution) {
-        pattern.nameResolution.regExp = replaceVariablesInRegExp(pattern.nameResolution.regExp, sourceFolder)
-      }
-    })
-  systemPattern.edgePatterns
-    .forEach(pattern => {
-      pattern.sourceNodePattern.regExp = replaceVariablesInRegExp(pattern.sourceNodePattern.regExp, sourceFolder)
-      pattern.targetNodePattern.regExp = replaceVariablesInRegExp(pattern.targetNodePattern.regExp, sourceFolder)
-    })
+function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: string): SystemPattern {
+  return immer.produce(systemPattern, (systemPatternDraft) => {
+    systemPatternDraft.servicePatterns
+      .forEach(pattern => {
+        pattern.regExp = replaceVariablesInRegExp(pattern.regExp, sourceFolder)
+        if (pattern.nameResolution) {
+          pattern.nameResolution.regExp = replaceVariablesInRegExp(pattern.nameResolution.regExp, sourceFolder)
+        }
+      })
+
+    systemPatternDraft.edgePatterns
+      .forEach(pattern => {
+        pattern.sourceNodePattern.regExp = replaceVariablesInRegExp(pattern.sourceNodePattern.regExp, sourceFolder)
+        pattern.targetNodePattern.regExp = replaceVariablesInRegExp(pattern.targetNodePattern.regExp, sourceFolder)
+      })
+  })
 }
 
 function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
