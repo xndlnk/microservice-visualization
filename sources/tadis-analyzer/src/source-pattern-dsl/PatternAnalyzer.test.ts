@@ -4,10 +4,10 @@ import { ConfigService } from '../config/Config.service'
 
 import { System, AsyncEventFlow } from '../model/ms'
 import { verifyEachContentHasTransformer } from '../test/verifiers'
+import { PatternAnalyzer } from './PatternAnalyzer'
 import {
-  PatternAnalyzer, SystemPattern, NodePattern,
-  SearchTextLocation
-} from './PatternAnalyzer'
+  SystemPattern, NodePattern, SearchTextLocation
+} from './model'
 
 describe(PatternAnalyzer.name, () => {
   let app: TestingModule
@@ -49,7 +49,7 @@ describe(PatternAnalyzer.name, () => {
     const inputSystem = new System('test')
 
     const systemPattern: SystemPattern = {
-      servicePatterns: [
+      nodePatterns: [
         javaSourceFilePattern()
       ],
       edgePatterns: []
@@ -66,7 +66,7 @@ describe(PatternAnalyzer.name, () => {
     const inputSystem = new System('test')
 
     const systemPattern: SystemPattern = {
-      servicePatterns: [],
+      nodePatterns: [],
       edgePatterns: [
         {
           edgeType: 'AsyncEventFlow',
@@ -119,7 +119,7 @@ describe(PatternAnalyzer.name, () => {
     inputSystem.addMessageExchange('service1')
 
     const systemPattern: SystemPattern = {
-      servicePatterns: [
+      nodePatterns: [
         {
           searchTextLocation: SearchTextLocation.FILE_PATH,
           regExp: '$sourceRoot/([^/]+)/source\.java',
@@ -142,7 +142,7 @@ describe(PatternAnalyzer.name, () => {
     const inputSystem = new System('test')
 
     const systemPattern: SystemPattern = {
-      servicePatterns: [],
+      nodePatterns: [],
       edgePatterns: [
         {
           edgeType: 'AsyncEventFlow',
@@ -189,7 +189,7 @@ describe(PatternAnalyzer.name, () => {
     const inputSystem = new System('test')
 
     const systemPattern: SystemPattern = {
-      servicePatterns: [
+      nodePatterns: [
         javaSourceFilePattern()
       ],
       edgePatterns: []

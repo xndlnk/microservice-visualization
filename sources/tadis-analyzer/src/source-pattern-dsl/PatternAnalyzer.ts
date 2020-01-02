@@ -4,9 +4,9 @@ import * as fs from 'fs'
 import * as immer from 'immer'
 
 import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
-
 import { ConfigService } from '../config/Config.service'
 import { System } from '../model/ms'
+import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
 
 // tslint:disable-next-line
 import * as ms from '../model/ms'
@@ -17,6 +17,9 @@ const logger = {
   log: (message: string) => Logger ? Logger.log(message, logContext) : console.log(message)
 }
 
+/**
+ * The PatternAnalyzer allows to derive a system from source code patterns defined by regular expressions.
+ */
 @Injectable()
 export class PatternAnalyzer {
   constructor(
@@ -30,46 +33,9 @@ export class PatternAnalyzer {
   }
 }
 
-export type SystemPattern = {
-  servicePatterns: NodePattern[]
-  edgePatterns: EdgePattern[]
-}
-
-export type NodePattern = {
-  searchTextLocation: SearchTextLocation
-  regExp: string
-  capturingGroupIndexForNodeName: number
-  nodeType: string
-  nameResolution?: NameResolution
-}
-
-/**
- * a name resolution translates a node name that represents a variable to its value.
- * the value is discovered by another regular expression applied to the current file.
- */
-export type NameResolution = {
-  searchTextLocation: SearchTextLocation
-  regExp: string // $name can be used to refer to the node name discovered before
-}
-
-export enum SearchTextLocation {
-  FILE_PATH,
-  FILE_CONTENT // content of file in current file path
-}
-
-/**
- * tries to match the source node pattern first.
- * then continues from the current file to match the target node pattern.
- */
-export type EdgePattern = {
-  sourceNodePattern: NodePattern
-  targetNodePattern: NodePattern
-  edgeType: string
-}
-
 function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: string): SystemPattern {
   return immer.produce(systemPattern, (systemPatternDraft) => {
-    systemPatternDraft.servicePatterns
+    systemPatternDraft.nodePatterns
       .forEach(pattern => {
         pattern.regExp = replaceVariablesInRegExp(pattern.regExp, sourceFolder)
         if (pattern.nameResolution) {
@@ -95,7 +61,7 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
   logger.log('found ' + allFiles.length + ' files')
 
   allFiles.forEach(filePath => {
-    systemPattern.servicePatterns.forEach(servicePattern => {
+    systemPattern.nodePatterns.forEach(servicePattern => {
       findNodeNames(servicePattern, filePath).forEach(nodeName => {
         system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
         logger.log(`added node '${nodeName}'`)
