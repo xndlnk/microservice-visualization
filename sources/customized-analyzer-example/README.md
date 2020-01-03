@@ -13,6 +13,7 @@ Before discussing the example analyzer, lets get started and see the analysis an
 ```
 SOURCE_FOLDER=<cwd>/dummy-system-source
 PORT=8081
+GIT_BASE_URLS='non'
 ```
 3. Run `yarn install`
 4. Run `yarn start`
