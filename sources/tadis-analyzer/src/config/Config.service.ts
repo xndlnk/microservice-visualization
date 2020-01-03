@@ -33,7 +33,7 @@ export class ConfigService {
       }
     }
     if (!value) {
-      throw new Error('access to undefined env variable ' + key)
+      this.logger.warn('access to undefined env variable ' + key)
     }
     return value
   }
