@@ -1,6 +1,8 @@
 # tadis-analyzer
 
-tadis-analyzer can discover the architecture of a microservice system by collecting information about the system from different sources. These sources include infrastructure services, e.g. Kubernetes and RabbitMQ, which provide real-time information, and Git repositories, which add information from static source code analysis. TADIS is designed as a DEV tool that a gives a team an overview of the services and their dependencies when planning further development of the system. It allows to customize the analysis in order to visualize system-specific architecture aspects. TADIS is not intended for system performance analysis.
+tadis-analyzer can discover the architecture of a microservice system by collecting information about the system from different sources. These sources include infrastructure services, e.g. Kubernetes and RabbitMQ, which provide real-time information, and Git repositories, which add information from static source code analysis.
+
+TADIS is designed as a DEV tool that a gives a team an overview of the services and their dependencies when planning further development of the system. It allows to customize the analysis in order to visualize system-specific architecture aspects. TADIS is not intended for system performance analysis.
 
 The analyzer is provided as a stand-alone microservice as well as a NPM package which can be integrated into a self-made microservice. Either way, it provides a generic REST controller with the following endpoints:
 * `/collect/system` uses a CollectorService to create a graph of a microservice system by using different transformers. A small example is given in [here for Kubernetes and RabbitMQ](src/msa/collector/KubernetesRabbitMqCollector.ts). A larger example is given in the [customized-analyzer-example](../customized-analyzer-example/README.md). The available transformers are described in the next section.
@@ -22,9 +24,37 @@ Environment Variables:
 * build Docker image: `yarn docker-build`
 * run Docker image: `yarn docker-run`
 
+## Getting Started
+
+Please see [customized-analyzer-example](../customized-analyzer-example/README.md).
+
 ## Transformers
 
-Each transformer gets an input system and transforms the system into an output system. There is a system model with types of microservice systems [defined here](src/model/ms.ts). The system model is based on a [generic model](src/model/core.ts). The following section describes all the available transformers and their configuration options.
+Transformers are used by a collector to assemble a system by collecting information from different sources. Each transformer gets an input system and transforms the system into an output system.
+
+A system uses concepts of microservice systems which are [defined by this model](src/model/ms.ts). The system model is a typed extension of a [generic model](src/model/core.ts).
+
+The following transformers are available out-of-the-box:
+
+- Kubernetes Transformers
+  - MicroservicesFromKubernetesCreator
+  - EnvDefinitionFromPodDecorator
+  - LabelsFromDeploymentDecorator
+- Java Transformers
+  - FeignClientAnnotationAnalyzer
+  - JavaAnnotationAnalyzer
+- RabbitMQ Transformers
+  - RabbitMqBindingsFromApiAnalyzer
+  - ExchangesFromEnvPayloadCreator
+  - OutgoingExchangesFromSourceCreator
+  - MicroserviceWithOutgoingExchangeMerger
+- Common Transformers
+  - SourceLocationDecorator
+  - StaticNodeFilter
+  - SubSystemFromPayloadTransformer
+- Source Pattern Analyzer
+
+The transformers and their configuration options are described in next sections.
 
 ### Kubernetes Transformers
 
@@ -134,8 +164,12 @@ How sub-system information is to be extracted from a nodes payload must be speci
 
 [see SubSystemTransformer.ts](sources/tadis-analyzer/src/msa/common/SubSystemTransformer.ts)
 
+### Source Pattern Analyzer
+
+This transformer allows to provide patterns for static source code analysis. An example is provided in the [customized-analyzer-example](../customized-analyzer-example) project.
+
 ## License
 
 [Apache License, Version 2.0](LICENSE)
 
-Copyright 2017-2019 Andreas Blunk, MaibornWolff GmbH
+Copyright 2017-2020 Andreas Blunk, MaibornWolff GmbH
