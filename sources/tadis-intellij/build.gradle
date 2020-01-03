@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.4.15'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 group 'de.maibornwolff'
@@ -16,10 +17,21 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+javafx {
+    version = "11"
+    modules = [ 'javafx.web', 'javafx.swing' ]
+}
+
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2019.3'
+    version 'IC-2019.3'
 }
+
+runIde {
+    configDirectory "${projectDir}/.ide-config"
+    // pluginsDirectory "${projectDir}/.ide-plugins"
+}
+
 patchPluginXml {
     changeNotes """
       Add change notes here.<br>
