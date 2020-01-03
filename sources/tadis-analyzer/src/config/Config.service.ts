@@ -19,7 +19,6 @@ export class ConfigService {
       if (!fs.existsSync(this.getSourceFolder())) {
         throw new Error('SOURCE_FOLDER does not exist: ' + this.getSourceFolder())
       }
-      this.logger.log('using KUBERNETES_NAMESPACE: ' + this.getKubernetesNamespace())
     } else {
       this.envConfig = {}
     }
@@ -32,6 +31,9 @@ export class ConfigService {
       if (value.startsWith('\'') && value.endsWith('\'') || value.startsWith('"') && value.endsWith('"')) {
         this.logger.warn('env variable ' + key + ' is surrounded by quotes: ' + value)
       }
+    }
+    if (!value) {
+      throw new Error('access to undefined env variable ' + key)
     }
     return value
   }
@@ -79,10 +81,9 @@ export class ConfigService {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       PORT: Joi.number().default(3000),
       SOURCE_FOLDER: Joi.string().required(),
-      GIT_BASE_URLS: Joi.string().required().min(1),
-      // TODO: should only be required when the corresponding steps are active
-      KUBERNETES_NAMESPACE: Joi.string().required(),
-      RABBIT_USER: Joi.string().required(),
+      GIT_BASE_URLS: Joi.any().optional(),
+      KUBERNETES_NAMESPACE: Joi.string().optional(),
+      RABBIT_USER: Joi.string().optional(),
       RABBIT_PASSWORD: Joi.string().optional(),
       RABBIT_URL: Joi.string().optional()
     })
