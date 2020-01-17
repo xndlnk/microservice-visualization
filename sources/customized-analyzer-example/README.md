@@ -9,29 +9,12 @@ Before discussing the example analyzer, lets get started and see the analysis an
 ### Run the Customized Analyzer
 
 1. Change directory to `customized-analyzer-example`.
-2. Create `.env` file in current directory and add content below. Substitute `<cwd>` with the absolute path to the current directory.
-```
-SOURCE_FOLDER=<cwd>/dummy-system-source
-PORT=8081
-GIT_BASE_URLS='non'
-```
-3. Run `yarn install`
-4. Run `yarn start`
-5. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
-
-### Run the UI
-
-1. Open another shell and change to the tadis-ui directory
-2. Create `.env` file in the tadis-ui directory and add content below.
-```
-PORT=8080
-CACHE_TTL_SECONDS=10
-SYSTEM_PROVIDER_URL=http://localhost:8081/collect/system?version=1
-```
-3. Run `yarn install`
-4. Run `yarn start`
-5. Open base path to UI in browser: [http://localhost:8080]()
-6. Navigate to actual UI: [http://localhost:8080/tadis/html/]()
+2. Run `docker-compose up`. This will run the following microservices:
+- tadis-ui on port 8080 providing a graphical representation of the system graph.
+- customized-analyzer-example on port 8081 providing the system graph as JSON by analyzing source code in source folder `./dummy-system-source`.
+3. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
+4. Open base path to TADIS-UI in browser: [http://localhost:8080]()
+5. Navigate to HTML view: [http://localhost:8080/tadis/html/]()
 
 ## The Customized Analyzer Explained
 
