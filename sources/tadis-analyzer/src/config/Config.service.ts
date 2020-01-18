@@ -16,9 +16,6 @@ export class ConfigService {
     if (process.env.NODE_ENV !== 'test') {
       dotenv.config()
       this.envConfig = this.validateEnvVariables(process.env)
-      if (!fs.existsSync(this.getSourceFolder())) {
-        throw new Error('SOURCE_FOLDER does not exist: ' + this.getSourceFolder())
-      }
     } else {
       this.envConfig = {}
     }
