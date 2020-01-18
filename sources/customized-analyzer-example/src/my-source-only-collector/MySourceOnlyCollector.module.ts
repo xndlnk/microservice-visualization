@@ -6,7 +6,7 @@ import {
 } from 'tadis-analyzer'
 
 import { MySourceOnlyCollectorService } from './MySourceOnlyCollector.service'
-import { EventProcessorSourceAnalyzerService } from './EventProcessorSourceAnalyzer.service'
+import { AnalyzerForEventProcessor } from './AnalyzerForEventProcessor'
 
 const customCollectorProvider = {
   provide: DefaultCollectorService,
@@ -24,7 +24,7 @@ const customCollectorProvider = {
   ],
   providers: [
     customCollectorProvider,
-    EventProcessorSourceAnalyzerService
+    AnalyzerForEventProcessor
   ],
   exports: [
   ]

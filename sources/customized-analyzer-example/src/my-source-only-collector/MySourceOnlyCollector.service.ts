@@ -4,13 +4,13 @@ import {
   System, MicroService, Metadata, GitStorageService, ConfigService
 } from 'tadis-analyzer'
 
-import { EventProcessorSourceAnalyzerService } from './EventProcessorSourceAnalyzer.service'
+import { AnalyzerForEventProcessor } from './AnalyzerForEventProcessor'
 
 @Injectable()
 export class MySourceOnlyCollectorService {
 
   constructor(
-    private readonly eventProcessorAnalyzer: EventProcessorSourceAnalyzerService,
+    private readonly analyzerForEventProcessor: AnalyzerForEventProcessor,
     private readonly gitStorage: GitStorageService,
     private readonly configService: ConfigService
   ) { }
@@ -21,8 +21,7 @@ export class MySourceOnlyCollectorService {
   }
 
   public async getSystem(): Promise<System> {
-    let system = await this.getAllMicroservicesFromSourceFolder()
-    system = await this.eventProcessorAnalyzer.transform(system)
+    const system = await this.analyzerForEventProcessor.transform(new System(''))
 
     return system
   }

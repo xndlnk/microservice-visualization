@@ -1,5 +1,5 @@
 # TODO
 
-- include cloning source via GIT_BASE_URLS into example setup
+- make README more descriptive: explain env variables used...
 - add integration test for tadis-analyzer, custom-analyzer and ui
 - update dependencies

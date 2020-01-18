@@ -12,9 +12,11 @@ Before discussing the example analyzer, lets get started and see the analysis an
 2. Run `docker-compose up`. This will run the following microservices:
 - tadis-ui on port 8080 providing a graphical representation of the system graph.
 - customized-analyzer-example on port 8081 providing the system graph as JSON by analyzing source code in source folder `./dummy-system-source`.
-3. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
-4. Open base path to TADIS-UI in browser: [http://localhost:8080]()
-5. Navigate to HTML view: [http://localhost:8080/tadis/html/]()
+3. Checkout source code:
+- run: `curl localhost:8081/source/store/repository/microservice-visualization`
+4. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
+5. Open base path to TADIS-UI in browser: [http://localhost:8080]()
+6. Navigate to HTML view: [http://localhost:8080/tadis/html/]()
 
 ## The Customized Analyzer Explained
 

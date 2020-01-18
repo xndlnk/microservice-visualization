@@ -5,7 +5,7 @@ import {
 } from 'tadis-analyzer'
 
 @Injectable()
-export class EventProcessorSourceAnalyzerService {
+export class AnalyzerForEventProcessor {
 
   constructor(
     private readonly configService: ConfigService,
@@ -22,7 +22,7 @@ export class EventProcessorSourceAnalyzerService {
 
     const javaSourceFilePattern: patternAnalyzer.NodePattern = {
       searchTextLocation: patternAnalyzer.SearchTextLocation.FILE_PATH,
-      regExp: '$sourceRoot/([^/]+)/source\.java',
+      regExp: '$sourceRoot.*/dummy-system-source/([^/]+)/.+java',
       capturingGroupIndexForNodeName: 1,
       nodeType: 'MicroService'
     }
