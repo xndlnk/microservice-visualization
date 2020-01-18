@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as _ from 'lodash'
 import * as fs from 'fs'
 import * as immer from 'immer'
+import * as path from 'path'
 
 import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
 import { ConfigService } from '../config/Config.service'
@@ -53,7 +54,7 @@ function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: 
 }
 
 function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
-  return regExp.replace('$sourceRoot', sourceFolder)
+  return regExp.replace('$sourceRoot', path.resolve(sourceFolder))
 }
 
 async function transformByPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
