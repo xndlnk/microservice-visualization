@@ -29,6 +29,7 @@ export class CollectorController {
   // TODO: more RESTy with @Patch('system-source') ?
   @Get('source')
   async storeSource(): Promise<string> {
+    // tslint:disable-next-line: no-floating-promises
     this.storeSystemSource()
     return 'started storing in background ...'
   }

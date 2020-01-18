@@ -26,6 +26,7 @@ export class GitStorageController {
       return this.storeRepositorySync(repositoryName)
     }
 
+    // tslint:disable-next-line: no-floating-promises
     this.gitStorage.storeRepository(repositoryName)
     return 'started storing in background ...'
   }
