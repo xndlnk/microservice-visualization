@@ -1,11 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Logger } from '@nestjs/common'
 import * as _ from 'lodash'
 import * as fs from 'fs'
 import * as immer from 'immer'
 import * as path from 'path'
 
 import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
-import { ConfigService } from '../config/Config.service'
 import { System } from '../model/ms'
 import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
 export { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
@@ -22,15 +21,14 @@ const logger = {
 /**
  * The PatternAnalyzer allows to derive a system from source code patterns defined by regular expressions.
  */
-@Injectable()
 export class PatternAnalyzer {
   constructor(
-    private readonly config: ConfigService
+    private readonly sourceFolder: string
   ) { }
 
   public async transform(system: System, systemPattern: SystemPattern): Promise<System> {
-    const systemPatternWithoutVariables = replaceVariablesInPatterns(systemPattern, this.config.getSourceFolder())
-    await transformByPatternInPath(system, systemPatternWithoutVariables, this.config.getSourceFolder())
+    const systemPatternWithoutVariables = replaceVariablesInPatterns(systemPattern, this.sourceFolder)
+    await transformByPatternInPath(system, systemPatternWithoutVariables, this.sourceFolder)
     return system
   }
 }

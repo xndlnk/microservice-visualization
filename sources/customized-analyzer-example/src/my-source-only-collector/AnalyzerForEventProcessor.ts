@@ -9,7 +9,7 @@ export class AnalyzerForEventProcessor {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly patternAnalyzer: patternAnalyzer.PatternAnalyzer
+    private readonly patternAnalyzer: patternAnalyzer.PatternAnalyzerService
   ) { }
 
   public async transform(system: System): Promise<System> {

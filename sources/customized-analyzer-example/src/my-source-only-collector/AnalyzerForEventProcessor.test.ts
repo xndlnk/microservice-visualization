@@ -21,7 +21,7 @@ describe(AnalyzerForEventProcessor.name, () => {
       providers: [
         ConfigService,
         AnalyzerForEventProcessor,
-        patternAnalyzer.PatternAnalyzer
+        patternAnalyzer.PatternAnalyzerService
       ]
     }).compile()
 

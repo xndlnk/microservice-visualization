@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 
 import { ConfigModule } from '../config/Config.module'
 import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnalysis.module'
-import * as pt from './PatternAnalyzer'
+import * as pt from './PatternAnalyzer.service'
 
 @Module({
   imports: [
@@ -11,10 +11,10 @@ import * as pt from './PatternAnalyzer'
   ],
   controllers: [],
   providers: [
-    pt.PatternAnalyzer
+    pt.PatternAnalyzerService
   ],
   exports: [
-    pt.PatternAnalyzer
+    pt.PatternAnalyzerService
   ]
 })
 class SourcePatternDslModule { }

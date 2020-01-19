@@ -1,7 +1,3 @@
-import { Test, TestingModule } from '@nestjs/testing'
-
-import { ConfigService } from '../config/Config.service'
-
 import { System, AsyncEventFlow } from '../model/ms'
 import { verifyEachContentHasTransformer } from '../test/verifiers'
 import { PatternAnalyzer } from './PatternAnalyzer'
@@ -10,8 +6,9 @@ import {
 } from './model'
 
 describe(PatternAnalyzer.name, () => {
-  let app: TestingModule
+  let analyzer: PatternAnalyzer
   let originalEnv: NodeJS.ProcessEnv = null
+  const sourceFolder: string = __dirname + '/testdata/source-folder'
 
   beforeEach(() => {
     originalEnv = process.env
@@ -22,15 +19,7 @@ describe(PatternAnalyzer.name, () => {
   })
 
   beforeAll(async() => {
-    app = await Test.createTestingModule({
-      controllers: [],
-      providers: [ConfigService, PatternAnalyzer]
-    }).compile()
-
-    const config = app.get<ConfigService>(ConfigService)
-    jest.spyOn(config, 'getSourceFolder').mockImplementation(
-      () => __dirname + '/testdata/source-folder'
-    )
+    analyzer = new PatternAnalyzer(sourceFolder)
   })
 
   const ws = '\\s*'
@@ -55,8 +44,7 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: []
     }
 
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, systemPattern)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
   })
@@ -95,8 +83,7 @@ describe(PatternAnalyzer.name, () => {
       ]
     }
 
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, systemPattern)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('target-exchange-X')).toBeDefined()
@@ -130,8 +117,7 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: []
     }
 
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, systemPattern)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMessageExchange('service1')).toBeDefined()
     expect(outputSystem.nodes.filter(node => node.getName() === 'service1')).toHaveLength(1)
@@ -167,8 +153,7 @@ describe(PatternAnalyzer.name, () => {
       ]
     }
 
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, systemPattern)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('source-exchange-Y')).toBeDefined()
@@ -195,8 +180,7 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: []
     }
 
-    const transformer = app.get<PatternAnalyzer>(PatternAnalyzer)
-    const outputSystem = await transformer.transform(inputSystem, systemPattern)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem).not.toBeNull()
 
