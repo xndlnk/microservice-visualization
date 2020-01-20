@@ -23,7 +23,7 @@ export async function findFiles(path: string, fileEnding: string) {
  * @param path
  * @param fileEnding
  */
-export async function findFilesSafe(path: string, fileEnding: string): Promise<string[]> {
+export async function findFilesSafe(path: string, fileEnding: string | undefined): Promise<string[]> {
   const allFiles = await findFiles(path, fileEnding)
   return allFiles.filter(file => isNoSourceOfThisProject(file))
 }
