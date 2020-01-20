@@ -2,8 +2,10 @@
 // in other typescript projects which depend on this one.
 // it's ok to use path alias in tests.
 
+import * as core from './model/core'
+import * as ms from './model/ms'
 import * as transport from './model/transport'
-export { transport }
+export { ms, core, transport }
 
 export * from './model/core'
 export * from './model/ms'
