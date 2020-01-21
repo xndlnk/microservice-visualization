@@ -14,7 +14,6 @@ export * from './config/Config.module'
 export * from './common-transformers/CommonTransformers.module'
 export * from './java/Java.module'
 export * from './source-code-analysis/SourceCodeAnalysis.module'
-export * from './source-pattern-dsl/SourcePatternDsl.module'
 
 export * from './msa/Msa.module'
 export * from './msa/kubernetes/Kubernetes.module'
