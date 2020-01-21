@@ -8,7 +8,7 @@ import * as p from 'path'
  * @param path
  * @param fileEnding
  */
-export async function findFiles(path: string, fileEnding: string) {
+export async function findFiles(path: string, fileEnding: string | undefined) {
   const files: string[] = []
   await getFilesRecursive(path, files, fileEnding)
   return files
@@ -25,6 +25,7 @@ export async function findFiles(path: string, fileEnding: string) {
  */
 export async function findFilesSafe(path: string, fileEnding: string | undefined): Promise<string[]> {
   const allFiles = await findFiles(path, fileEnding)
+  // tslint:disable-next-line: deprecation - its ok for this file to use the method.
   return allFiles.filter(file => isNoSourceOfThisProject(file))
 }
 

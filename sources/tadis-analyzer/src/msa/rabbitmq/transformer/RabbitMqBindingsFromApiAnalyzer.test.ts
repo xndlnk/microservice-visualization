@@ -69,10 +69,10 @@ describe(RabbitMqBindingsFromApiAnalyzer.name, () => {
 
     const queueNode = outputSystem.nodes.find(node => node.content.type === MessageQueue.name)
     expect(queueNode).toBeDefined()
-    expect(queueNode.getName()).toEqual('receiver-service.routingKey.publish.update')
+    expect(queueNode!.getName()).toEqual('receiver-service.routingKey.publish.update')
 
     expect(outputSystem.getAsyncEventFlows()[0].source.id).toEqual(outputSystem.getMessageExchanges()[0].id)
-    expect(outputSystem.getAsyncEventFlows()[0].target.id).toEqual(queueNode.id)
+    expect(outputSystem.getAsyncEventFlows()[0].target.id).toEqual(queueNode!.id)
 
     verifyEachContentHasTransformer(outputSystem, RabbitMqBindingsFromApiAnalyzer.name)
   })
@@ -103,7 +103,7 @@ describe(RabbitMqBindingsFromApiAnalyzer.name, () => {
 
     const queueNode = outputSystem.nodes.find(node => node.content.type === MessageQueue.name)
     expect(queueNode).toBeDefined()
-    expect(queueNode.getName()).toEqual('no-service-prefix')
+    expect(queueNode!.getName()).toEqual('no-service-prefix')
 
     verifyEachContentHasTransformer(outputSystem, RabbitMqBindingsFromApiAnalyzer.name)
   })

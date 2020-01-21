@@ -141,8 +141,8 @@ export class GitStorage {
     }
   }
 
-  private async getChildExitCode(child: cp.ChildProcess): Promise<number> {
-    return new Promise<number>(
+  private async getChildExitCode(child: cp.ChildProcess): Promise<number | null> {
+    return new Promise<number | null>(
       (resolve) => {
         child.on('exit', (code) => resolve(code))
       })

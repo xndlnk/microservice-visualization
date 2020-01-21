@@ -13,7 +13,7 @@ import { PatternAnalyzer } from './PatternAnalyzer'
  */
 @Injectable()
 export class PatternAnalyzerService {
-  private patternAnalyzer: PatternAnalyzer
+  private patternAnalyzer: PatternAnalyzer | undefined
 
   constructor(
     private readonly config: ConfigService

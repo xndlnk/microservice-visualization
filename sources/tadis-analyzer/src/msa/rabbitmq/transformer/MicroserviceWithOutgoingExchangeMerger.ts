@@ -24,14 +24,16 @@ export class MicroserviceWithOutgoingExchangeMerger {
     system.nodes.forEach(node => {
       if (node.content.type === MessageExchange.name) {
         const exchange = node as MessageExchange
+        const exchangeName = exchange.getName()
+        if (!exchangeName) return
 
         const edgeTargetingSameNameMicroService = this.findEdgeTargetingSameNameMicroService(exchange, system)
         if (edgeTargetingSameNameMicroService) {
-          const service = system.findMicroService(exchange.getName())
+          const service = system.findMicroService(exchangeName)
           if (service) {
             this.extendPayloadOfMicroService(service, exchange.content.payload)
             this.extendMetadataOfMicroService(service, exchange.content.metadata)
-            this.extendMetadataOfMicroService(service, edgeTargetingSameNameMicroService.content.metadata)
+            this.extendMetadataOfMicroService(service, edgeTargetingSameNameMicroService.content?.metadata)
 
             this.getOtherExchangeEdgesRedirectedToService(system, exchange, service)
               .forEach(edge => result.edges.push(edge))
@@ -66,7 +68,7 @@ export class MicroserviceWithOutgoingExchangeMerger {
       .map(exchangeEdge => {
         const source = exchangeEdge.source === exchange ? service : exchangeEdge.source
         const target = exchangeEdge.target === exchange ? service : exchangeEdge.target
-        const newEdge = new AsyncEventFlow(source, target, exchangeEdge.content.payload, exchangeEdge.content.metadata)
+        const newEdge = new AsyncEventFlow(source, target, exchangeEdge.content?.payload, exchangeEdge.content?.metadata)
 
         this.logger.log(`redirected ${exchangeEdge.source.id} -> ${exchangeEdge.target.id}`
           + ` to ${newEdge.source.id} -> ${newEdge.target.id}`)
@@ -85,7 +87,9 @@ export class MicroserviceWithOutgoingExchangeMerger {
       .forEach(payloadPropertyName => service.content.payload[payloadPropertyName] = extraPayload[payloadPropertyName])
   }
 
-  private extendMetadataOfMicroService(service: MicroService, metadata: Metadata) {
+  private extendMetadataOfMicroService(service: MicroService, metadata: Metadata | undefined) {
+    if (!metadata) return
+
     if (service.content.metadata) {
       service.content.metadata.transformer += '; ' + metadata.transformer
       service.content.metadata.context += '; ' + metadata.context
@@ -95,7 +99,7 @@ export class MicroserviceWithOutgoingExchangeMerger {
     }
   }
 
-  private findEdgeTargetingSameNameMicroService(exchange: MessageExchange, system: System): Edge {
+  private findEdgeTargetingSameNameMicroService(exchange: MessageExchange, system: System): Edge | undefined {
     return system.edges.find(edge => edge.target.id === exchange.id
       && edge.source.hasSameNameAs(exchange)
       && edge.source.content.type === MicroService.name

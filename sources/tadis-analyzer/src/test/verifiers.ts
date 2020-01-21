@@ -12,6 +12,6 @@ export function verifyEachContentHasTransformer(node: Node, transformer: string)
   }
 
   if (node.edges && node.edges.length > 0) {
-    expect(node.edges.map(edge => edge.content.metadata)).toContainObject({ transformer })
+    expect(node.edges.map(edge => edge.content?.metadata)).toContainObject({ transformer })
   }
 }

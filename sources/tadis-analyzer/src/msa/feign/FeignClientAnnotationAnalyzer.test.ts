@@ -8,14 +8,9 @@ import { verifyEachContentHasTransformer } from '../../test/verifiers'
 
 describe(FeignClientAnnotationAnalyzer.name, () => {
   let app: TestingModule
-  let originalEnv: NodeJS.ProcessEnv = null
 
   beforeEach(() => {
-    originalEnv = process.env
-  })
-
-  afterEach(() => {
-    process.env = originalEnv
+    process.env.NODE_ENV = 'test'
   })
 
   beforeAll(async() => {
