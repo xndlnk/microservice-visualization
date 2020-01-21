@@ -1,29 +1,23 @@
-import { Logger } from '@nestjs/common'
-import * as _ from 'lodash'
 import * as fs from 'fs'
-import * as immer from 'immer'
 import * as path from 'path'
-
-import { findFilesSafe } from '../source-code-analysis/file-analysis/analysis'
-import { System } from '../model/ms'
+import * as _ from 'lodash'
+import * as immer from 'immer'
+import { findFilesSafe } from '../file-analysis/analysis'
 import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
-export { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
+import { Logger } from '@nestjs/common'
+import { System } from '../../model/ms'
 
 // tslint:disable-next-line
-import * as ms from '../model/ms'
-import { Metadata } from 'src/model/core'
+import * as ms from '../../model/ms'
 
-const logContext = 'PatternAnalyzer'
-const logger = {
-  log: (message: string) => Logger ? Logger.log(message, logContext) : console.log(message)
-}
+import { Metadata } from '../../model/core'
 
 /**
  * The PatternAnalyzer allows to derive a system from source code patterns defined by regular expressions.
  */
 export class PatternAnalyzer {
   constructor(
-    private readonly sourceFolder: string
+    public readonly sourceFolder: string
   ) { }
 
   public async transform(system: System, systemPattern: SystemPattern): Promise<System> {
@@ -56,30 +50,32 @@ function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
 }
 
 async function transformByPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
-  logger.log('scanning all files in ' + sourceFolder)
-  const allFiles = await findFilesSafe(sourceFolder, null)
-  logger.log('found ' + allFiles.length + ' files')
+  Logger.log('scanning all files in ' + sourceFolder)
+  const allFiles = await findFilesSafe(sourceFolder, undefined)
+  Logger.log('found ' + allFiles.length + ' files')
 
   allFiles.forEach(filePath => {
     systemPattern.nodePatterns.forEach(servicePattern => {
-      findNodeNames(servicePattern, filePath).forEach(nodeName => {
+      findNodeNames(servicePattern, filePath, allFiles).forEach(nodeName => {
         system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
-        logger.log(`added node '${nodeName}'`)
+        Logger.log(`added node '${nodeName}'`)
       })
     })
 
-    systemPattern.edgePatterns.forEach(edgePattern => transformByEdgePattern(system, edgePattern, filePath))
+    systemPattern.edgePatterns
+      .forEach(edgePattern => transformByEdgePattern(system, edgePattern, filePath, allFiles))
   })
 }
 
-function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string) {
-  findNodeNames(edgePattern.sourceNodePattern, filePath)
+function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string,
+  allFiles: string[]) {
+  findNodeNames(edgePattern.sourceNodePattern, filePath, allFiles)
     .forEach(sourceNodeName => {
-      logger.log(`found source node '${sourceNodeName}'`)
+      Logger.log(`found source node '${sourceNodeName}'`)
 
-      findNodeNames(edgePattern.targetNodePattern, filePath)
+      findNodeNames(edgePattern.targetNodePattern, filePath, allFiles)
         .forEach(targetNodeName => {
-          logger.log(`found target node '${targetNodeName}'`)
+          Logger.log(`found target node '${targetNodeName}'`)
           createEdge(system, edgePattern, sourceNodeName, targetNodeName)
         })
     })
@@ -101,17 +97,19 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
   const edge = new ms[edgePattern.edgeType](sourceNode, targetNode, undefined, metadata)
   system.edges.push(edge)
 
-  logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
+  Logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
 }
 
-function findNodeNames(pattern: NodePattern, filePath: string): string[] {
+function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[]): string[] {
   const nodeNames = matchNodeName(pattern, filePath)
-  if (!pattern.nameResolution) return nodeNames
 
-  return nodeNames.map(nodeName => resolveNodeName(nodeName, pattern.nameResolution, filePath))
+  if (!pattern.nameResolution) return nodeNames
+  const nameResolution = pattern.nameResolution
+
+  return nodeNames.map(nodeName => resolveNodeName(nodeName, nameResolution, filePath, allFiles))
 }
 
-function resolveNodeName(nodeName: string, nameResolution: NameResolution, filePath: string): string {
+function resolveNodeName(nodeName: string, nameResolution: NameResolution, filePath: string, allFiles: string[]): string {
   const regExp = nameResolution.regExp.replace('$name', nodeName)
   if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
     const fileContent = fs.readFileSync(filePath, 'utf8')
@@ -119,8 +117,16 @@ function resolveNodeName(nodeName: string, nameResolution: NameResolution, fileP
     if (resolvedNodeNames.length === 1) {
       return resolvedNodeNames[0]
     }
+  } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
+    for (const fp of allFiles) {
+      const fileContent = fs.readFileSync(fp, 'utf8')
+      const resolvedNodeNames = matchNodeNameByRegExp(regExp, fileContent, 1)
+      if (resolvedNodeNames.length === 1) {
+        return resolvedNodeNames[0]
+      }
+    }
   }
-  return null
+  return nodeName
 }
 
 function matchNodeName(pattern: NodePattern, filePath: string): string[] {
@@ -156,7 +162,7 @@ function getAllPatternMatches<MatchType>(pattern: RegExp, content: string,
   const allMatches: MatchType[] = []
 
   let matches = pattern.exec(content)
-  while (matches != null) {
+  while (matches !== null) {
     const capturedValue = matchTransformer(matches)
     if (capturedValue) {
       allMatches.push(capturedValue)

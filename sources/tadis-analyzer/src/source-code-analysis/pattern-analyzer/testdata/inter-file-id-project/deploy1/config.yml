@@ -1,0 +1,26 @@
+---
+kind: Template
+apiVersion: v1
+
+parameters:
+  - name: APPLICATION_NAME
+    required: true
+
+objects:
+  - kind: DeploymentConfig
+    apiVersion: v1
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ${APPLICATION_NAME}
+              image: xx
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: ${CPU_REQUESTS}
+                  memory: ${MEMORY_REQUESTS}
+              env:
+                # Kafka Topics
+                - name: SOME_KAFKA_TOPIC
+                  value: actual_topic_name

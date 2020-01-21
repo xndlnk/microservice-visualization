@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import * as _ from 'lodash'
 
-import { ConfigService } from '../config/Config.service'
-import { System } from '../model/ms'
+import { ConfigService } from '../../config/Config.service'
+import { System } from '../../model/ms'
 import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
 export { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
 

@@ -56,7 +56,11 @@ export enum SearchTextLocation {
   /**
    * content of the source code file under analysis
    */
-  FILE_CONTENT
+  FILE_CONTENT,
+  /**
+   * the content of any file in the source code folder
+   */
+  ANY_FILE_CONTENT
 }
 
 /**

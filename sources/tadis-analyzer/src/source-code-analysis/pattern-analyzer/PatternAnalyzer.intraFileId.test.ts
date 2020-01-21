@@ -1,25 +1,18 @@
-import { System, AsyncEventFlow } from '../model/ms'
-import { verifyEachContentHasTransformer } from '../test/verifiers'
+import { System, AsyncEventFlow } from '../../model/ms'
+
+import { verifyEachContentHasTransformer } from '../../test/verifiers'
+
 import { PatternAnalyzer } from './PatternAnalyzer'
 import {
   SystemPattern, NodePattern, SearchTextLocation
 } from './model'
 
 describe(PatternAnalyzer.name, () => {
-  let analyzer: PatternAnalyzer
-  let originalEnv: NodeJS.ProcessEnv = null
-  const sourceFolder: string = __dirname + '/testdata/source-folder'
+
+  const sourceFolder = __dirname + '/testdata/intra-file-id-project'
 
   beforeEach(() => {
-    originalEnv = process.env
-  })
-
-  afterEach(() => {
-    process.env = originalEnv
-  })
-
-  beforeAll(async() => {
-    analyzer = new PatternAnalyzer(sourceFolder)
+    process.env.NODE_ENV = 'test'
   })
 
   const ws = '\\s*'
@@ -44,6 +37,7 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: []
     }
 
+    const analyzer = new PatternAnalyzer(sourceFolder)
     const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
@@ -83,6 +77,7 @@ describe(PatternAnalyzer.name, () => {
       ]
     }
 
+    const analyzer = new PatternAnalyzer(sourceFolder)
     const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
@@ -92,7 +87,7 @@ describe(PatternAnalyzer.name, () => {
     // TODO: are there better ways to test parts of objects to match in jest?
     expect(outputSystem.edges.find(edge => edge.source.getName() === 'service1'
       && edge.target.getName() === 'target-exchange-X'
-      && edge.content.type === AsyncEventFlow.name)).toBeDefined()
+      && edge.content?.type === AsyncEventFlow.name)).toBeDefined()
 
     expect(outputSystem.edges.find(edge => edge.source.getName() === 'service1'
       && edge.target.getName() === 'target-exchange-Y')).toBeDefined()
@@ -117,6 +112,7 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: []
     }
 
+    const analyzer = new PatternAnalyzer(sourceFolder)
     const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMessageExchange('service1')).toBeDefined()
@@ -153,6 +149,7 @@ describe(PatternAnalyzer.name, () => {
       ]
     }
 
+    const analyzer = new PatternAnalyzer(sourceFolder)
     const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem.findMicroService('service1')).toBeDefined()
@@ -180,10 +177,26 @@ describe(PatternAnalyzer.name, () => {
       edgePatterns: []
     }
 
+    const analyzer = new PatternAnalyzer(sourceFolder)
     const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
     expect(outputSystem).not.toBeNull()
 
+    expect(outputSystem.getMicroServices()).toHaveLength(0)
+  })
+
+  it('can process an empty pattern', async() => {
+    const inputSystem = new System('test')
+
+    const systemPattern: SystemPattern = {
+      nodePatterns: [],
+      edgePatterns: []
+    }
+
+    const analyzer = new PatternAnalyzer(sourceFolder)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
+
+    expect(outputSystem).not.toBeNull()
     expect(outputSystem.getMicroServices()).toHaveLength(0)
   })
 })
