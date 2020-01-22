@@ -20,7 +20,7 @@ describe(MicroserviceWithOutgoingExchangeMerger.name, () => {
     expect(system.nodes).toHaveLength(3)
     const mergedServiceB = system.nodes.find(node => node.content.payload.name === 'B' && node.content.type === MicroService.name)
     expect(mergedServiceB).toBeDefined()
-    expect(mergedServiceB.content.payload.reduced).toEqual(true)
+    expect(mergedServiceB!.content.payload.reduced).toEqual(true)
 
     expect(system.edges).toHaveLength(2)
     expect(system.edges.find(edge => edge.source.hasName('A') && edge.target.hasName('B'))).toBeDefined()
@@ -41,7 +41,7 @@ describe(MicroserviceWithOutgoingExchangeMerger.name, () => {
     expect(system.nodes).toHaveLength(2)
     const mergedServiceB = system.nodes.find(node => node.content.payload.name === 'B' && node.content.type === MicroService.name)
     expect(mergedServiceB).toBeDefined()
-    expect(mergedServiceB.content.payload.reduced).toEqual(true)
+    expect(mergedServiceB!.content.payload.reduced).toEqual(true)
 
     expect(system.edges).toHaveLength(1)
     expect(system.edges.find(edge => edge.source.hasName('X') && edge.target.hasName('B'))).toBeDefined()
@@ -126,11 +126,11 @@ describe(MicroserviceWithOutgoingExchangeMerger.name, () => {
     expect(system.nodes).toHaveLength(2)
     expect(system.nodes[0].content.payload.p).toEqual(1)
     expect(system.nodes[0].content.payload.q).toEqual(2)
-    expect(system.nodes[0].content.metadata.transformer).toEqual('t1; t2; t3')
-    expect(system.nodes[0].content.metadata.context).toEqual('c1; c2; c3')
+    expect(system.nodes[0].content?.metadata?.transformer).toEqual('t1; t2; t3')
+    expect(system.nodes[0].content?.metadata?.context).toEqual('c1; c2; c3')
 
     expect(system.edges).toHaveLength(1)
-    expect(system.edges[0].content.payload).toEqual({ routingKey: 'r' })
-    expect(system.edges[0].content.metadata).toEqual(metadataOfEdgeBtoC)
+    expect(system.edges[0].content?.payload).toEqual({ routingKey: 'r' })
+    expect(system.edges[0].content?.metadata).toEqual(metadataOfEdgeBtoC)
   })
 })

@@ -1,3 +1,5 @@
+import { Test, TestingModule } from '@nestjs/testing'
+
 import { KubernetesApiService } from '../api/api.service'
 import { ConfigService } from '../../../config/Config.service'
 import { MicroservicesFromKubernetesCreator } from './MicroservicesFromKubernetesCreator'
@@ -5,32 +7,33 @@ import { MicroservicesFromKubernetesCreator } from './MicroservicesFromKubernete
 import { body as testBodyServices } from './testdata/api/services.json'
 import { body as testBodyPods } from './testdata/api/pods.json'
 import { verifyEachContentHasTransformer } from '../../../test/verifiers'
-
-jest.mock('../api/api.service')
-jest.mock('../../../config/Config.service')
+import { System } from '../../../model/ms'
 
 describe(MicroservicesFromKubernetesCreator.name, () => {
+  let app: TestingModule
 
   beforeAll(async() => {
-    ConfigService.prototype.getKubernetesNamespace = jest.fn().mockImplementation(() => {
-      return 'test-ns'
-    })
-
-    KubernetesApiService.prototype.getServices = jest.fn().mockImplementation(() => {
-      return testBodyServices
-    })
-
-    KubernetesApiService.prototype.getPods = jest.fn().mockImplementation(() => {
-      return testBodyPods
-    })
+    app = await Test.createTestingModule({
+      controllers: [],
+      providers: [
+        ConfigService,
+        KubernetesApiService,
+        MicroservicesFromKubernetesCreator
+      ]
+    }).compile()
   })
 
   it('transforms', async() => {
-    const config = new ConfigService()
-    const apiService = new KubernetesApiService(config)
+    const configService = app.get<ConfigService>(ConfigService)
+    jest.spyOn(configService, 'getKubernetesNamespace').mockImplementation(() => 'test-ns')
 
-    const kubernetesService = new MicroservicesFromKubernetesCreator(config, apiService)
-    const system = await kubernetesService.transform(null)
+    const apiService = app.get<KubernetesApiService>(KubernetesApiService)
+    jest.spyOn(apiService, 'getPods').mockImplementation(async() => testBodyPods)
+    jest.spyOn(apiService, 'getServices').mockImplementation(async() => testBodyServices)
+
+    const kubernetesService = app.get<MicroservicesFromKubernetesCreator>(MicroservicesFromKubernetesCreator)
+
+    const system = await kubernetesService.transform(new System(''))
 
     expect(system).not.toBeNull()
     expect(system.getPayload().name).toEqual('test-ns')

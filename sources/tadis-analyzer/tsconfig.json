@@ -6,7 +6,7 @@
     "declaration": true,
     "allowJs": false,
     "noImplicitAny": false,
-    // "strict": true,
+    //"strict": true,
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

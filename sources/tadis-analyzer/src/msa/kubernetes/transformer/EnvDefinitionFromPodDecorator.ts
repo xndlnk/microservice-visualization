@@ -33,7 +33,7 @@ export class EnvDefinitionFromPodDecorator {
 
           logger.log('found pod for ' + pod.metadata.name + ' service ' + serviceName)
           // TODO: make this configurable or more flexible
-          let mergedEnvs = []
+          let mergedEnvs: any[] = []
           for (const container of pod.spec.containers) {
             if (container.env !== undefined) {
               logger.log('addind env vars from pod')

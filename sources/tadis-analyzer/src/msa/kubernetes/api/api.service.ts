@@ -11,9 +11,7 @@ export class KubernetesApiService {
   private readonly api: Api.ApiRoot
 
   constructor(private config: ConfigService) {
-    if (process.env.NODE_ENV !== 'test') {
-      this.api = new Client({ config: this.getKubeConfig() })
-    }
+    this.api = new Client({ config: this.getKubeConfig() })
   }
 
   public async getServices(namespace: string): Promise<any> {
