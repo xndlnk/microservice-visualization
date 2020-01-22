@@ -1,9 +1,8 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 
-import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransformer'
 import { System } from '../model/ms'
-import { CommonTransformersModule } from './CommonTransformers.module'
+import { CommonTransformersModule, SubSystemFromPayloadTransformer } from './CommonTransformers.module'
 
 jest.mock('../config/Config.service')
 
@@ -18,7 +17,7 @@ describe(CommonTransformersModule.name, () => {
     await app.init()
   })
 
-  it('integrates', async() => {
+  it('supports backward-compatible use of SubSystemFromPayloadTransformer', async() => {
     const inputSystem = new System('system')
 
     const transformer = app.get<SubSystemFromPayloadTransformer>(SubSystemFromPayloadTransformer)

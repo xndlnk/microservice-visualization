@@ -1,4 +1,4 @@
-import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransformer'
+import { SubSystemFromPayloadTransformer } from './CommonTransformers.module'
 import { System, AsyncEventFlow } from '../model/ms'
 import { Node, Content } from '../model/core'
 

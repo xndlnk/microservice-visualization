@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common'
 
 import { ConfigModule } from '../config/Config.module'
 import { StaticNodeFilter } from './StaticNodeFilter'
-import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransformer'
+import {
+  AssociatedSubSystemTransformer,
+  AssociatedSubSystemTransformer as SubSystemFromPayloadTransformer
+} from './SubSystemFromPayloadTransformer'
 
 @Module({
   imports: [
@@ -11,10 +14,12 @@ import { SubSystemFromPayloadTransformer } from './SubSystemFromPayloadTransform
   controllers: [],
   providers: [
     StaticNodeFilter,
+    AssociatedSubSystemTransformer,
     SubSystemFromPayloadTransformer
   ],
   exports: [
     StaticNodeFilter,
+    AssociatedSubSystemTransformer,
     SubSystemFromPayloadTransformer
   ]
 })
@@ -23,5 +28,6 @@ class CommonTransformersModule { }
 export {
   CommonTransformersModule,
   StaticNodeFilter,
+  AssociatedSubSystemTransformer,
   SubSystemFromPayloadTransformer
 }
