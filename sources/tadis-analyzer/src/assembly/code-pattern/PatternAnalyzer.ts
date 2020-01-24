@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as _ from 'lodash'
 import * as immer from 'immer'
 import { findFilesSafe } from '../../source-code-analysis/file-analysis/analysis'
-import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
+import { SystemPattern, NodePattern, EdgePattern, SearchTextLocation, NamePattern } from './model'
 import { Logger } from '@nestjs/common'
 import { System } from '../../model/ms'
 
@@ -32,8 +32,8 @@ function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: 
     systemPatternDraft.nodePatterns
       .forEach(pattern => {
         pattern.regExp = replaceVariablesInRegExp(pattern.regExp, sourceFolder)
-        if (pattern.nameResolution) {
-          pattern.nameResolution.regExp = replaceVariablesInRegExp(pattern.nameResolution.regExp, sourceFolder)
+        if (pattern.nameResolutionPattern) {
+          pattern.nameResolutionPattern.regExp = replaceVariablesInRegExp(pattern.nameResolutionPattern.regExp, sourceFolder)
         }
       })
 
@@ -103,30 +103,38 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
 function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[]): string[] {
   const nodeNames = matchNodeName(pattern, filePath)
 
-  if (!pattern.nameResolution) return nodeNames
-  const nameResolution = pattern.nameResolution
+  if (!pattern.nameResolutionPattern) return nodeNames
+  const nameResolution = pattern.nameResolutionPattern
 
   return nodeNames.map(nodeName => resolveNodeName(nodeName, nameResolution, filePath, allFiles))
 }
 
-function resolveNodeName(nodeName: string, nameResolution: NameResolution, filePath: string, allFiles: string[]): string {
-  const regExp = nameResolution.regExp.replace('$name', nodeName)
-  if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
-    const fileContent = fs.readFileSync(filePath, 'utf8')
+function resolveNodeName(id: string, nameResolution: NamePattern, filePath: string, allFiles: string[]): string {
+  const regExp = nameResolution.regExp.replace('$name', id)
+  const files = getFilesToResolveNodeNameFrom(nameResolution, filePath, allFiles)
+
+  for (const fp of files) {
+    const fileContent = fs.readFileSync(fp, 'utf8')
     const resolvedNodeNames = matchNodeNameByRegExp(regExp, fileContent, 1)
     if (resolvedNodeNames.length === 1) {
-      return resolvedNodeNames[0]
-    }
-  } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
-    for (const fp of allFiles) {
-      const fileContent = fs.readFileSync(fp, 'utf8')
-      const resolvedNodeNames = matchNodeNameByRegExp(regExp, fileContent, 1)
-      if (resolvedNodeNames.length === 1) {
-        return resolvedNodeNames[0]
+      const resolvedName = resolvedNodeNames[0]
+      if (!nameResolution.nameResolutionPattern) {
+        return resolvedName
       }
+      return this.resolveNodeName(resolvedName, nameResolution.nameResolutionPattern, filePath, allFiles)
     }
   }
-  return nodeName
+
+  return id
+}
+
+function getFilesToResolveNodeNameFrom(nameResolution: NamePattern, filePath: string, allFiles: string[]): string[] {
+  if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
+    return [filePath]
+  } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
+    return allFiles
+  }
+  return []
 }
 
 function matchNodeName(pattern: NodePattern, filePath: string): string[] {
@@ -141,17 +149,17 @@ function matchNodeName(pattern: NodePattern, filePath: string): string[] {
 }
 
 function matchNodeNameByNodePattern(pattern: NodePattern, searchText: string): string[] {
-  return matchNodeNameByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForNodeName)
+  return matchNodeNameByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForName)
 }
 
 function matchNodeNameByRegExp(regExpString: string, searchText: string,
-  capturingGroupIndexForNodeName: number
+  capturingGroupIndexForName: number
 ): string[] {
   const regExp = new RegExp(regExpString, 'g')
   return getAllPatternMatches<string>(regExp, searchText,
     (matchArray: RegExpExecArray) => {
-      if (matchArray.length >= capturingGroupIndexForNodeName) {
-        return matchArray[capturingGroupIndexForNodeName]
+      if (matchArray.length >= capturingGroupIndexForName) {
+        return matchArray[capturingGroupIndexForName]
       }
       return null
     })

@@ -22,7 +22,7 @@ describe(PatternAnalyzer.name, () => {
     return {
       searchTextLocation: SearchTextLocation.FILE_PATH,
       regExp: '$sourceRoot/([^/]+)/source\.java',
-      capturingGroupIndexForNodeName: 1,
+      capturingGroupIndexForName: 1,
       nodeType: 'MicroService'
     }
   }
@@ -39,10 +39,11 @@ describe(PatternAnalyzer.name, () => {
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `"(.+_KAFKA_TOPIC)"`,
-            capturingGroupIndexForNodeName: 1,
-            nameResolution: {
+            capturingGroupIndexForName: 1,
+            nameResolutionPattern: {
               searchTextLocation: SearchTextLocation.ANY_FILE_CONTENT,
-              regExp: `name:\\s*$name\\s*value:\\s*(\\w+)`
+              regExp: `name:\\s*$name\\s*value:\\s*(\\w+)`,
+              capturingGroupIndexForName: 1
             },
             nodeType: 'MessageExchange'
           }

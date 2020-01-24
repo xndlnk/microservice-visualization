@@ -22,7 +22,7 @@ describe(PatternAnalyzer.name, () => {
     return {
       searchTextLocation: SearchTextLocation.FILE_PATH,
       regExp: '$sourceRoot/([^/]+)/source\.java',
-      capturingGroupIndexForNodeName: 1,
+      capturingGroupIndexForName: 1,
       nodeType: 'MicroService'
     }
   }
@@ -56,10 +56,11 @@ describe(PatternAnalyzer.name, () => {
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}(${id})`,
-            capturingGroupIndexForNodeName: 1,
-            nameResolution: {
+            capturingGroupIndexForName: 1,
+            nameResolutionPattern: {
               searchTextLocation: SearchTextLocation.FILE_CONTENT,
-              regExp: `$name${ws}=${ws}"([^"]*)"`
+              regExp: `$name${ws}=${ws}"([^"]*)"`,
+              capturingGroupIndexForName: 1
             },
             nodeType: 'MessageExchange'
           }
@@ -70,7 +71,7 @@ describe(PatternAnalyzer.name, () => {
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}"([^"]+)"`,
-            capturingGroupIndexForNodeName: 1,
+            capturingGroupIndexForName: 1,
             nodeType: 'MessageExchange'
           }
         }
@@ -105,7 +106,7 @@ describe(PatternAnalyzer.name, () => {
         {
           searchTextLocation: SearchTextLocation.FILE_PATH,
           regExp: '$sourceRoot/([^/]+)/source\.java',
-          capturingGroupIndexForNodeName: 1,
+          capturingGroupIndexForName: 1,
           nodeType: 'MessageExchange'
         }
       ],
@@ -131,7 +132,7 @@ describe(PatternAnalyzer.name, () => {
           sourceNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*receiveFromExchange${ws}=${ws}"([^"]+)"`,
-            capturingGroupIndexForNodeName: 1,
+            capturingGroupIndexForName: 1,
             nodeType: 'MessageExchange'
           },
           targetNodePattern: javaSourceFilePattern()
@@ -142,7 +143,7 @@ describe(PatternAnalyzer.name, () => {
           targetNodePattern: {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `@EventProcessor${ws}\\([^)]*sendToExchange${ws}=${ws}"([^"]+)"`,
-            capturingGroupIndexForNodeName: 1,
+            capturingGroupIndexForName: 1,
             nodeType: 'MessageExchange'
           }
         }

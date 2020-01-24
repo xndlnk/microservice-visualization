@@ -1,7 +1,7 @@
 .template: &javaSourceFilePattern
   searchTextLocation: "FILE_PATH"
   regExp: '$sourceRoot/([^/]+)/source\.java'
-  capturingGroupIndexForNodeName: 1
+  capturingGroupIndexForName: 1
   nodeType: "MicroService"
 
 variables:
@@ -20,6 +20,6 @@ edges:
       searchLocation: "FILE_CONTENT"
       regExp: '@EventProcessor$ws\\([^)]*sendToExchange$ws=$ws($id)'
       nameGroup: 1
-      nameResolution:
+      nameResolutionPattern:
         searchLocation: "FILE_CONTENT"
         regExp: '$name$ws=$ws"([^"]*)"'

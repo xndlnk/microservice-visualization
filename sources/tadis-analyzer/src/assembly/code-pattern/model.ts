@@ -8,7 +8,15 @@ export type SystemPattern = {
   edgePatterns: EdgePattern[]
 }
 
-export type NodePattern = {
+export type NodePattern = NamePattern & {
+  /**
+   * the class name of the node to create. this class must exist in model/ms.ts
+   * @see ../model/ms.ts
+   */
+  nodeType: string
+}
+
+export type NamePattern = {
   /**
    * location of the search text that is used for matching the regular expression.
    */
@@ -21,31 +29,18 @@ export type NodePattern = {
   /**
    * the index of the capturing group to derive the node name from.
    */
-  capturingGroupIndexForNodeName: number
+  capturingGroupIndexForName: number
   /**
-   * the class name of the node to create. this class must exist in model/ms.ts
-   * @see ../model/ms.ts
-   */
-  nodeType: string
-  /**
-   * optionally allows to provide name resolution in case the node name represents
-   * a variable.
-   */
-  nameResolution?: NameResolution
-}
-
-/**
- * a name resolution translates a node name that represents a variable to its value.
- * the value is discovered by another regular expression applied to the current file.
- */
-export type NameResolution = {
-  searchTextLocation: SearchTextLocation
-  /**
-   * a regular expression that defines a pattern from the name can be resolved.
+   * a name resolution translates a node name that represents a variable to its value.
+   * the value is discovered by another regular expression applied to the current file.
+   *
+   * in this case, the provided regular expression defines a pattern from which
+   * the name can be resolved.
+   *
    * special variables allowed:
    *  - $name can be used to refer to the node name discovered before
    */
-  regExp: string
+  nameResolutionPattern?: NamePattern
 }
 
 export enum SearchTextLocation {

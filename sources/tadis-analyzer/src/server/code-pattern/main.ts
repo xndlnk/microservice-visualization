@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core'
 import { Logger } from '@nestjs/common'
 
 import { CodePatternModule } from '../../assembly/code-pattern/CodePattern.module'
-import { ConfigService } from '../../config/Config.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(CodePatternModule)
