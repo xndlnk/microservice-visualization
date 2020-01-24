@@ -12,10 +12,11 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start": "ts-node -r tsconfig-paths/register src/server/default/main.ts",
     "start:dev": "nodemon",
     "start:debug": "nodemon --config nodemon-debug.json",
-    "start:prod": "node build/src/main.js",
+    "start:prod": "node build/src/server/default/main.js",
+    "code-pattern": "ts-node -r tsconfig-paths/register src/server/code-pattern/main.ts",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest --runInBand",
     "test:verbose": "jest --verbose",
