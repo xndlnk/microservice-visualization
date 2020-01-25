@@ -43,8 +43,9 @@ describe(PatternAnalyzer.name, () => {
             variableForName: 'envName',
             nameResolutionPattern: {
               searchTextLocation: SearchTextLocation.FILE_PATH,
-              regExp: `/([^/]+)\.yml`,
+              regExp: `deploy-(.+)/.+\.yml`,
               capturingGroupIndexForName: 1,
+              variableForName: 'serviceName',
               nameResolutionPattern: {
                 searchTextLocation: SearchTextLocation.FILE_CONTENT,
                 regExp: `name:\\s*$envName\\s*value:\\s*(\\w+)`,
