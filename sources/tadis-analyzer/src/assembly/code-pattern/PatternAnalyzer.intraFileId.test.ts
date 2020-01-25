@@ -7,7 +7,7 @@ import {
   SystemPattern, NodePattern, SearchTextLocation
 } from './model'
 
-describe(PatternAnalyzer.name, () => {
+describe('PatternAnalyzer.intraFileId', () => {
 
   const sourceFolder = __dirname + '/testdata/intra-file-id-project'
 

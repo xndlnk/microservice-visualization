@@ -7,7 +7,7 @@ import {
   SystemPattern, NodePattern, SearchTextLocation
 } from './model'
 
-describe(PatternAnalyzer.name, () => {
+describe('PatternAnalyzer.interFileId', () => {
 
   const sourceFolder = __dirname + '/testdata/inter-file-id-project'
 
@@ -23,6 +23,7 @@ describe(PatternAnalyzer.name, () => {
       searchTextLocation: SearchTextLocation.FILE_PATH,
       regExp: '$sourceRoot/([^/]+)/source\.java',
       capturingGroupIndexForName: 1,
+      variableForName: 'serviceName',
       nodeType: 'MicroService'
     }
   }
@@ -45,7 +46,7 @@ describe(PatternAnalyzer.name, () => {
               searchTextLocation: SearchTextLocation.FILE_PATH,
               regExp: `deploy-(.+)/.+\.yml`,
               capturingGroupIndexForName: 1,
-              variableForName: 'serviceName',
+              variableForName: 'deployServiceName',
               nameResolutionPattern: {
                 searchTextLocation: SearchTextLocation.FILE_CONTENT,
                 regExp: `name:\\s*$envName\\s*value:\\s*(\\w+)`,

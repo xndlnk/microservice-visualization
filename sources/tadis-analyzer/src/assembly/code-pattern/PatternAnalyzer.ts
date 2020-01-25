@@ -134,6 +134,14 @@ class NameMemory {
     if (!directName && this.inheritedNameMemory) return this.inheritedNameMemory.findName(name)
     return undefined
   }
+
+  toString(): string {
+    let result = ''
+    for (const entry of this.names.entries()) {
+      result += entry[0] + ': ' + entry[1] + '\n'
+    }
+    return result + (this.inheritedNameMemory ? this.inheritedNameMemory.toString() : '')
+  }
 }
 
 function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[], nameMemory: NameMemory): MatchedNode[] {
@@ -151,6 +159,7 @@ function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[
       Logger.warn(`could not resolve name '${node}'`)
       return new MatchedNode(node.nodeName, foundNames)
     }
+    Logger.log(`resolved node with name '${node.nodeName}' to actual name '${resolvedName}'.\ncurrent name memory\n---\n${foundNames.toString()}`)
     return new MatchedNode(resolvedName, foundNames)
   })
 }
