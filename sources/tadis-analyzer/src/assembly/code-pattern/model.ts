@@ -16,6 +16,9 @@ export type NodePattern = NamePattern & {
   nodeType: string
 }
 
+/**
+ * defines a pattern by a regular expression with a capturing group from which a name is derived.
+ */
 export type NamePattern = {
   /**
    * location of the search text that is used for matching the regular expression.
@@ -23,16 +26,21 @@ export type NamePattern = {
   searchTextLocation: SearchTextLocation
   /**
    * a JavaScript regular expression that defines the pattern to be matched.
-   * the expression must define a capturing group from which the node name is derived.
+   * the expression must define at least one capturing group from which an intermediate name is derived.
+   * this name can be referenced in further name resolutions.
    */
   regExp: string
   /**
-   * the index of the capturing group to derive the node name from.
+   * the index of the capturing group to derive the name from.
    */
   capturingGroupIndexForName: number
+  /**
+   * name of a variable which can be used in regular expressions of upcoming name resolutions in order
+   * to reference the captured name
+   */
   variableForName?: string
   /**
-   * a name resolution translates a node name that represents a variable to its value.
+   * a name resolution translates a name that represents a variable to its value.
    * the value is discovered by another regular expression applied to the current file.
    *
    * in this case, the provided regular expression defines a pattern from which
@@ -40,6 +48,7 @@ export type NamePattern = {
    *
    * special variables allowed:
    *  - $name can be used to refer to the node name discovered before
+   *  - additional variables are available for names matched in regular expressions before
    */
   nameResolutionPattern?: NamePattern
 }
