@@ -11,8 +11,6 @@ import { System } from '../../model/ms'
 import * as ms from '../../model/ms'
 
 import { Metadata } from '../../model/core'
-import { number } from 'joi'
-import { ContextCreator } from '@nestjs/core/helpers/context-creator'
 
 /**
  * The PatternAnalyzer allows to derive a system from source code patterns defined by regular expressions.
@@ -47,6 +45,7 @@ function replaceVariablesInPatterns(systemPattern: SystemPattern, sourceFolder: 
   })
 }
 
+// TODO: add variable to name memory
 function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
   return regExp.replace('$sourceRoot', path.resolve(sourceFolder))
 }
@@ -105,6 +104,9 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
   Logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
 }
 
+/**
+ * a node which was matched from a pattern including all matched names.
+ */
 class MatchedNode {
   constructor(
     public readonly nodeName: string,
@@ -112,6 +114,9 @@ class MatchedNode {
   ) {}
 }
 
+/**
+ * a memory of all the names found during a chain of pattern matchings.
+ */
 class NameMemory {
   private readonly names: Map<string,string>
 
