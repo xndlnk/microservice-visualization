@@ -40,21 +40,22 @@ describe(PatternAnalyzer.name, () => {
             searchTextLocation: SearchTextLocation.FILE_CONTENT,
             regExp: `"(.+_KAFKA_TOPIC)"`,
             capturingGroupIndexForName: 1,
-            nameResolutionPattern: {
+            variableForName: 'envName',
+            /*nameResolutionPattern: {
               searchTextLocation: SearchTextLocation.ANY_FILE_CONTENT,
               regExp: `name:\\s*$name\\s*value:\\s*(\\w+)`,
               capturingGroupIndexForName: 1
-            },
-/*            nameResolutionPattern: {
+            },*/
+            nameResolutionPattern: {
               searchTextLocation: SearchTextLocation.FILE_PATH,
-              regExp: `\.yml`,
+              regExp: `/([^/]+)\.yml`,
               capturingGroupIndexForName: 1,
               nameResolutionPattern: {
                 searchTextLocation: SearchTextLocation.FILE_CONTENT,
-                regExp: `name:\\s*$name\\s*value:\\s*(\\w+)`,
+                regExp: `name:\\s*$envName\\s*value:\\s*(\\w+)`,
                 capturingGroupIndexForName: 1
               }
-            },*/
+            },
             nodeType: 'MessageExchange'
           }
         }

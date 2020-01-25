@@ -108,11 +108,17 @@ function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[
   if (!pattern.nameResolutionPattern) return nodeNames
   const nameResolution = pattern.nameResolutionPattern
 
-  return nodeNames.map(nodeName => resolveNodeName(nodeName, nameResolution, filePath, allFiles))
+  return nodeNames.map(nodeName => {
+    const resolvedNames = new Map<string,string>()
+    const nameVariable = pattern.variableForName ?? 'name'
+    resolvedNames.set(nameVariable, nodeName)
+    return resolveNodeName(nodeName, nameResolution, filePath, allFiles, resolvedNames)
+  })
 }
 
 interface Content {
   read(): string
+  filePath(): string
 }
 
 class FileContent implements Content {
@@ -120,21 +126,50 @@ class FileContent implements Content {
   read(): string {
     return fs.readFileSync(this.file, 'utf8')
   }
+  filePath(): string {
+    return this.file
+  }
 }
 
-function resolveNodeName(id: string, nameResolution: NamePattern, filePath: string, allFiles: string[]): string {
-  const regExp = nameResolution.regExp.replace('$name', id)
+class PathContent implements Content {
+  constructor(private readonly path: string) {}
+  read(): string {
+    return this.path
+  }
+  filePath(): string {
+    return this.path
+  }
+}
+
+function resolveNodeName(id: string, nameResolution: NamePattern, filePath: string, allFiles: string[],
+  resolvedNames: Map<string, string>): string {
+
+  let regExp = nameResolution.regExp
+  for (const entry of resolvedNames.entries()) {
+    regExp = regExp.replace('$' + entry[0], entry[1])
+  }
 
   const contents = getContentsToResolveNodeNameFrom(nameResolution, filePath, allFiles)
   for (const content of contents) {
     const resolvedNodeNames = matchNodeNameByRegExp(regExp, content.read(), 1)
     if (resolvedNodeNames.length === 1) {
       const resolvedName = resolvedNodeNames[0]
+      const nameVariable = nameResolution.variableForName ?? 'name'
+      resolvedNames.set(nameVariable, resolvedName)
       if (!nameResolution.nameResolutionPattern) {
         return resolvedName
+      } else {
+        // continue with next resolution pattern
+        const nextFilePath = nameResolution.searchTextLocation === SearchTextLocation.FILE_PATH
+          ? content.filePath()
+          : filePath
+
+        Logger.log(`continuing name resolution for file '${nextFilePath}' and for pattern with regexp '${nameResolution.regExp}'`)
+        const resolvedName = resolveNodeName(id, nameResolution.nameResolutionPattern, nextFilePath, allFiles, resolvedNames)
+        if (resolvedName) return resolvedName
       }
-      return this.resolveNodeName(resolvedName, nameResolution.nameResolutionPattern, filePath, allFiles)
     }
+
   }
   return id
 }
@@ -144,12 +179,11 @@ function getContentsToResolveNodeNameFrom(nameResolution: NamePattern, filePath:
     return [new FileContent(filePath)]
   } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
     return allFiles.map(file => new FileContent(file))
+  } else if (nameResolution.searchTextLocation === SearchTextLocation.FILE_PATH) {
+    return allFiles.map(file => new PathContent(file))
+  } else {
+    return []
   }
-  return [{
-    read: () => {
-      return filePath
-    }
-  }]
 }
 
 function matchNodeName(pattern: NodePattern, filePath: string): string[] {
@@ -174,7 +208,9 @@ function matchNodeNameByRegExp(regExpString: string, searchText: string,
   return getAllPatternMatches<string>(regExp, searchText,
     (matchArray: RegExpExecArray) => {
       if (matchArray.length >= capturingGroupIndexForName) {
-        return matchArray[capturingGroupIndexForName]
+        const name = matchArray[capturingGroupIndexForName]
+        Logger.log(`matched name '${name}' from regexp '${regExpString}'`)
+        return name
       }
       return null
     })

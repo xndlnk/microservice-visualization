@@ -3,8 +3,8 @@ import * as _ from 'lodash'
 
 import { ConfigService } from '../../config/Config.service'
 import { System } from '../../model/ms'
-import { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
-export { SystemPattern, NodePattern, EdgePattern, NameResolution, SearchTextLocation } from './model'
+import { SystemPattern, NodePattern, EdgePattern, NamePattern, SearchTextLocation } from './model'
+export { SystemPattern, NodePattern, EdgePattern, NamePattern, SearchTextLocation } from './model'
 
 import { PatternAnalyzer } from './PatternAnalyzer'
 

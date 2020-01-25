@@ -30,6 +30,7 @@ export type NamePattern = {
    * the index of the capturing group to derive the node name from.
    */
   capturingGroupIndexForName: number
+  variableForName?: string
   /**
    * a name resolution translates a node name that represents a variable to its value.
    * the value is discovered by another regular expression applied to the current file.
