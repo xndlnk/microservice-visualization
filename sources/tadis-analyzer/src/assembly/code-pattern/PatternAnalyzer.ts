@@ -11,6 +11,8 @@ import { System } from '../../model/ms'
 import * as ms from '../../model/ms'
 
 import { Metadata } from '../../model/core'
+import { number } from 'joi'
+import { ContextCreator } from '@nestjs/core/helpers/context-creator'
 
 /**
  * The PatternAnalyzer allows to derive a system from source code patterns defined by regular expressions.
@@ -109,13 +111,23 @@ function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[
   return nodeNames.map(nodeName => resolveNodeName(nodeName, nameResolution, filePath, allFiles))
 }
 
+interface Content {
+  read(): string
+}
+
+class FileContent implements Content {
+  constructor(private readonly file: string) {}
+  read(): string {
+    return fs.readFileSync(this.file, 'utf8')
+  }
+}
+
 function resolveNodeName(id: string, nameResolution: NamePattern, filePath: string, allFiles: string[]): string {
   const regExp = nameResolution.regExp.replace('$name', id)
-  const files = getFilesToResolveNodeNameFrom(nameResolution, filePath, allFiles)
 
-  for (const fp of files) {
-    const fileContent = fs.readFileSync(fp, 'utf8')
-    const resolvedNodeNames = matchNodeNameByRegExp(regExp, fileContent, 1)
+  const contents = getContentsToResolveNodeNameFrom(nameResolution, filePath, allFiles)
+  for (const content of contents) {
+    const resolvedNodeNames = matchNodeNameByRegExp(regExp, content.read(), 1)
     if (resolvedNodeNames.length === 1) {
       const resolvedName = resolvedNodeNames[0]
       if (!nameResolution.nameResolutionPattern) {
@@ -124,17 +136,20 @@ function resolveNodeName(id: string, nameResolution: NamePattern, filePath: stri
       return this.resolveNodeName(resolvedName, nameResolution.nameResolutionPattern, filePath, allFiles)
     }
   }
-
   return id
 }
 
-function getFilesToResolveNodeNameFrom(nameResolution: NamePattern, filePath: string, allFiles: string[]): string[] {
+function getContentsToResolveNodeNameFrom(nameResolution: NamePattern, filePath: string, allFiles: string[]): Content[] {
   if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
-    return [filePath]
+    return [new FileContent(filePath)]
   } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
-    return allFiles
+    return allFiles.map(file => new FileContent(file))
   }
-  return []
+  return [{
+    read: () => {
+      return filePath
+    }
+  }]
 }
 
 function matchNodeName(pattern: NodePattern, filePath: string): string[] {

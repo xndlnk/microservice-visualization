@@ -45,6 +45,16 @@ describe(PatternAnalyzer.name, () => {
               regExp: `name:\\s*$name\\s*value:\\s*(\\w+)`,
               capturingGroupIndexForName: 1
             },
+/*            nameResolutionPattern: {
+              searchTextLocation: SearchTextLocation.FILE_PATH,
+              regExp: `\.yml`,
+              capturingGroupIndexForName: 1,
+              nameResolutionPattern: {
+                searchTextLocation: SearchTextLocation.FILE_CONTENT,
+                regExp: `name:\\s*$name\\s*value:\\s*(\\w+)`,
+                capturingGroupIndexForName: 1
+              }
+            },*/
             nodeType: 'MessageExchange'
           }
         }
