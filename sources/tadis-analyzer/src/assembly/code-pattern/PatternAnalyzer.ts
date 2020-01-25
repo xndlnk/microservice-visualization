@@ -58,7 +58,7 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
   allFiles.forEach(filePath => {
     systemPattern.nodePatterns.forEach(servicePattern => {
-      findNodeNames(servicePattern, filePath, allFiles, new NameMemory()).forEach(node => {
+      findNodes(servicePattern, filePath, allFiles, new NameMemory()).forEach(node => {
         const nodeName = node.nodeName
         system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
         Logger.log(`added node '${nodeName}'`)
@@ -72,12 +72,12 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
 function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string,
   allFiles: string[]) {
-  findNodeNames(edgePattern.sourceNodePattern, filePath, allFiles, new NameMemory())
+  findNodes(edgePattern.sourceNodePattern, filePath, allFiles, new NameMemory())
     .forEach(sourceNode => {
       const sourceNodeName = sourceNode.nodeName
       Logger.log(`found source node '${sourceNodeName}'`)
 
-      findNodeNames(edgePattern.targetNodePattern, filePath, allFiles, sourceNode.nameMemory)
+      findNodes(edgePattern.targetNodePattern, filePath, allFiles, sourceNode.nameMemory)
         .forEach(targetNode => {
           const targetNodeName = targetNode.nodeName
           Logger.log(`found target node '${targetNodeName}'`)
@@ -144,8 +144,8 @@ class NameMemory {
   }
 }
 
-function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[], nameMemory: NameMemory): MatchedNode[] {
-  const matchedNodes = matchNodeName(pattern, filePath, nameMemory)
+function findNodes(pattern: NodePattern, filePath: string, allFiles: string[], nameMemory: NameMemory): MatchedNode[] {
+  const matchedNodes = matchNode(pattern, filePath, nameMemory)
 
   if (!pattern.nameResolutionPattern) return matchedNodes
   const nameResolution = pattern.nameResolutionPattern
@@ -209,9 +209,9 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
 
   const regExp = replaceNameVariables(nameResolution.regExp, foundNames)
 
-  const contents = getContentsToResolveNodeNameFrom(nameResolution, filePath, allFiles)
+  const contents = getContentsToResolveNameFrom(nameResolution, filePath, allFiles)
   for (const content of contents) {
-    const resolvedNames = matchNodeNameByRegExp(regExp, content.read(), 1, nameResolution.variableForName, foundNames)
+    const resolvedNames = matchNodeByRegExp(regExp, content.read(), 1, nameResolution.variableForName, foundNames)
     if (resolvedNames.length === 1) {
       const resolvedName = resolvedNames[0]
       const nameVariable = getVariableForName(nameResolution.variableForName)
@@ -245,7 +245,7 @@ function replaceNameVariables(regExp: string, nameMemory: NameMemory): string {
   return regExp
 }
 
-function getContentsToResolveNodeNameFrom(nameResolution: NamePattern, filePath: string, allFiles: string[]): Content[] {
+function getContentsToResolveNameFrom(nameResolution: NamePattern, filePath: string, allFiles: string[]): Content[] {
   if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
     return [new FileContent(filePath)]
   } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
@@ -257,23 +257,23 @@ function getContentsToResolveNodeNameFrom(nameResolution: NamePattern, filePath:
   }
 }
 
-function matchNodeName(pattern: NodePattern, filePath: string, nameMemory: NameMemory): MatchedNode[] {
+function matchNode(pattern: NodePattern, filePath: string, nameMemory: NameMemory): MatchedNode[] {
   if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-    return matchNodeNameByNodePattern(pattern, filePath, nameMemory)
+    return matchNodeByPattern(pattern, filePath, nameMemory)
   }
   if (pattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
     const fileContent = fs.readFileSync(filePath, 'utf8')
-    return matchNodeNameByNodePattern(pattern, fileContent, nameMemory)
+    return matchNodeByPattern(pattern, fileContent, nameMemory)
   }
   return []
 }
 
-function matchNodeNameByNodePattern(pattern: NodePattern, searchText: string, nameMemory: NameMemory): MatchedNode[] {
+function matchNodeByPattern(pattern: NodePattern, searchText: string, nameMemory: NameMemory): MatchedNode[] {
   const variableForName = getVariableForName(pattern.variableForName)
-  return matchNodeNameByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForName, variableForName, nameMemory)
+  return matchNodeByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForName, variableForName, nameMemory)
 }
 
-function matchNodeNameByRegExp(regExpString: string, searchText: string,
+function matchNodeByRegExp(regExpString: string, searchText: string,
   capturingGroupIndexForName: number, variableForName: string, inheritedNameMemory: NameMemory
 ): MatchedNode[] {
   const regExpWithReplacedVariables = replaceNameVariables(regExpString, inheritedNameMemory)
