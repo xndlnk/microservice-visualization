@@ -58,7 +58,8 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
   allFiles.forEach(filePath => {
     systemPattern.nodePatterns.forEach(servicePattern => {
-      findNodeNames(servicePattern, filePath, allFiles).forEach(nodeName => {
+      findNodeNames(servicePattern, filePath, allFiles).forEach(node => {
+        const nodeName = node.nodeName
         system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
         Logger.log(`added node '${nodeName}'`)
       })
@@ -72,11 +73,13 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string,
   allFiles: string[]) {
   findNodeNames(edgePattern.sourceNodePattern, filePath, allFiles)
-    .forEach(sourceNodeName => {
+    .forEach(sourceNode => {
+      const sourceNodeName = sourceNode.nodeName
       Logger.log(`found source node '${sourceNodeName}'`)
 
       findNodeNames(edgePattern.targetNodePattern, filePath, allFiles)
-        .forEach(targetNodeName => {
+        .forEach(targetNode => {
+          const targetNodeName = targetNode.nodeName
           Logger.log(`found target node '${targetNodeName}'`)
           createEdge(system, edgePattern, sourceNodeName, targetNodeName)
         })
@@ -102,10 +105,14 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
   Logger.log(`added edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
 }
 
-function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[]): string[] {
+class MatchedNode {
+  constructor(public readonly nodeName: string) {}
+}
+
+function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[]): MatchedNode[] {
   const nodeNames = matchNodeName(pattern, filePath)
 
-  if (!pattern.nameResolutionPattern) return nodeNames
+  if (!pattern.nameResolutionPattern) return nodeNames.map(nodeName => new MatchedNode(nodeName))
   const nameResolution = pattern.nameResolutionPattern
 
   return nodeNames.map(nodeName => {
@@ -115,9 +122,9 @@ function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[
     const resolvedName = resolveName(nameResolution, filePath, allFiles, foundNames)
     if (!resolvedName) {
       Logger.warn(`could not resolve name '${nodeName}'`)
-      return nodeName
+      return new MatchedNode(nodeName)
     }
-    return resolvedName
+    return new MatchedNode(resolvedName)
   })
 }
 
