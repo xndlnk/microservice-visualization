@@ -58,7 +58,7 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
   allFiles.forEach(filePath => {
     systemPattern.nodePatterns.forEach(servicePattern => {
-      findNodeNames(servicePattern, filePath, allFiles).forEach(node => {
+      findNodeNames(servicePattern, filePath, allFiles, new NameMemory()).forEach(node => {
         const nodeName = node.nodeName
         system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
         Logger.log(`added node '${nodeName}'`)
@@ -72,12 +72,12 @@ async function transformByPatternInPath(system: System, systemPattern: SystemPat
 
 function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string,
   allFiles: string[]) {
-  findNodeNames(edgePattern.sourceNodePattern, filePath, allFiles)
+  findNodeNames(edgePattern.sourceNodePattern, filePath, allFiles, new NameMemory())
     .forEach(sourceNode => {
       const sourceNodeName = sourceNode.nodeName
       Logger.log(`found source node '${sourceNodeName}'`)
 
-      findNodeNames(edgePattern.targetNodePattern, filePath, allFiles)
+      findNodeNames(edgePattern.targetNodePattern, filePath, allFiles, sourceNode.nameMemory)
         .forEach(targetNode => {
           const targetNodeName = targetNode.nodeName
           Logger.log(`found target node '${targetNodeName}'`)
@@ -106,26 +106,63 @@ function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: st
 }
 
 class MatchedNode {
-  constructor(public readonly nodeName: string) {}
+  constructor(
+    public readonly nodeName: string,
+    public readonly nameMemory: NameMemory
+  ) {}
 }
 
-function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[]): MatchedNode[] {
-  const nodeNames = matchNodeName(pattern, filePath)
+class NameMemory {
+  private readonly names: Map<string,string>
 
-  if (!pattern.nameResolutionPattern) return nodeNames.map(nodeName => new MatchedNode(nodeName))
+  constructor(
+    public inheritedNameMemory?: NameMemory
+  ) {
+    this.names = new Map()
+  }
+
+  saveName(name: string, value: string) {
+    this.names.set(name, value)
+  }
+
+  getCurrentNames(): Map<string,string> {
+    return this.names
+  }
+
+  findName(name: string): string | undefined {
+    const directName = this.names.get(name)
+    if (!directName && this.inheritedNameMemory) return this.inheritedNameMemory.findName(name)
+    return undefined
+  }
+
+  setInheritedNameMemory(inheritedNameMemory: NameMemory) {
+    this.inheritedNameMemory = inheritedNameMemory
+  }
+}
+
+function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[], nameMemory: NameMemory): MatchedNode[] {
+  const matchedNodes = matchNodeName(pattern, filePath, nameMemory)
+
+  matchedNodes.forEach(matchedNode => matchedNode.nameMemory.setInheritedNameMemory(nameMemory))
+
+  if (!pattern.nameResolutionPattern) return matchedNodes
   const nameResolution = pattern.nameResolutionPattern
 
-  return nodeNames.map(nodeName => {
-    const foundNames = new Map<string,string>()
-    const nameVariable = pattern.variableForName ?? 'name'
-    foundNames.set(nameVariable, nodeName)
+  return matchedNodes.map(node => {
+    const foundNames = new NameMemory(nameMemory)
+    const nameVariable = getVariableForName(pattern.variableForName)
+    foundNames.saveName(nameVariable, node.nodeName)
     const resolvedName = resolveName(nameResolution, filePath, allFiles, foundNames)
     if (!resolvedName) {
-      Logger.warn(`could not resolve name '${nodeName}'`)
-      return new MatchedNode(nodeName)
+      Logger.warn(`could not resolve name '${node}'`)
+      return new MatchedNode(node.nodeName, foundNames)
     }
-    return new MatchedNode(resolvedName)
+    return new MatchedNode(resolvedName, foundNames)
   })
+}
+
+function getVariableForName(variableForName: string | undefined): string {
+  return variableForName ?? 'name'
 }
 
 interface Content {
@@ -165,20 +202,20 @@ class PathContent implements Content {
  * @param foundNames map of names found by matching regular expressions in name resolution chains so far
  */
 function resolveName(nameResolution: NamePattern, filePath: string, allFiles: string[],
-  foundNames: Map<string, string>): string | undefined {
+  foundNames: NameMemory): string | undefined {
 
   const regExp = replaceNameVariables(nameResolution.regExp, foundNames)
 
   const contents = getContentsToResolveNodeNameFrom(nameResolution, filePath, allFiles)
   for (const content of contents) {
-    const resolvedNames = matchNodeNameByRegExp(regExp, content.read(), 1)
+    const resolvedNames = matchNodeNameByRegExp(regExp, content.read(), 1, nameResolution.variableForName, foundNames)
     if (resolvedNames.length === 1) {
       const resolvedName = resolvedNames[0]
-      const nameVariable = nameResolution.variableForName ?? 'name'
-      foundNames.set(nameVariable, resolvedName)
+      const nameVariable = getVariableForName(nameResolution.variableForName)
+      foundNames.saveName(nameVariable, resolvedName.nodeName)
 
       if (!nameResolution.nameResolutionPattern) {
-        return resolvedName
+        return resolvedName.nodeName
       } else {
         // continue with next resolution pattern
         const nextFilePath = nameResolution.searchTextLocation === SearchTextLocation.FILE_PATH
@@ -195,9 +232,12 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
   return undefined
 }
 
-function replaceNameVariables(regExp: string, nameVariables: Map<string, string>): string {
-  for (const variable of nameVariables.entries()) {
+function replaceNameVariables(regExp: string, nameMemory: NameMemory): string {
+  for (const variable of nameMemory.getCurrentNames().entries()) {
     regExp = regExp.replace('$' + variable[0], variable[1])
+  }
+  if (nameMemory.inheritedNameMemory) {
+    regExp = replaceNameVariables(regExp, nameMemory.inheritedNameMemory)
   }
   return regExp
 }
@@ -214,31 +254,36 @@ function getContentsToResolveNodeNameFrom(nameResolution: NamePattern, filePath:
   }
 }
 
-function matchNodeName(pattern: NodePattern, filePath: string): string[] {
+function matchNodeName(pattern: NodePattern, filePath: string, nameMemory: NameMemory): MatchedNode[] {
   if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
-    return matchNodeNameByNodePattern(pattern, filePath)
+    return matchNodeNameByNodePattern(pattern, filePath, nameMemory)
   }
   if (pattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
     const fileContent = fs.readFileSync(filePath, 'utf8')
-    return matchNodeNameByNodePattern(pattern, fileContent)
+    return matchNodeNameByNodePattern(pattern, fileContent, nameMemory)
   }
   return []
 }
 
-function matchNodeNameByNodePattern(pattern: NodePattern, searchText: string): string[] {
-  return matchNodeNameByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForName)
+function matchNodeNameByNodePattern(pattern: NodePattern, searchText: string, nameMemory: NameMemory): MatchedNode[] {
+  const variableForName = getVariableForName(pattern.variableForName)
+  return matchNodeNameByRegExp(pattern.regExp, searchText, pattern.capturingGroupIndexForName, variableForName, nameMemory)
 }
 
 function matchNodeNameByRegExp(regExpString: string, searchText: string,
-  capturingGroupIndexForName: number
-): string[] {
-  const regExp = new RegExp(regExpString, 'g')
-  return getAllPatternMatches<string>(regExp, searchText,
+  capturingGroupIndexForName: number, variableForName: string, inheritedNameMemory: NameMemory
+): MatchedNode[] {
+  const regExpWithReplacedVariables = replaceNameVariables(regExpString, inheritedNameMemory)
+  const regExp = new RegExp(regExpWithReplacedVariables, 'g')
+
+  return getAllPatternMatches<MatchedNode>(regExp, searchText,
     (matchArray: RegExpExecArray) => {
       if (matchArray.length >= capturingGroupIndexForName) {
         const name = matchArray[capturingGroupIndexForName]
         Logger.log(`matched name '${name}' from regexp '${regExpString}'`)
-        return name
+        const nameMemory = new NameMemory(inheritedNameMemory)
+        nameMemory.saveName(variableForName, name)
+        return new MatchedNode(name, nameMemory)
       }
       return null
     })
