@@ -116,7 +116,7 @@ class NameMemory {
   private readonly names: Map<string,string>
 
   constructor(
-    public inheritedNameMemory?: NameMemory
+    public readonly inheritedNameMemory?: NameMemory
   ) {
     this.names = new Map()
   }
@@ -134,16 +134,10 @@ class NameMemory {
     if (!directName && this.inheritedNameMemory) return this.inheritedNameMemory.findName(name)
     return undefined
   }
-
-  setInheritedNameMemory(inheritedNameMemory: NameMemory) {
-    this.inheritedNameMemory = inheritedNameMemory
-  }
 }
 
 function findNodeNames(pattern: NodePattern, filePath: string, allFiles: string[], nameMemory: NameMemory): MatchedNode[] {
   const matchedNodes = matchNodeName(pattern, filePath, nameMemory)
-
-  matchedNodes.forEach(matchedNode => matchedNode.nameMemory.setInheritedNameMemory(nameMemory))
 
   if (!pattern.nameResolutionPattern) return matchedNodes
   const nameResolution = pattern.nameResolutionPattern
