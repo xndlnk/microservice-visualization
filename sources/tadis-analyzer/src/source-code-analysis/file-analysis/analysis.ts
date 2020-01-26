@@ -8,9 +8,9 @@ import * as p from 'path'
  * @param path
  * @param fileEnding
  */
-export async function findFiles(path: string, fileEnding: string | undefined) {
+export async function findFiles(path: string, includedFileEndings: string[] | undefined, excludedFolders: string[] | undefined) {
   const files: string[] = []
-  await getFilesRecursive(path, files, fileEnding)
+  await getFilesRecursive(path, files, includedFileEndings, excludedFolders)
   return files
 }
 
@@ -23,28 +23,40 @@ export async function findFiles(path: string, fileEnding: string | undefined) {
  * @param path
  * @param fileEnding
  */
-export async function findFilesSafe(path: string, fileEnding: string | undefined): Promise<string[]> {
-  const allFiles = await findFiles(path, fileEnding)
+export async function findFilesSafe(path: string,
+  includedFileEndings: string[] | undefined, excludedFolders: string[] | undefined): Promise<string[]> {
+
+  const allFiles = await findFiles(path, includedFileEndings, excludedFolders)
   // tslint:disable-next-line: deprecation - its ok for this file to use the method.
   return allFiles.filter(file => isNoSourceOfThisProject(file))
 }
 
-async function getFilesRecursive(path, allFiles, fileEnding) {
+async function getFilesRecursive(path, allFiles,
+  includedFileEndings: string[] | undefined, excludedFolders: string[] | undefined) {
+
   const entries = await getDirectoryEntries(path)
 
   for (const entry of entries) {
     const entryWithPath = p.resolve(path, entry)
     if (!fs.statSync(entryWithPath).isDirectory()
-      && (!fileEnding || entry.endsWith(fileEnding))) {
+      && (!includedFileEndings || fileHasAnyEnding(entry, includedFileEndings))) {
       allFiles.push(entryWithPath)
     }
 
-    if (fs.statSync(entryWithPath).isDirectory()) {
-      await getFilesRecursive(entryWithPath, allFiles, fileEnding)
+    if (fs.statSync(entryWithPath).isDirectory() && folderIsNotExcluded(entry, excludedFolders)) {
+      await getFilesRecursive(entryWithPath, allFiles, includedFileEndings, excludedFolders)
     }
   }
 
   return true
+}
+
+function folderIsNotExcluded(folder: string, excludedFolders: string[] | undefined): boolean {
+  return !excludedFolders || !excludedFolders.includes(folder)
+}
+
+function fileHasAnyEnding(file: string, includedFileEndings: string[] | undefined): boolean {
+  return includedFileEndings.find(ending => file.endsWith(ending)) !== undefined
 }
 
 function getDirectoryEntries(path): Promise<string[]> {

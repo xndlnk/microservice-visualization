@@ -46,7 +46,7 @@ export class OutgoingExchangesFromSourceCreator {
 
   private async scanPathForExchangesInSendConfigurations(path: string): Promise<ScanResult[]> {
     this.logger.log('scanning for exchange in ' + path)
-    const filesToAnalyze = await findFiles(path, fileEndingToAnalyze)
+    const filesToAnalyze = await findFiles(path, [fileEndingToAnalyze], undefined)
     this.logger.log('found ' + filesToAnalyze.length + ' files which end with ' + fileEndingToAnalyze)
 
     const sendConfigurations: ScanResult[] = []

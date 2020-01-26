@@ -27,7 +27,7 @@ export class JavaAnnotationAnalyzer {
 
   private async transformSourcesInPath(system: System, path: string, annotation: string, elementMappings: ElementMapping[]) {
     this.logger.log('scanning java files in ' + path)
-    const javaFiles = await findFiles(path, '.java')
+    const javaFiles = await findFiles(path, ['.java'], undefined)
     this.logger.log('found ' + javaFiles.length + ' java files')
 
     javaFiles

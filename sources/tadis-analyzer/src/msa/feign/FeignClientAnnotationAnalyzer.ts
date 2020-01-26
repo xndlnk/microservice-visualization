@@ -44,7 +44,7 @@ export class FeignClientAnnotationAnalyzer {
 
   private async scanPathForFeignClients(path: string): Promise<ScanResult[]> {
     this.logger.log('scanning for feign clients in ' + path)
-    const javaFiles = await findFiles(path, '.java')
+    const javaFiles = await findFiles(path, ['.java'], undefined)
     this.logger.log('found ' + javaFiles.length + ' java files')
 
     const scanResults: ScanResult[] = []

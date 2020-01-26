@@ -67,4 +67,33 @@ describe('PatternAnalyzer.interFileId', () => {
 
     verifyEachContentHasTransformer(outputSystem, PatternAnalyzer.name)
   })
+
+  it('only searches in files matching the file mask and not in excluded folders', async() => {
+    const inputSystem = new System('test')
+
+    const systemPattern: SystemPattern = {
+      includedFileEndings: [
+        '.yml'
+      ],
+      excludedFolders: [
+        'excluded'
+      ],
+      nodePatterns: [
+        {
+          searchTextLocation: SearchTextLocation.FILE_PATH,
+          regExp: '$sourceRoot/([^/]+)/.*',
+          capturingGroupIndexForName: 1,
+          variableForName: 'serviceName',
+          nodeType: 'MicroService'
+        }
+      ],
+      edgePatterns: [
+      ]
+    }
+
+    const analyzer = new PatternAnalyzer(sourceFolder)
+    const outputSystem = await analyzer.transform(inputSystem, systemPattern)
+
+    expect(outputSystem.getMicroServices()).toHaveLength(1)
+  })
 })

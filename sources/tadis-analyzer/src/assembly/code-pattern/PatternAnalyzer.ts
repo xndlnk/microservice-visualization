@@ -52,7 +52,7 @@ function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
 
 async function transformByPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
   Logger.log('scanning all files in ' + sourceFolder)
-  const allFiles = await findFilesSafe(sourceFolder, undefined)
+  const allFiles = await findFilesSafe(sourceFolder, systemPattern.includedFileEndings, systemPattern.excludedFolders)
   Logger.log('found ' + allFiles.length + ' files')
 
   allFiles.forEach(filePath => {

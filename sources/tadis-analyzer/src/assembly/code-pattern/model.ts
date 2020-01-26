@@ -6,6 +6,8 @@
 export type SystemPattern = {
   nodePatterns: NodePattern[]
   edgePatterns: EdgePattern[]
+  includedFileEndings?: string[]
+  excludedFolders?: string[]
 }
 
 export type NodePattern = NamePattern & {
