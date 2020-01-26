@@ -59,10 +59,8 @@ function displayVersion() {
     .get(getBaseUrlInCurrentEnvironment() + '/version')
     .then((response) => {
       const version = response.data
-      select('#title')
-        .select('a')
-        .attr('href', 'https://github.com/MaibornWolff/microservice-visualization/releases/tag/v' + version)
-        .text('Viewer v' + version)
+      select('#version')
+        .text('tadis-ui v' + version)
     })
 }
 
