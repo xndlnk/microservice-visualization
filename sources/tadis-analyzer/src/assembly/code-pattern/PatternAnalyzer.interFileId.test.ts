@@ -62,6 +62,7 @@ describe('PatternAnalyzer.interFileId', () => {
     const analyzer = new PatternAnalyzer(sourceFolder)
     const outputSystem = await analyzer.transform(inputSystem, systemPattern)
 
+    expect(outputSystem.getAllEdges()).toHaveLength(1)
     expect(outputSystem.findMicroService('service1')).toBeDefined()
     expect(outputSystem.findMessageExchange('actual_topic_name')).toBeDefined()
 

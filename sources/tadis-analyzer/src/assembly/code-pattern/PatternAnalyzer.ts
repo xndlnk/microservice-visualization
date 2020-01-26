@@ -80,12 +80,17 @@ function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePa
         .forEach(targetNode => {
           const targetNodeName = targetNode.nodeName
           Logger.log(`found target node '${targetNodeName}'`)
-          createEdge(system, edgePattern, sourceNodeName, targetNodeName)
+          createEdgeOnce(system, edgePattern, sourceNodeName, targetNodeName)
         })
     })
 }
 
-function createEdge(system: System, edgePattern: EdgePattern, sourceNodeName: string, targetNodeName: string) {
+function createEdgeOnce(system: System, edgePattern: EdgePattern, sourceNodeName: string, targetNodeName: string) {
+  if (system.getAllEdges().find(edge => edge.source.getName() === sourceNodeName && edge.target.getName() === targetNodeName)) {
+    Logger.log(`skipping already existing edge '${sourceNodeName}' --(${edgePattern.edgeType})--> '${targetNodeName}'`)
+    return
+  }
+
   const metadata: Metadata = {
     transformer: PatternAnalyzer.name,
     context: `edge pattern with source node '${sourceNodeName}'`,

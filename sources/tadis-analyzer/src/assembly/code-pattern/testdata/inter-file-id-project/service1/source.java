@@ -6,4 +6,8 @@ public class SomeKafkaProducer extends AbstractKafkaProducer {
     @ConfigProperty(name = "SOME_KAFKA_TOPIC")
     protected String kafkaTopic;
 
+    @Inject
+    @ConfigProperty(name = "SOME_KAFKA_TOPIC")
+    protected String kafkaTopic;
+
 }
