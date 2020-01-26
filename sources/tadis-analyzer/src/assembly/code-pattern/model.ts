@@ -65,6 +65,10 @@ export enum SearchTextLocation {
    */
   FILE_CONTENT,
   /**
+   * the path of any file in the source code folder
+   */
+  ANY_FILE_PATH,
+  /**
    * the content of any file in the source code folder
    */
   ANY_FILE_CONTENT

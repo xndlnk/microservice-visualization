@@ -43,7 +43,7 @@ describe('PatternAnalyzer.interFileId', () => {
             capturingGroupIndexForName: 1,
             variableForName: 'envName',
             nameResolutionPattern: {
-              searchTextLocation: SearchTextLocation.FILE_PATH,
+              searchTextLocation: SearchTextLocation.ANY_FILE_PATH,
               regExp: `deploy-(.+)/.+\.yml`,
               capturingGroupIndexForName: 1,
               variableForName: 'deployServiceName',

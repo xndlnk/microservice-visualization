@@ -226,7 +226,7 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
         return resolvedName.nodeName
       } else {
         // continue with next resolution pattern
-        const nextFilePath = nameResolution.searchTextLocation === SearchTextLocation.FILE_PATH
+        const nextFilePath = shouldSearchInPath(nameResolution.searchTextLocation)
           ? content.filePath()
           : filePath
 
@@ -240,6 +240,10 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
   return undefined
 }
 
+function shouldSearchInPath(searchTextLocation: SearchTextLocation) {
+  return searchTextLocation === SearchTextLocation.FILE_PATH || searchTextLocation === SearchTextLocation.ANY_FILE_PATH
+}
+
 function replaceNameVariables(regExp: string, nameMemory: NameMemory): string {
   for (const variable of nameMemory.getCurrentNames().entries()) {
     regExp = regExp.replace('$' + variable[0], variable[1])
@@ -251,11 +255,13 @@ function replaceNameVariables(regExp: string, nameMemory: NameMemory): string {
 }
 
 function getContentsToResolveNameFrom(nameResolution: NamePattern, filePath: string, allFiles: string[]): Content[] {
-  if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
+  if (nameResolution.searchTextLocation === SearchTextLocation.FILE_PATH) {
+    return [new PathContent(filePath)]
+  } else if (nameResolution.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
     return [new FileContent(filePath)]
   } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_CONTENT) {
     return allFiles.map(file => new FileContent(file))
-  } else if (nameResolution.searchTextLocation === SearchTextLocation.FILE_PATH) {
+  } else if (nameResolution.searchTextLocation === SearchTextLocation.ANY_FILE_PATH) {
     return allFiles.map(file => new PathContent(file))
   } else {
     return []
@@ -263,7 +269,7 @@ function getContentsToResolveNameFrom(nameResolution: NamePattern, filePath: str
 }
 
 function matchNode(pattern: NodePattern, filePath: string, nameMemory: NameMemory): MatchedNode[] {
-  if (pattern.searchTextLocation === SearchTextLocation.FILE_PATH) {
+  if (shouldSearchInPath(pattern.searchTextLocation)) {
     return matchNodeByPattern(pattern, filePath, nameMemory)
   }
   if (pattern.searchTextLocation === SearchTextLocation.FILE_CONTENT) {
