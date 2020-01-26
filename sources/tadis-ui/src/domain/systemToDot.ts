@@ -259,5 +259,6 @@ function addSpaces(n: number): string {
 }
 
 function makeId(value: string) {
+  // TODO: check if a result is a valid DOT id. for example '=' is not allowed in an id
   return value.replace(/[ -\.]/g, '_')
 }

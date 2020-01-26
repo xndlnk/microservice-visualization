@@ -98,11 +98,21 @@ function asyncLoadSystemRenderer(system: Node, options: SystemToDotOptions) {
   const systemRenderer = new SystemRenderer()
   const graphService = new GraphService(system)
 
-  systemRenderer.renderSystem(system, () => {
-    replaceSpinnerByGraphBox()
-  }, options)
-  new MenuActions(systemRenderer, graphService).install()
-  new NodeActions(systemRenderer, graphService).install()
+  try {
+    systemRenderer.renderSystem(system, () => {
+      replaceSpinnerByGraphBox()
+    }, options)
+    new MenuActions(systemRenderer, graphService).install()
+    new NodeActions(systemRenderer, graphService).install()
+  } catch (error) {
+    const errorDiv = select('#graphBox')
+        .append('div')
+        .classed('pa2 bg-red white', true)
+
+    errorDiv.append('div')
+        .classed('f3 pa2 bg-red white', true)
+        .text(error)
+  }
 }
 
 function replaceSpinnerByGraphBox() {
