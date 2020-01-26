@@ -154,6 +154,7 @@ class NameMemory {
   }
 }
 
+// TODO: add individual tests
 function findNodes(pattern: NodePattern, filePath: string, allFiles: string[], nameMemory: NameMemory): MatchedNode[] {
   const matchedNodes = matchNode(pattern, filePath, nameMemory)
 
@@ -214,6 +215,7 @@ class PathContent implements Content {
  * @param allFiles list of all files which are used in the search
  * @param foundNames map of names found by matching regular expressions in name resolution chains so far
  */
+// TODO: add individual tests
 function resolveName(nameResolution: NamePattern, filePath: string, allFiles: string[],
   foundNames: NameMemory): string | undefined {
 
@@ -273,6 +275,7 @@ function getContentsToResolveNameFrom(nameResolution: NamePattern, filePath: str
   }
 }
 
+// TODO: add individual tests
 function matchNode(pattern: NodePattern, filePath: string, nameMemory: NameMemory): MatchedNode[] {
   if (shouldSearchInPath(pattern.searchTextLocation)) {
     return matchNodeByPattern(pattern, filePath, nameMemory)
