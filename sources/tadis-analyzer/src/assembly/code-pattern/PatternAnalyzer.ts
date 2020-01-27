@@ -22,7 +22,7 @@ export class PatternAnalyzer {
 
   public async transform(system: System, systemPattern: SystemPattern): Promise<System> {
     const systemPatternWithoutVariables = replaceVariablesInPatterns(systemPattern, this.sourceFolder)
-    await transformByPatternInPath(system, systemPatternWithoutVariables, this.sourceFolder)
+    await transformSystemFromPattern(system, systemPatternWithoutVariables, this.sourceFolder)
     return system
   }
 }
@@ -50,27 +50,33 @@ function replaceVariablesInRegExp(regExp: string, sourceFolder: string) {
   return regExp.replace('$sourceRoot', path.resolve(sourceFolder))
 }
 
-async function transformByPatternInPath(system: System, systemPattern: SystemPattern, sourceFolder: string) {
+async function transformSystemFromPattern(system: System, systemPattern: SystemPattern, sourceFolder: string) {
   Logger.log('scanning all files in ' + sourceFolder)
   const allFiles = await findFilesSafe(sourceFolder, systemPattern.includedFileEndings, systemPattern.excludedFolders)
   Logger.log('found ' + allFiles.length + ' files')
 
   allFiles.forEach(filePath => {
-    systemPattern.nodePatterns.forEach(servicePattern => {
-      findNodes(servicePattern, filePath, allFiles, new NameMemory()).forEach(node => {
-        const nodeName = node.nodeName
-        system.addOrExtendTypedNode(servicePattern.nodeType, nodeName)
-        Logger.log(`added node '${nodeName}'`)
-      })
-    })
+    systemPattern.nodePatterns
+      .forEach(nodePattern => addNodesFromPattern(system, nodePattern, filePath, allFiles))
 
     systemPattern.edgePatterns
-      .forEach(edgePattern => transformByEdgePattern(system, edgePattern, filePath, allFiles))
+      .forEach(edgePattern => addEdgesFromPattern(system, edgePattern, filePath, allFiles))
   })
 }
 
-function transformByEdgePattern(system: System, edgePattern: EdgePattern, filePath: string,
+function addNodesFromPattern(system: System, nodePattern: NodePattern, filePath: string,
   allFiles: string[]) {
+
+  findNodes(nodePattern, filePath, allFiles, new NameMemory()).forEach(node => {
+    const nodeName = node.nodeName
+    system.addOrExtendTypedNode(nodePattern.nodeType, nodeName)
+    Logger.log(`added node '${nodeName}'`)
+  })
+}
+
+function addEdgesFromPattern(system: System, edgePattern: EdgePattern, filePath: string,
+  allFiles: string[]) {
+
   findNodes(edgePattern.sourceNodePattern, filePath, allFiles, new NameMemory())
     .forEach(sourceNode => {
       const sourceNodeName = sourceNode.nodeName
