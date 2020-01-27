@@ -167,7 +167,7 @@ function findNodes(pattern: NodePattern, filePath: string, allFiles: string[], n
     foundNames.saveName(nameVariable, node.nodeName)
     const resolvedName = resolveName(nameResolution, filePath, allFiles, foundNames)
     if (!resolvedName) {
-      Logger.warn(`could not resolve name '${node}'`)
+      Logger.warn(`could not resolve name '${node.nodeName}'`)
       return new MatchedNode(node.nodeName, foundNames)
     }
     Logger.log(`resolved node with name '${node.nodeName}' to actual name '${resolvedName}'.\ncurrent name memory\n---\n${foundNames.toString()}`)
@@ -224,8 +224,13 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
   const contents = getContentsToResolveNameFrom(nameResolution, filePath, allFiles)
   for (const content of contents) {
     const resolvedNames = matchNodeByRegExp(regExp, content.read(), 1, nameResolution.variableForName, foundNames)
-    if (resolvedNames.length === 1) {
+    if (resolvedNames.length > 0) {
       const resolvedName = resolvedNames[0]
+      if (resolvedNames.length >= 2) {
+        const allNames = resolvedNames.map(node => node.nodeName).join(', ')
+        Logger.warn('name resolution returned with multiple possible names. choosing first name from list: ' + allNames)
+      }
+
       const nameVariable = getVariableForName(nameResolution.variableForName)
       foundNames.saveName(nameVariable, resolvedName.nodeName)
 
