@@ -235,6 +235,8 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
       foundNames.saveName(nameVariable, resolvedName.nodeName)
 
       if (!nameResolution.nameResolutionPattern) {
+        // TODO: add metadata to node for debugging
+        Logger.log(`resolved name '${resolvedName}' in file ${content.filePath()} using pattern ${nameResolution.regExp}`)
         return resolvedName.nodeName
       } else {
         // continue with next resolution pattern
@@ -242,9 +244,13 @@ function resolveName(nameResolution: NamePattern, filePath: string, allFiles: st
           ? content.filePath()
           : filePath
 
-        Logger.log(`continuing name resolution for file '${nextFilePath}' and for pattern with regexp '${nameResolution.regExp}'`)
+        Logger.log(`continue to resolve name in file '${nextFilePath}' using pattern '${nameResolution.regExp}'`)
         const resolvedName = resolveName(nameResolution.nameResolutionPattern, nextFilePath, allFiles, foundNames)
-        if (resolvedName) return resolvedName
+        if (resolvedName) {
+          // TODO: add metadata to node for debugging
+          Logger.log(`resolved name '${resolvedName}' in file ${content.filePath()} using pattern ${nameResolution.regExp}`)
+          return resolvedName
+        }
       }
     }
 
