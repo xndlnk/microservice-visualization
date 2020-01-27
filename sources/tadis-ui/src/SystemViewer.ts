@@ -1,5 +1,7 @@
 import * as axios from 'axios'
 import { select } from 'd3'
+import * as queryString from 'query-string'
+import * as _ from 'lodash'
 
 import { getBaseUrlInCurrentEnvironment } from './appBaseUrl'
 
@@ -27,12 +29,7 @@ export function load() {
       const system = Node.ofRawNode(rawSystem)
       displaySystemTitle(system)
       displayNodesRemoved(system)
-
-      const options: SystemToDotOptions = {
-        urlExtractor: (node: Node) => node.getProp('url', null),
-        showDebug: queryPart.includes('?debug') || queryPart.includes('&debug')
-      }
-      displaySystem(system, options)
+      displaySystem(system, getSystemToDotOptions())
     })
     .catch((error) => {
       replaceSpinnerByGraphBox()
@@ -50,8 +47,21 @@ export function load() {
         .attr('id', 'load-example-link')
         .classed('f5 grow no-underline br-pill ph3 pv2 dib red bg-white clickable', true)
 
-      new LoadExampleAction().install(displaySystem)
+      new LoadExampleAction().install(displaySystem, getSystemToDotOptions())
     })
+}
+
+function getSystemToDotOptions(): SystemToDotOptions {
+  const parsedUrl = queryString.parseUrl(window.location.href)
+  const parsedQuery = parsedUrl.query
+  const rankDir: string = parsedQuery.rankdir && _.isString(parsedQuery.rankdir) ? parsedQuery.rankdir : undefined
+  const showDebug: boolean = parsedQuery.debug !== undefined
+
+  return {
+    urlExtractor: (node: Node) => node.getProp('url', null),
+    showDebug,
+    rankDir
+  }
 }
 
 function displayVersion() {

@@ -1,6 +1,6 @@
 {
   "name": "tadis-ui",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "main": "src/viewer.ts",
   "scripts": {
@@ -36,6 +36,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.3",
     "@types/node-cache": "^4.1.1",
+    "@types/query-string": "^6.3.0",
     "awesome-typescript-loader": "^3.4.1",
     "chai": "^4.2.0",
     "css-loader": "^1.0.0",
@@ -43,6 +44,7 @@
     "d3-graphviz": "^2.4.3",
     "mocha": "^6.0.2",
     "progress-bar-webpack-plugin": "^1.11.0",
+    "query-string": "^6.10.1",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.22.1",
     "tachyons": "^4.11.1",

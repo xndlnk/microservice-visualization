@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 export interface Options {
   urlExtractor: (node: Node) => string
   showDebug?: boolean
+  rankDir?: string
 }
 
 export class SystemToDotConverter {
@@ -23,12 +24,15 @@ export class SystemToDotConverter {
       ? this.convertEdgesToDot(system.getEdges(), 1)
       : this.convertEdgesToDotForDebug(system.getEdges(), 1)
 
+    const rankDir = this.options?.rankDir ?? 'TB'
+
     // splines=ortho;
     // splines=polyline;
     // edge[dir=both, arrowhead="normal", arrowtail="dot"];
     // INFO: don't change indentation below. it is important!
     let dotGraph: string = `strict digraph {
     size="40"
+    rankdir="${rankDir}";
     ranksep=1;
     newrank=true;
     splines=polyline;
