@@ -1,0 +1,6 @@
+{
+  "code-runner.executorMap": {
+    "javascript": "node",
+    "typescript": "$workspaceRoot/ts-node $fullFileName"
+  }
+}

@@ -1,0 +1,60 @@
+digraph model {
+	node [shape=box,fillcolor=white,style=filled,fontname="Arial"];
+	edge [fontname="Arial"]
+
+	subgraph cluster_node {
+		label = "sub-system s1";
+		fontname="Arial";
+		style = "filled";
+    color = "#f8ecc9";
+
+		n1 [label="ms1", style=filled, fillcolor=gold];
+		n1content [label="
+			<content> content
+			| {
+				<type> type='MicroService'
+				| {
+					<metadata> metadata
+					| {
+						transformerName='K8sServices'
+						| context='service ms1'
+					}
+				}
+				| {
+					<payload> payload
+					| {
+						<name> name='ms1'
+						| labels.cabinet='s1'
+					}
+				}
+			}
+		", shape=record, style=filled, fillcolor=black, color=lightgrey, fontcolor=white];
+
+		n1 -> n1content:content [arrowhead=none, style=dashed];
+		#n1content -> n1payload [arrowhead=none,  label="payload"];
+		#{rank = same; n1; n1content:content; n1payload;}
+
+		n2 [shape="cylinder", label="ex1", style=filled, fillcolor=lightgrey];
+		n2content [label="type = 'MessageExchange'\nmetadata = ...", shape=note, style=filled, fillcolor=black, color=lightgrey, fontcolor=white];
+		n2 -> n2content [arrowhead=none, label="content"];
+		{rank = same; n2; n2content; }
+
+		e1 [shape=point];
+		e1content [label="type = 'AsyncInfoFlow'\nmetadata = ...", shape=note, style=filled, fillcolor=black, color=lightgrey, fontcolor=white];
+		e1payload [label="routingKey = 'r.k'", shape=note, style=filled, fillcolor=black, color=lightgrey, fontcolor=white];
+		e1 -> e1content [arrowhead=none, label="content"];
+		e1content -> e1payload [arrowhead=none, label="payload"];
+		{rank = same; e1; e1content; e1payload; }
+
+		n1 -> e1 [arrowhead=none];
+		e1 -> n2;
+	}
+
+	n2 -> ms3;
+	ms3 [label="ms3", style=filled, fillcolor=gold];
+	
+	ms3 -> ms4 [color=red];
+	ms4 [label="ms4", style=striped, fillcolor="#9eebcf:#ff725c:lightgrey"];
+
+
+}

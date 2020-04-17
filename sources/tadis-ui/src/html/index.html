@@ -1,0 +1,122 @@
+<html>
+
+<head>
+    <title id="head-system-title">System &lt;loading&gt;</title>
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+
+<body>
+    <div class="sans-serif">
+        <div id="title" class="flex bg-black white pa2 f3">
+            <div class="w-80" id="system-title">
+                System Architecture
+            </div>
+            <div class="w-20 tr">
+                [<a href="" class="f4 fw6 blue no-underline underline-hover"></a>]
+            </div>
+        </div>
+        <div class="mw100">
+            <div class="fl w-100 bb">
+                <div class="bg-white pa2">
+                    <div id="complete-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">
+                        Interactive
+                    </div>
+                    <div id="svg-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-gold">
+                        SVG</div>
+                    <div id="cabinets-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-green">
+                        Cabinets
+                    </div>
+                    <div id="info-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-blue">Info
+                    </div>
+                    <div id="reload-no-cache-link"
+                        class="clickable f5 grow no-underline br-pill ph3 pv2 dib white bg-black">
+                        Flush Cache
+                    </div>
+                    <div id="debug-link" class="clickable f5 grow no-underline br-pill ph3 pv2 dib red bg-black">
+                        Debug
+                    </div>
+                    <div id="alt-key-info" class="f6 no-underline br-pill ba ph3 pv2 dib blue">💡 Use alt-key to focus
+                        on nodes.</div>
+                </div>
+            </div>
+        </div>
+        <div class="mw100">
+            <div class="fl w-100">
+                <div id="info" class="pa2 bb" style="display:none;">
+                    <div class="pa2">
+                        The following nodes are hidden:
+                        <div id="node-filter-info" class="f5">
+                            A, B, C
+                        </div>
+                    </div>
+                    <div class="pa2">
+                        Symbol explanation:
+                        <ul>
+                            <li>A <b>box</b> represents i) a microservice or ii) a microservice and its outgoing
+                                exchange
+                                if the
+                                microservice and its outgoing exchange have the same name.</li>
+                            <li>
+                                Box colors have the following meaning:
+                                <ul>
+                                    <li class="pa1">
+                                        <div class="ba w-25 pa1 bg-gold" style="width:200;">
+                                            regular microservice
+                                        </div>
+                                    </li>
+                                    <li class="pa1">
+                                        <div class="ba w-25 pa1" style="width:200; background-color: #9eebcf">
+                                            microservice with the shared property set
+                                        </div>
+                                    </li>
+                                    <li class="pa1">
+                                        <div class="ba w-25 pa1" style="width:200; background-color: #ff725c">
+                                            indicates that the source code location of the microservice is unknown.
+                                            thus no source analysis can be carried out.
+                                        </div>
+                                    </li>
+                                    <li class="pa1">
+                                        <div class="ba w-25 pa1" style="width:200; background-color: lightgray">
+                                            indicates that an exchange with the same name as the microservice exists.
+                                            this exchange is merged into the microservice node. the exchange can be
+                                            either incoming or outgoing.
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>A <b>gray cylinder</b> represents a RabbitMQ message exchange.</li>
+                            <li>A <b>black link</b> represents an asynchronous information flow from source to target.
+                                If
+                                both source and target are connected
+                                to a microservice then a message exchange exists in between them. This message exchange
+                                is
+                                not shown.</li>
+                            <li>A <b>
+                                    <font color="red">red link</font>
+                                </b> represents a synchronous information flow (note: the actual synchronous
+                                call takes place in the opposite
+                                direction).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="content" class="mw100">
+            <div id="loadSpinner" class="vh-75 w-100 dt">
+                <div class="dtc tc v-mid bg-white">
+                    <img src="spinner.svg" width="200" alt="loading">
+                </div>
+            </div>
+            <div id="graphBox" class="fl pa4" style="display:none;">
+                <div class="ba bw1 b--silver">
+                    <div id="graph"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.bundle.js"></script>
+    <script src="SystemViewer.chunk.js"></script>
+</body>
+
+</html>

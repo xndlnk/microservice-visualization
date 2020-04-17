@@ -1,0 +1,65 @@
+digraph model {
+	node [shape=box,fillcolor=white,style=filled,fontname="Arial"];
+	edge [fontname="Arial"]
+
+	subgraph cluster_node {
+		label = "sub-system s1";
+		fontname="Arial";
+		style = "filled";
+    color = "#f8ecc9";
+
+		ms1 [label="ms1", style=filled, fillcolor=gold];
+		ms1content [label=< <TABLE CELLBORDER="0" BORDER="0">
+		<TR><TD BALIGN="LEFT">
+		<B>type:</B><BR/>
+		MicroService<BR/>
+		<B>metadata.transformer:</B><BR/>
+		MicroservicesFromKubernetesCreator<BR/>
+		<B>metadata.context:</B><BR/>
+		pod ms1-458945<BR/>
+		</TD></TR></TABLE> >, shape=box, style=filled, fillcolor=black, color=lightgrey, fontcolor=white];
+
+		ms1 -> ms1content:content [arrowhead=none, style=dashed];
+		{rank = same; ms1; ms1content;}
+
+		ex1 [shape="ellipse", label="exchangeWithLongName", style=filled, fillcolor=lightgrey];
+
+		e1 [shape=point];
+		e1content [label=< <TABLE CELLBORDER="1" CELLSPACING="0" BORDER="0">
+				<TR>
+					<TD BGCOLOR="#595959" COLSPAN="2">content</TD>
+				</TR>
+				<TR>
+					<TD BGCOLOR="#595959">attribute</TD>
+					<TD BGCOLOR="#595959">value</TD>
+				</TR>
+				<TR>
+					<TD>type</TD>
+					<TD>AsyncEventFlow</TD>
+				</TR>
+				<TR>
+					<TD>metadata<BR/>.transformer</TD>
+					<TD>OutgoingExchangesFromSourceCreator</TD>
+				</TR>
+				<TR>
+					<TD>metadata<BR/>.context</TD>
+					<TD>service ms1</TD>
+				</TR>
+			</TABLE> >, shape=note, style=filled, fillcolor=black, color=lightgrey, fontcolor=white];
+		e1 -> e1content [arrowhead=none, label="content"];
+		{rank = same; e1; e1content; }
+
+		ms1 -> e1 [arrowhead=none];
+		e1 -> ex1;
+	}
+
+	ex1 -> ms3;
+	ms3 [label="ms3", style=striped, fillcolor=gold];
+	
+	ms3 -> ms4 [color=red];
+	ms4 [label="ms4", style=striped, fillcolor="#9eebcf:#ff725c:lightgrey"];
+
+	q1 [shape="polygon", orientation=10,label="queue1"]
+	ex1 -> q1;
+
+}
