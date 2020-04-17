@@ -12,6 +12,11 @@ export type SystemPattern = {
 
 export type NodePattern = NamePattern & {
   /**
+   * a name which describes this pattern.
+   * the name is used in logs and in system model metadata.
+   */
+  name?: string
+  /**
    * the class name of the node to create. this class must exist in model/ms.ts
    * @see ../model/ms.ts
    */
@@ -82,5 +87,15 @@ export enum SearchTextLocation {
 export type EdgePattern = {
   sourceNodePattern: NodePattern
   targetNodePattern: NodePattern
+  /**
+   * the class name of the edge to create. this class must exist in model/ms.ts
+   * @see ../model/ms.ts
+   */
   edgeType: string
+  // TODO: use name in logging + metadata
+  /**
+   * a name which describes this pattern.
+   * the name is used in logs and in system model metadata.
+   */
+  name?: string
 }
