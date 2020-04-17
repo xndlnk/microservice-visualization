@@ -1,5 +1,3 @@
-# Further maintenance of this project is now under: https://github.com/MaibornWolff/microservice-visualization
------
 # microservice-visualization
 
 [![Build Status](https://travis-ci.org/xndlnk/microservice-visualization.svg?branch=master)](https://travis-ci.org/xndlnk/microservice-visualization) 
