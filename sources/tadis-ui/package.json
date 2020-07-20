@@ -22,7 +22,7 @@
     "dotenv": "^7.0.0",
     "express": "^4.16.3",
     "js-yaml": "^3.12.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "node-cache": "^4.2.0",
     "path": "^0.12.7",
     "random-word": "^2.0.0",
