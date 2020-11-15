@@ -40,7 +40,7 @@ export class RabbitMqManagementApiService {
 
     try {
       // TODO: maybe change this to use axios provided bei Nest.js
-      const response = await request(options)
+      const response = await request(options).promise()
       return JSON.parse(response)
     } catch (error) {
       throw new Error('sending request failed, using options: ' + JSON.stringify(options))

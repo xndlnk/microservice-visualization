@@ -24,7 +24,8 @@ export async function findFiles(path: string, includedFileEndings: string[] | un
  * @param fileEnding
  */
 export async function findFilesSafe(path: string,
-  includedFileEndings: string[] | undefined, excludedFolders: string[] | undefined): Promise<string[]> {
+                                    includedFileEndings: string[] | undefined,
+                                    excludedFolders: string[] | undefined): Promise<string[]> {
 
   const allFiles = await findFiles(path, includedFileEndings, excludedFolders)
   // tslint:disable-next-line: deprecation - its ok for this file to use the method.
@@ -76,8 +77,7 @@ function getDirectoryEntries(path): Promise<string[]> {
  */
 export function getServiceNameFromPath(sourcePath, file) {
   const strippedPath = file.slice(sourcePath.length + 1)
-  const serviceName = strippedPath.slice(0, strippedPath.indexOf('/'))
-  return serviceName
+  return strippedPath.slice(0, strippedPath.indexOf('/'))
 }
 
 /**
