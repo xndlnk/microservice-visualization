@@ -164,10 +164,6 @@ How sub-system information is to be extracted from a nodes payload must be speci
 
 [see SubSystemTransformer.ts](sources/tadis-analyzer/src/msa/common/SubSystemTransformer.ts)
 
-### Source Pattern Analyzer
-
-This transformer allows to provide patterns for static source code analysis. An example is provided in the [customized-analyzer-example](../customized-analyzer-example) project.
-
 ## License
 
 [Apache License, Version 2.0](LICENSE)

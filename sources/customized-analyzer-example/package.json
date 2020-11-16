@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
-    "start:prod": "node build/src/main.js",
+    "start:prod": "node build/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest --runInBand"
   },

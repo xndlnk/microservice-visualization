@@ -394,3 +394,4 @@ docker-compose.yml
 dist
 build
 temp
+tadis-analyzer-snapshot

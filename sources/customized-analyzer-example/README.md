@@ -1,44 +1,51 @@
-# Customized Analyzer Example
+# Custom Analyzer Example
 
-This project contains examples of customized TADIS analyzers.
+This project contains two examples of custom TADIS analyzers:
 
-## Getting Started
+1. a working simple analyzer to get you started with and
+2. a Kubernetes system analyzer that serves as an example of what a complex analyzer can look like.
 
-Before discussing the example analyzer, lets get started and see the analysis and visualization in action. The first step is to checkout the repository at [https://github.com/MaibornWolff/microservice-visualization](). Then the analyzer and its UI are started as separate communicating processes.
+## Getting Started: The Simple Analyzer
 
-### Run the Customized Analyzer
+The simple analyzer reads the source code of a fictitious system and transforms it to a graph.
+For source code analysis, one has to define a source folder that will contain the source code
+of all the microservices of a system, i.e. each sub-folder is interpreted as a microservice
+in the system. The source folder is defined by the environment variable `SOURCE_FOLDER`.
 
-1. Change directory to `customized-analyzer-example`.
-2. Run `docker-compose up`. This will run the following microservices:
-- tadis-ui on port 8080 providing a graphical representation of the system graph.
-- customized-analyzer-example on port 8081 providing the system graph as JSON by analyzing source code in source folder `./dummy-system-source`.
-3. Checkout source code:
-- run: `curl localhost:8081/source/store/repository/microservice-visualization`
-4. Access JSON representation of analyzed dummy system: [http://localhost:8081/collect/system]()
-5. Open base path to TADIS-UI in browser: [http://localhost:8080]()
-6. Navigate to HTML view: [http://localhost:8080/tadis/html/]()
+1. Create a `.env` file in the `customized-analyzer-example` folder and add the following content.
+This file is used in the `docker-compose.yml`.
+```
+SOURCE_FOLDER=/dummy-system-source
+GIT_BASE_URLS=git@github.com:MaibornWolff
+ANALYZER_PORT=8081
+VISUALIZER_PORT=8080
+SYSTEM_PROVIDER_URL=http://localhost:8081/collect/system?version=1
+```
 
-## The Customized Analyzer Explained
+The analyzer and the visualizer are provided as separate docker containers that we have to start.
 
-The first custom analyzer in `my-source-only-collector/` is a simple one. It discovers a system from static source code analysis only. A more complicated example, which is contained in `complex-collector/`, is discussed in the next section.
+1. Run `docker-compose up`. This will start the two services:
+    - **custom-analyzer** (on port 8081) analyzes the source code and creates a system graph as JSON.
+    - **tadis-ui** (on port 8080) reads the system graph and displays it graphically.
+2. Open analysis result as JSON graph: [http://localhost:8081/collect/system]()
+3. Open HTML view to see graphical representation: [http://localhost:8080/tadis/html/]()
 
-Each example analyzer defines a collector which is responsible for discovering a system from different sources by using various transformers. Some transformers are already provided by the tadis-analyzer.
+## The Simple Analyzer Explained
 
-### Collector for Simple Source Code Analysis
+The simple analyzer is made up of a collector which is responsible for discovering
+a system from different sources. The collector runs a number of so-called tranformers
+to assemble a system from different sources. You can add your own transformers or
+you can use general-purpose transformers provided by the tadis-analyzer,
+e.g. a RabbitMQ transformer.
 
-The example is made up of the following resources:
+### Files
 
-**`main.ts`**
+**`main.ts`** bootstraps the nest.js application and starts a web server.
 
-bootstraps the nest.js application and starts a web server at the port defined in the `.env` file
+**`app.module.ts`** contains the applications main nest.js module.
 
-**`app.module.ts`**
-
-contains the applications main nest.js module. Among others, it imports the module `MySourceOnlyCollectorModule`. This the module that defines our customizations.
-
-**`my-source-only-collector/MySourceOnlyCollector.module.ts`**
-
-defines a customized module with a new collector service. The module `MySourceOnlyCollectorModule` specifies a replacement for the `DefaultCollectorService`, which is used by the generic REST controller in `CollectorController`, by a custom `MySourceOnlyCollectorService`. The replacing collector is required to implement the following Collector interface methods.
+**`simple-source-analyzer/SimpleCollector.service.ts`** contains the SimpleCollectorService that is used to create
+a representation of the microservice system. Each collector must implement the following interface.
 
 ```
 export interface Collector {
@@ -47,16 +54,28 @@ export interface Collector {
 }
 ```
 
-**`my-source-only-collector/MySourceOnlyCollector.service.ts`**
+**`simple-source-analyzer/SimpleCollector.module.ts`** contains a nest.js module that provides the SimpleCollectorService.
+The SimpleCollectorService is defined as a replacement for the `DefaultCollectorService`, which is used by
+the generic REST controller in `CollectorController`.
 
-holds the `MySourceOnlyCollectorService`. It uses a source code pattern analyzer which is provided by the module `SourcePatternDslModule`. The pattern analyzer is then used in `EventProcessorSourceAnalyzer`. 
+### Importing Microservice Source Code
 
-**`my-source-only-collector/EventProcessorSourceAnalyzer.service.ts`**
+In this example, the source code of the target system is already included.
+In a real system, you would import the source code of the microservices
+into the folder defined by `SOURCE_FOLDER`.
 
-defines the `EventProcessorSourceAnalyzer`. It is made up of a transform method that creates the system from the provided source code patterns.
+The tadis-analyzer provides some REST endpoints to import or update the source code
+from a GIT repository. Let's run the simple analyzer with a different `SOURCE_FOLDER`
+and then import the source code of the microservice-visualization as an example.
 
-### Complex Collector
+1. Run `docker-compose --env-file .env-import up`
+2. Run `curl http://localhost:8081/source/store/repository/microservice-visualization`
+3. Open HTML view to see graphical representation: [http://localhost:8080/tadis/html/]()
 
-A far more complex example collector is defined in [complex-collector/CustomCollector.service.ts](./src/complex-collector/CustomCollector.service.ts).
+You will a see a different graph now. The microservice-visualization is considered
+the only microservice.
 
-...
+## The Kubernetes System Analyzer
+
+The analyzer is defined in [kubernetes-analyzer/CustomCollector.service.ts](src/kubernetes-analyzer/CustomCollector.service.ts).
+It utilizes a number of transformers from the MsaModule of the tadis-analyzer.

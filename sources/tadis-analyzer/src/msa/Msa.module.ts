@@ -9,6 +9,7 @@ import { KubernetesRabbitMqCollectorService } from './collector/KubernetesRabbit
 import { FeignClientAnnotationAnalyzer } from './feign/FeignClientAnnotationAnalyzer'
 import { SourceCodeAnalysisModule } from '../source-code-analysis/SourceCodeAnalysis.module'
 import { DefaultCollectorService } from './collector/DefaultCollector'
+import { Collector } from './collector/Collector'
 
 @Module({
   imports: [
@@ -46,5 +47,6 @@ export {
   FeignClientAnnotationAnalyzer,
   DefaultCollectorService,
   KubernetesRabbitMqCollectorService,
-  CollectorController
+  CollectorController,
+  Collector
 }

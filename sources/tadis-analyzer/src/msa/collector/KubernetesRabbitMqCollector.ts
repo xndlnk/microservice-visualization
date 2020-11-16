@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
-import * as _ from 'lodash'
 
 import { System, MicroService } from '../../model/ms'
 import { SourceLocationDecorator } from '../../source-code-analysis/SourceCodeAnalysis.module'

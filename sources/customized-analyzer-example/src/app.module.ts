@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from 'tadis-analyzer'
-
-import { CustomCollectorModule } from './complex-collector/CustomCollector.module'
-import { MySourceOnlyCollectorModule } from './my-source-only-collector/MySourceOnlyCollector.module'
+import { SimpleCollectorModule } from './simple-source-analyzer/SimpleCollector.module'
 
 @Module({
   imports: [
     ConfigModule,
-    // CustomCollectorModule
-    MySourceOnlyCollectorModule
+    SimpleCollectorModule
   ],
   controllers: [],
   providers: []

@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common'
 
 import {
-  System, MicroService, ElementMapping,
+  System,
+  MicroService,
+  ElementMapping,
   SourceLocationDecorator,
-  GitStorageService, ConfigService, SubSystemFromPayloadTransformer, MicroserviceWithOutgoingExchangeMerger,
-  StaticNodeFilter, JavaAnnotationAnalyzer, FeignClientAnnotationAnalyzer, MicroservicesFromKubernetesCreator,
-  RabbitMqBindingsFromApiAnalyzer, OutgoingExchangesFromSourceCreator, ExchangesFromEnvPayloadCreator,
-  EnvDefinitionFromPodDecorator, LabelsFromDeploymentDecorator
+  SubSystemFromPayloadTransformer,
+  MicroserviceWithOutgoingExchangeMerger,
+  StaticNodeFilter,
+  JavaAnnotationAnalyzer,
+  FeignClientAnnotationAnalyzer,
+  MicroservicesFromKubernetesCreator,
+  RabbitMqBindingsFromApiAnalyzer,
+  OutgoingExchangesFromSourceCreator,
+  ExchangesFromEnvPayloadCreator,
+  EnvDefinitionFromPodDecorator,
+  LabelsFromDeploymentDecorator, Collector
 } from 'tadis-analyzer'
 
 @Injectable()
-export class CustomCollectorService {
+export class CustomCollectorService implements Collector {
 
   constructor(
     private readonly microservicesCreator: MicroservicesFromKubernetesCreator,
@@ -24,9 +33,7 @@ export class CustomCollectorService {
     private readonly sourceLocationDecorator: SourceLocationDecorator,
     private readonly nodeFilter: StaticNodeFilter,
     private readonly microserviceWithOutgoingExchangeMerger: MicroserviceWithOutgoingExchangeMerger,
-    private readonly subSystemTransformer: SubSystemFromPayloadTransformer,
-    private readonly gitStorage: GitStorageService,
-    private readonly configService: ConfigService
+    private readonly subSystemTransformer: SubSystemFromPayloadTransformer
   ) { }
 
   public async getAllMicroservices(): Promise<MicroService[]> {

@@ -4,18 +4,12 @@ import * as Api from 'kubernetes-client'
 const Client = Api.Client1_10
 const logger = new Logger('KubernetesApiService')
 
-import { ConfigService } from '../../../config/Config.service'
-
 @Injectable()
 export class KubernetesApiService {
-  private readonly api: Api.ApiRoot
-
-  constructor(private config: ConfigService) {
-    this.api = new Client({ config: this.getKubeConfig() })
-  }
+  private _api: Api.ApiRoot
 
   public async getServices(namespace: string): Promise<any> {
-    const response = await this.api.api.v1.namespace(namespace).services.get()
+    const response = await this.getApiRoot().api.v1.namespace(namespace).services.get()
     if (response.statusCode !== 200) {
       throw new Error('Got invalid response from Kubernetes API: ' + response.statusCode)
     }
@@ -24,7 +18,7 @@ export class KubernetesApiService {
   }
 
   public async getPods(namespace: string): Promise<any> {
-    const response = await this.api.api.v1.namespace(namespace).pods.get()
+    const response = await this.getApiRoot().api.v1.namespace(namespace).pods.get()
     if (response.statusCode !== 200) {
       throw new Error('Got invalid response from Kubernetes API: ' + response.statusCode)
     }
@@ -33,12 +27,19 @@ export class KubernetesApiService {
   }
 
   public async getDeployments(namespace: string): Promise<any> {
-    const response = await this.api.apis.apps.v1.namespace(namespace).deployments.get()
+    const response = await this.getApiRoot().apis.apps.v1.namespace(namespace).deployments.get()
     if (response.statusCode !== 200) {
       throw new Error('Got invalid response from Kubernetes API: ' + response.statusCode)
     }
 
     return response.body
+  }
+
+  private getApiRoot(): Api.ApiRoot {
+    if (!this._api) {
+      this._api = new Client({ config: this.getKubeConfig() })
+    }
+    return this._api
   }
 
   private getKubeConfig() {

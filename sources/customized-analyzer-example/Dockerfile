@@ -3,13 +3,11 @@ FROM node:12.14.1-alpine as build
 
 RUN mkdir -p /app/src
 COPY src /app/src/
-#COPY test /app/test/
 COPY *.json /app/
 COPY *.lock /app/
 
 WORKDIR /app
 RUN yarn install
-#RUN yarn test
 RUN yarn build
 
 # stage: install prod packages & run
@@ -25,8 +23,12 @@ COPY --from=build /app/*.lock /app/
 WORKDIR /app
 RUN yarn install --production
 
+# TODO: REMOVE and RETEST after new tadis-analyzer version is released
+RUN rm -rf /app/node_modules/tadis-analyzer
+RUN mkdir /app/node_modules/tadis-analyzer
+COPY tadis-analyzer-snapshot /app/node_modules/tadis-analyzer/
+
 COPY entrypoint.sh /
-#COPY entrypoint-ssh.sh /
 
 RUN mkdir -p /app/temp
 
