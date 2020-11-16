@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import * as Api from 'kubernetes-client'
 
-const Client = Api.Client1_10
+const Client = Api.Client1_13
 const logger = new Logger('KubernetesApiService')
 
 @Injectable()
