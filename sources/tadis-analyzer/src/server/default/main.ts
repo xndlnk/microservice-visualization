@@ -10,5 +10,6 @@ async function bootstrap() {
   await app.listen(config.getPort())
   Logger.log('running at http://localhost:' + config.getPort())
 }
+
 // tslint:disable-next-line: no-floating-promises
 bootstrap()
