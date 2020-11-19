@@ -1,10 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common'
-import * as _ from 'lodash'
 
 import { ConfigService } from '../../config/Config.service'
 import { System } from '../../model/ms'
-import { SystemPattern, NodePattern, EdgePattern, NamePattern, SearchTextLocation } from './model'
-export { SystemPattern, NodePattern, EdgePattern, NamePattern, SearchTextLocation } from './model'
+import {
+  SystemPattern,
+  NodePattern,
+  EdgePattern,
+  NamePattern,
+  SearchTextLocation
+} from './model'
+export {
+  SystemPattern,
+  NodePattern,
+  EdgePattern,
+  NamePattern,
+  SearchTextLocation
+} from './model'
 
 import { PatternAnalyzer } from './PatternAnalyzer'
 
@@ -13,13 +24,10 @@ import { PatternAnalyzer } from './PatternAnalyzer'
  */
 @Injectable()
 export class PatternAnalyzerService {
-
   private readonly patternAnalyzer: PatternAnalyzer
   private currentPattern: SystemPattern
 
-  constructor(
-    private readonly config: ConfigService
-  ) {
+  constructor(private readonly config: ConfigService) {
     this.patternAnalyzer = new PatternAnalyzer(this.config.getSourceFolder())
     this.currentPattern = {
       nodePatterns: [],
@@ -36,7 +44,10 @@ export class PatternAnalyzerService {
     this.currentPattern = pattern
   }
 
-  public async transform(system: System, systemPattern: SystemPattern): Promise<System> {
+  public async transform(
+    system: System,
+    systemPattern: SystemPattern
+  ): Promise<System> {
     return this.patternAnalyzer.transform(system, systemPattern)
   }
 }

@@ -20,6 +20,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint-fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --runInBand",
+    "test-failed": "jest -f --runInBand",
     "test:verbose": "jest --verbose",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -27,7 +28,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "docker-build": "node docker-build.js",
     "docker-run": "node docker-run.js",
-    "docker-publish": "node docker-publish.js"
+    "docker-publish": "node docker-publish.js",
+    "publish": "tsc && yarn publish"
   },
   "dependencies": {
     "@nestjs/cli": "^7.5.3",

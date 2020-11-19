@@ -5,21 +5,20 @@
 
 ## new structure
 
-- analysis
-  - assembly
+- system-assemblers: DefaultCollector -> EmptyAssembler
+- aspect-extractors
     - spring-feign
     - rabbitmq
     - kubernetes
     - java-annotations
     - code-patterns
-  - transformer
+- post-processors
     - subsystem
-  - filter
     - node-filter
-  - util
+- utils
     - files
 - git
 - config
-- model
+- models
   - core
   - ms
