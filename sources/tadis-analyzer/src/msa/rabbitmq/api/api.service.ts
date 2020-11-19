@@ -1,50 +1,61 @@
-import { Injectable, Logger } from '@nestjs/common'
-import * as request from 'request-promise-native'
+import { HttpService, Injectable, Logger } from '@nestjs/common'
 
 import { ConfigService } from '../../../config/Config.service'
+import { AxiosRequestConfig } from 'axios'
 
 @Injectable()
 export class RabbitMqManagementApiService {
   private readonly logger = new Logger(RabbitMqManagementApiService.name)
 
-  constructor(private config: ConfigService) {
-  }
+  constructor(
+    private config: ConfigService,
+    private httpService: HttpService
+  ) {}
 
   public async getQueues(): Promise<any> {
     const url = this.config.getRabbitUrl() + '/api/queues/'
     this.logger.log('get queues from url ' + url)
-    return this.sendRequest(url, 'GET')
+    return this.getData(url)
   }
 
   public async getBindings(queueName: string): Promise<any[]> {
-    // TODO: make vhost configurable
     const vhost = '/'
-    const url = this.config.getRabbitUrl() + '/api/queues/' + encodeURIComponent(vhost) + '/' + encodeURIComponent(queueName) + '/bindings/'
+
+    const url =
+      this.config.getRabbitUrl() +
+      '/api/queues/' +
+      encodeURIComponent(vhost) +
+      '/' +
+      encodeURIComponent(queueName) +
+      '/bindings/'
+
     this.logger.log('get bindings for ' + queueName + ' from url ' + url)
-    return this.sendRequest(url, 'GET')
+    return this.getData(url)
   }
 
-  private async sendRequest(url, method) {
-    const options: any = {
-      method: method,
-      url: url
-    }
-
-    if (this.config.getRabbitUser() && this.config.getRabbitPassword()) {
-      // TODO: auth type should be configurable
-      options.auth = {
-        user: this.config.getRabbitUser(),
-        password: this.config.getRabbitPassword()
-      }
-    }
+  private async getData(url) {
+    const axiosConfig = this.getAxiosConfig()
 
     try {
-      // TODO: maybe change this to use axios provided bei Nest.js
-      const response = await request(options).promise()
-      return JSON.parse(response)
+      const response = await this.httpService.axiosRef.get(url, axiosConfig)
+      return response.data
     } catch (error) {
-      throw new Error('sending request failed, using options: ' + JSON.stringify(options))
+      this.logger.error(
+        'sending request failed, using options: ' + JSON.stringify(axiosConfig)
+      )
+      throw error
     }
   }
 
+  private getAxiosConfig(): AxiosRequestConfig {
+    if (this.config.getRabbitUser() && this.config.getRabbitPassword()) {
+      return {
+        auth: {
+          username: this.config.getRabbitUser(),
+          password: this.config.getRabbitPassword()
+        }
+      }
+    }
+    return undefined
+  }
 }

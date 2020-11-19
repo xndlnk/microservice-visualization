@@ -12,7 +12,7 @@ export class MicroservicesFromKubernetesCreator {
   constructor(
     private readonly config: ConfigService,
     private readonly apiService: KubernetesApiService
-  ) { }
+  ) {}
 
   public async transform(system: System): Promise<System> {
     return this.getSystem()
@@ -25,7 +25,7 @@ export class MicroservicesFromKubernetesCreator {
       const pods = await this.apiService.getPods(namespace)
 
       const system = new System(namespace)
-      services.items.forEach(item => {
+      services.items.forEach((item) => {
         const serviceName = item.metadata.name
         if (this.isPodExisting(pods, serviceName + '-')) {
           const metadata: Metadata = {
@@ -36,17 +36,26 @@ export class MicroservicesFromKubernetesCreator {
           system.addMicroService(serviceName, undefined, metadata)
           this.logger.log('added microservice ' + serviceName)
         } else {
-          this.logger.log('not adding microservice ' + serviceName + ' because no pods were found')
+          this.logger.log(
+            'not adding microservice ' +
+              serviceName +
+              ' because no pods were found'
+          )
         }
       })
       return system
     } catch (err) {
-      this.logger.error('Failed to get services from Kubernetes API: ', err.message)
+      this.logger.error('Failed to get services from Kubernetes API: ', err)
       return new System(namespace)
     }
   }
 
   private isPodExisting(pods: any, podNamePrefixToCheck: string): boolean {
-    return pods.items && pods.items.find(item => item.metadata.name.startsWith(podNamePrefixToCheck)) !== undefined
+    return (
+      pods.items &&
+      pods.items.find((item) =>
+        item.metadata.name.startsWith(podNamePrefixToCheck)
+      ) !== undefined
+    )
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { HttpModule, Module } from '@nestjs/common'
 
 import { RabbitMqManagementApiService } from './api/api.service'
 import { ConfigModule } from '../../config/Config.module'
@@ -8,11 +8,8 @@ import { OutgoingExchangesFromSourceCreator } from './transformer/OutgoingExchan
 import { MicroserviceWithOutgoingExchangeMerger } from './transformer/MicroserviceWithOutgoingExchangeMerger'
 
 @Module({
-  imports: [
-    ConfigModule
-  ],
-  controllers: [
-  ],
+  imports: [ConfigModule, HttpModule],
+  controllers: [],
   providers: [
     RabbitMqManagementApiService,
     RabbitMqBindingsFromApiAnalyzer,
@@ -28,7 +25,7 @@ import { MicroserviceWithOutgoingExchangeMerger } from './transformer/Microservi
     MicroserviceWithOutgoingExchangeMerger
   ]
 })
-class RabbitMqModule { }
+class RabbitMqModule {}
 
 export {
   RabbitMqModule,
