@@ -5,16 +5,24 @@
 
 ## new structure
 
-- system-assemblers: DefaultCollector -> EmptyAssembler
-- aspect-extractors
-    - spring-feign
-    - rabbitmq
-    - kubernetes
-    - java-annotations
-    - code-patterns
+- system-assemblers
+    - DefaultCollector -> EmptyAssembler
+    - KubernetesRabbitMqAssembler
+- element-extractors
+    - async-event-flows
+        - rabbitmq
+        - ExchangesFromEnvPayloadCreator
+    - generic
+        - java-annotations    
+        - code-patterns
+    - microservices
+        - kubernetes
+    - sync-data-flows
+        - spring-feign
 - post-processors
-    - subsystem
-    - node-filter
+    - SubSystemFromPayloadTransformer
+    - StaticNodeFilter
+    - MicroserviceWithOutgoingExchangeMerger
 - utils
     - files
 - git
