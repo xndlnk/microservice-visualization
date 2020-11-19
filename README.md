@@ -1,11 +1,13 @@
-# Microservice Visualization with TADIS (Tool for Architecture Discovery)
+# Microservice Visualization
 
 ![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 [![Automated Release Notes by gren](https://img.shields.io/badge/%F0%9F%A4%96-release%20notes-00B2EE.svg)](https://github-tools.github.io/github-release-notes/)
 
-This repository contains software for analyzing and visualizing the topology of microservice systems.
+This repository contains tools for analyzing and visualizing the topology of microservice systems.
 
-## Architecture
+The main tool is the **Tool for Architecture Discovery (TADIS)**.
+
+## TADIS Architecture
 
 TADIS consists of two microservices: an analyzer backend and a UI frontend (see the architecture picture below).
 
@@ -16,17 +18,17 @@ TADIS consists of two microservices: an analyzer backend and a UI frontend (see 
 
 ## Getting Started Example
 
-An example of a customized analyzer is provided in [customized-analyzer-example](sources/customized-analyzer-example).
+An example of a customized analyzer is provided in [custom-example-analyzer](sources/custom-example-analyzer).
 
 - The customized analyzer is implemented by a NPM package that depends on the tadis-analyzer NPM package.
 - It implements a custom collector which uses certain transformers for source code analysis.
 - It contains source code of a dummy system for analysis.
 
-Please follow the instructions [provided here](sources/customized-analyzer-example/README.md) to setup the example.
+Please follow the instructions [provided here](sources/custom-example-analyzer/README.md) to setup the example.
 
 ## Requirements
 
-- [Node.js v10](https://nodejs.org)
+- [Node.js v11](https://nodejs.org)
 - [Yarn](https://yarnpkg.com)
 
 ## License

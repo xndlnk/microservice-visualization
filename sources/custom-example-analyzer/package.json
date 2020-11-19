@@ -1,0 +1,25 @@
+{
+  "name": "tadis-custom-example-analyzer",
+  "version": "1.0.0",
+  "description": "this is a custom example analyzer that imports the npm package of the generic tadis-analyzer.",
+  "license": "Apache-2.0",
+  "author": "Andreas Blunk, MaibornWolff GmbH",
+  "private": true,
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register src/main.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^7.5.3",
+    "@nestjs/core": "^7.5.3",
+    "@nestjs/platform-express": "7.5.3",
+    "dotenv": "^8.2.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.6.3",
+    "tadis-analyzer": "^1.1.3"
+  },
+  "devDependencies": {
+    "ts-node": "^8.0.3",
+    "tsconfig-paths": "^3.8.0",
+    "typescript": "^4.0.5"
+  }
+}

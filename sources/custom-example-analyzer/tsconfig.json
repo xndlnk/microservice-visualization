@@ -24,9 +24,14 @@
     "src",
     "test"
   ],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "temp",
-    "build"
+    "build",
+    "tadis-analyzer-snapshot",
+    "dummy-system-source"
   ]
 }
