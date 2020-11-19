@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/queues/",
+    "basicAuthCredentials" : {
+      "username" : "guest",
+      "password" : "guest"
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "rabbitmq/queues.json"
+  }
+}

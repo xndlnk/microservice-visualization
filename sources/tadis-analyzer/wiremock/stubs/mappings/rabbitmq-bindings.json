@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/queues/%2F/receiver-service.routingKey.publish.update/bindings/",
+    "basicAuthCredentials" : {
+      "username" : "guest",
+      "password" : "guest"
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "rabbitmq/bindings.json"
+  }
+}
