@@ -1,24 +1,19 @@
 # TODOs
 
 - strict type checks
-- introduce interface for assemblers to chain them
+- introduce interface for extractors to chain them
 
 ## new structure
 
-- system-assemblers
+- system-assemblers or analyzers?
     - DefaultCollector -> EmptyAssembler
     - KubernetesRabbitMqAssembler
-- element-extractors
-    - async-event-flows
-        - rabbitmq
-        - ExchangesFromEnvPayloadCreator
-    - generic
-        - java-annotations    
-        - code-patterns
-    - microservices
-        - kubernetes
-    - sync-data-flows
-        - spring-feign
+- system-element-extractors or just extractors?
+    - rabbitmq
+    - java    
+    - code-patterns
+    - kubernetes
+    - spring-feign
 - post-processors
     - SubSystemFromPayloadTransformer
     - StaticNodeFilter
@@ -30,3 +25,9 @@
 - models
   - core
   - ms
+
+## controllers
+
+- /collect/source -> /system/import_source
+- /collect/system -> /system
+- /source/store/repository/:repositoryName -> /git/import/:repositoryName

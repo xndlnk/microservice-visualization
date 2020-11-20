@@ -1,14 +1,14 @@
 import * as request from 'supertest'
 import { Test } from '@nestjs/testing'
-import { MsaModule } from './../src/msa/Msa.module'
 import { INestApplication } from '@nestjs/common'
+import { SystemAssemblerModule } from '../src/system-assemblers/controllers/SystemAssembler.module'
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [MsaModule]
+      imports: [SystemAssemblerModule]
     }).compile()
 
     app = moduleFixture.createNestApplication()

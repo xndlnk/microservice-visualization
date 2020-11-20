@@ -1,13 +1,10 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from 'tadis-analyzer'
-import { SimpleCollectorModule } from './simple-source-analyzer/SimpleCollector.module'
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "tadis-analyzer";
+import { SimpleSystemAssemblerModule } from "./simple-analyzer/SimpleSystemAssembler.module";
 
 @Module({
-  imports: [
-    ConfigModule,
-    SimpleCollectorModule
-  ],
+  imports: [ConfigModule, SimpleSystemAssemblerModule],
   controllers: [],
-  providers: []
+  providers: [],
 })
-export class AppModule { }
+export class AppModule {}

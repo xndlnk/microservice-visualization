@@ -11,10 +11,23 @@ export * from './model/core'
 export * from './model/ms'
 
 export * from './config/Config.module'
-export * from './common-transformers/CommonTransformers.module'
-export * from './java/Java.module'
-export * from './source-code-analysis/SourceCodeAnalysis.module'
+export * from './git/Git.module'
 
-export * from './msa/Msa.module'
-export * from './msa/kubernetes/Kubernetes.module'
-export * from './msa/rabbitmq/RabbitMq.module'
+export * from './system-element-extractors/java/Java.module'
+export * from './system-element-extractors/env-variables/EnvVariables.module'
+export * from './system-element-extractors/kubernetes/Kubernetes.module'
+export * from './system-element-extractors/rabbitmq/RabbitMq.module'
+export * from './system-element-extractors/spring-boot/SpringBoot.module'
+
+export * from './system-assemblers/controllers/SystemAssembler.module'
+export * from './system-assemblers/kubernetes-rabbitmq/KubernetesRabbitMqAssembler.module'
+
+export * from './post-processors/PostProcessors.module'
+
+import * as fileAnalysis from './utils/files/analysis'
+export { fileAnalysis }
+
+// deprecated exports
+export * from './deprecated-modules/SourceCodeAnalysis.module'
+export * from './deprecated-modules/CommonTransformers.module'
+export * from './deprecated-modules/Msa.module'

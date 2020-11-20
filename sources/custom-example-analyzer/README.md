@@ -77,5 +77,5 @@ the only microservice.
 
 ## The Kubernetes System Analyzer
 
-The analyzer is defined in [kubernetes-analyzer/CustomCollector.service.ts](src/kubernetes-analyzer/CustomCollector.service.ts).
+The analyzer is defined in [kubernetes-analyzer/CustomCollector.service.ts](src/complex-analyzer/ComplexSystemAssembler.service.ts).
 It utilizes a number of transformers from the MsaModule of the tadis-analyzer.
