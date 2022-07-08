@@ -1,3 +1,3 @@
 #!/bin/bash
 cd app
-yarn start:prod
+yarn start
