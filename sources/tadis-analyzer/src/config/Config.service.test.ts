@@ -1,9 +1,10 @@
-jest.mock('dotenv', () => (
-  {
-    ...(jest.requireActual('dotenv')),
+jest.mock('dotenv', () => {
+  const actualDotenv = jest.requireActual('dotenv');
+  return {
+    ...actualDotenv,
     config: () => ({})
   }
-))
+})
 
 import { ConfigService } from './Config.service'
 

@@ -6,8 +6,8 @@ import { System, MessageQueue } from '../../../model/ms'
 import { RabbitMqBindingsFromApiAnalyzer } from './RabbitMqBindingsFromApiAnalyzer'
 import { RabbitMqManagementApiService } from '../api/api.service'
 
-import * as testQueues from './testdata/api/queues.json'
-import * as testBindings from './testdata/api/bindings.json'
+import testQueues from './testdata/api/queues.json'
+import testBindings from './testdata/api/bindings.json'
 import { verifyEachContentHasTransformer } from '../../../test/verifiers'
 import { HttpModule } from '@nestjs/common'
 

@@ -33,8 +33,13 @@ export class RabbitMqManagementApiService {
     return this.getData(url)
   }
 
-  private async getData(url) {
-    const axiosConfig = this.getAxiosConfig()
+  private async getData(url): Promise<any> {
+    const axiosConfig = {
+      auth: {
+        username: this.config.getRabbitUser(),
+        password: this.config.getRabbitPassword()
+      }
+    }
 
     try {
       const response = await this.httpService.axiosRef.get(url, axiosConfig)
@@ -47,15 +52,4 @@ export class RabbitMqManagementApiService {
     }
   }
 
-  private getAxiosConfig(): AxiosRequestConfig {
-    if (this.config.getRabbitUser() && this.config.getRabbitPassword()) {
-      return {
-        auth: {
-          username: this.config.getRabbitUser(),
-          password: this.config.getRabbitPassword()
-        }
-      }
-    }
-    return undefined
-  }
 }
