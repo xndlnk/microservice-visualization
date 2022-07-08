@@ -8,6 +8,7 @@ import { KubernetesRabbitMqAssembler } from './KubernetesRabbitMqAssembler.servi
 import { GitModule } from '../../git/Git.module'
 import { SystemAssembler } from '../controllers/SystemAssembler.service'
 import { SpringBootModule } from '../../system-element-extractors/spring-boot/SpringBoot.module'
+import {PostProcessorsModule} from '../../post-processors/PostProcessors.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { SpringBootModule } from '../../system-element-extractors/spring-boot/Sp
     GitModule,
     KubernetesModule,
     RabbitMqModule,
-    SpringBootModule
+    SpringBootModule,
+    PostProcessorsModule
   ],
   controllers: [SystemAssemblerController],
   providers: [

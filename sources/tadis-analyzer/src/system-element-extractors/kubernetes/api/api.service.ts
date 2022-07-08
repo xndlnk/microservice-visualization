@@ -1,53 +1,43 @@
 import { Injectable, Logger } from '@nestjs/common'
-import * as Api from 'kubernetes-client'
-
-const Client = Api.Client1_13
-const logger = new Logger('KubernetesApiService')
+import * as k8s from '@kubernetes/client-node'
 
 @Injectable()
 export class KubernetesApiService {
-  private _api: Api.ApiRoot
+  private coreV1Api: k8s.CoreV1Api
+  private appsV1Api: k8s.AppsV1Api
 
-  public async getServices(namespace: string): Promise<any> {
-    const response = await this.getApiRoot().api.v1.namespace(namespace).services.get()
-    if (response.statusCode !== 200) {
-      throw new Error('Got invalid response from Kubernetes API: ' + response.statusCode)
-    }
-
-    return response.body
+  constructor() {
+    const kubeConfig = new k8s.KubeConfig()
+    kubeConfig.loadFromDefault()
+    this.coreV1Api = kubeConfig.makeApiClient(k8s.CoreV1Api)
+    this.appsV1Api = kubeConfig.makeApiClient(k8s.AppsV1Api)
   }
 
-  public async getPods(namespace: string): Promise<any> {
-    const response = await this.getApiRoot().api.v1.namespace(namespace).pods.get()
-    if (response.statusCode !== 200) {
-      throw new Error('Got invalid response from Kubernetes API: ' + response.statusCode)
-    }
-
-    return response.body
-  }
-
-  public async getDeployments(namespace: string): Promise<any> {
-    const response = await this.getApiRoot().apis.apps.v1.namespace(namespace).deployments.get()
-    if (response.statusCode !== 200) {
-      throw new Error('Got invalid response from Kubernetes API: ' + response.statusCode)
-    }
-
-    return response.body
-  }
-
-  private getApiRoot(): Api.ApiRoot {
-    if (!this._api) {
-      this._api = new Client({ config: this.getKubeConfig() })
-    }
-    return this._api
-  }
-
-  private getKubeConfig() {
-    if (process.env.KUBECONFIG != null) {
-      logger.log('using KUBECONFIG in ' + process.env.KUBECONFIG)
-      return Api.config.fromKubeconfig()
-    } else {
-      return Api.config.getInCluster()
+  public async getServices(namespace: string): Promise<k8s.V1ServiceList> {
+    try {
+      const response = await this.coreV1Api.listNamespacedService(namespace)
+      return response.body
+    } catch (err) {
+      throw new Error('Got invalid response from Kubernetes API: ' + err)
     }
   }
+
+  public async getPods(namespace: string): Promise<k8s.V1PodList> {
+    try {
+      const response = await this.coreV1Api.listNamespacedPod(namespace)
+      return response.body
+    } catch (err) {
+      throw new Error('Got invalid response from Kubernetes API: ' + err)
+    }
+  }
+
+  public async getDeployments(namespace: string): Promise<k8s.V1DeploymentList> {
+    try {
+      const response = await this.appsV1Api.listNamespacedDeployment(namespace)
+      return response.body
+    } catch (err) {
+      throw new Error('Got invalid response from Kubernetes API: ' + err)
+    }
+  }
+
 }

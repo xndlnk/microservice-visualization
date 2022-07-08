@@ -32,6 +32,7 @@
     "publish": "tsc && yarn publish"
   },
   "dependencies": {
+    "@kubernetes/client-node": "^0.17.0",
     "@nestjs/cli": "^7.5.3",
     "@nestjs/common": "^7.5.3",
     "@nestjs/core": "^7.5.3",
@@ -40,7 +41,6 @@
     "dotenv": "^8.2.0",
     "immer": "^5.1.0",
     "joi": "^14.3.1",
-    "kubernetes-client": "^9",
     "lodash": "^4.17.11",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.3",
