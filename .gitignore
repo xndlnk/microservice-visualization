@@ -5,6 +5,7 @@ dist
 **/temp
 .gradle
 .env*
+!.env-public*
 .nyc_output
 .cache
 build
