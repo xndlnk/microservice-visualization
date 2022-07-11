@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common'
 
 import {
   System,
@@ -11,8 +11,8 @@ import {
   JavaAnnotationAnalyzer,
   FeignClientAnnotationAnalyzer,
   Metadata,
-  Collector,
-} from "tadis-analyzer";
+  Collector
+} from 'tadis-analyzer'
 
 @Injectable()
 export class SimpleSystemAssembler implements Collector {
@@ -26,51 +26,51 @@ export class SimpleSystemAssembler implements Collector {
   ) {}
 
   public async getAllMicroservices(): Promise<MicroService[]> {
-    const system = await this.getAllMicroservicesFromSourceFolder();
-    return system.getMicroServices();
+    const system = await this.getAllMicroservicesFromSourceFolder()
+    return system.getMicroServices()
   }
 
   private async getAllMicroservicesFromSourceFolder(): Promise<System> {
-    const storageStatus = await this.gitStorage.getStorageStatus();
+    const storageStatus = await this.gitStorage.getStorageStatus()
     const metadata: Metadata = {
-      transformer: "custom git sources to microservices",
-      context: this.configService.getSourceFolder(),
-    };
-    const system = new System("System");
+      transformer: 'custom git sources to microservices',
+      context: this.configService.getSourceFolder()
+    }
+    const system = new System('System')
     storageStatus.forEach((status) => {
-      system.addMicroService(status.name, undefined, metadata);
-    });
-    return system;
+      system.addMicroService(status.name, undefined, metadata)
+    })
+    return system
   }
 
   public async getSystem(): Promise<System> {
-    let system = await this.getAllMicroservicesFromSourceFolder();
+    let system = await this.getAllMicroservicesFromSourceFolder()
 
-    system = await this.feignClientAnnotationAnalyzer.transform(system);
+    system = await this.feignClientAnnotationAnalyzer.transform(system)
 
     const elementMappings: ElementMapping[] = [
       {
-        elementToDeriveNodeFrom: "sendToExchange",
-        nodeTypeToCreate: "MessageExchange",
-        nodeTypeDirection: "target",
-        edgeType: "AsyncEventFlow",
+        elementToDeriveNodeFrom: 'sendToExchange',
+        nodeTypeToCreate: 'MessageExchange',
+        nodeTypeDirection: 'target',
+        edgeType: 'AsyncEventFlow'
       },
       {
-        elementToDeriveNodeFrom: "receiveFromExchange",
-        nodeTypeToCreate: "MessageExchange",
-        nodeTypeDirection: "source",
-        edgeType: "AsyncEventFlow",
-      },
-    ];
+        elementToDeriveNodeFrom: 'receiveFromExchange',
+        nodeTypeToCreate: 'MessageExchange',
+        nodeTypeDirection: 'source',
+        edgeType: 'AsyncEventFlow'
+      }
+    ]
     system = await this.javaAnnotationAnalyzer.transform(
       system,
-      "EventProcessor",
+      'EventProcessor',
       elementMappings
-    );
-    system = await this.sourceLocationDecorator.transform(system);
+    )
+    system = await this.sourceLocationDecorator.transform(system)
 
-    system = await this.nodeFilter.transform(system);
+    system = await this.nodeFilter.transform(system)
 
-    return system;
+    return system
   }
 }

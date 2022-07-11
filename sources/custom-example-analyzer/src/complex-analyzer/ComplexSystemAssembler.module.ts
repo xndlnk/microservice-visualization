@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common'
 
 import {
   ConfigModule,
@@ -9,15 +9,15 @@ import {
   JavaModule,
   PostProcessorsModule,
   SystemAssembler,
-  SystemAssemblerController,
-} from "tadis-analyzer";
+  SystemAssemblerController
+} from 'tadis-analyzer'
 
-import { ComplexSystemAssembler } from "./ComplexSystemAssembler.service";
+import { ComplexSystemAssembler } from './ComplexSystemAssembler.service'
 
 const customCollectorProvider = {
   provide: SystemAssembler,
-  useClass: ComplexSystemAssembler,
-};
+  useClass: ComplexSystemAssembler
+}
 
 @Module({
   imports: [
@@ -27,10 +27,10 @@ const customCollectorProvider = {
     SpringBootModule,
     RabbitMqModule,
     KubernetesModule,
-    GitModule,
+    GitModule
   ],
   controllers: [SystemAssemblerController],
   providers: [customCollectorProvider],
-  exports: [],
+  exports: []
 })
 export class ComplexSystemAssemblerModule {}

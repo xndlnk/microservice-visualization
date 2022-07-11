@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common'
 
 import {
   ConfigModule,
@@ -7,10 +7,10 @@ import {
   PostProcessorsModule,
   SystemAssembler,
   SpringBootModule,
-  SystemAssemblerController,
-} from "tadis-analyzer";
+  SystemAssemblerController
+} from 'tadis-analyzer'
 
-import { SimpleSystemAssembler } from "./SimpleSystemAssembler.service";
+import { SimpleSystemAssembler } from './SimpleSystemAssembler.service'
 
 @Module({
   imports: [
@@ -18,15 +18,15 @@ import { SimpleSystemAssembler } from "./SimpleSystemAssembler.service";
     GitModule,
     JavaModule,
     SpringBootModule,
-    PostProcessorsModule,
+    PostProcessorsModule
   ],
   controllers: [SystemAssemblerController],
   providers: [
     {
       provide: SystemAssembler,
-      useClass: SimpleSystemAssembler,
-    },
+      useClass: SimpleSystemAssembler
+    }
   ],
-  exports: [],
+  exports: []
 })
 export class SimpleSystemAssemblerModule {}

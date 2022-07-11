@@ -28,11 +28,11 @@ Please follow the instructions [provided here](sources/custom-example-analyzer/R
 
 ## Requirements
 
-- [Node.js v11](https://nodejs.org)
+- [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com)
 
 ## License
 
 [Apache License, Version 2.0](LICENSE)
 
-Copyright 2017-2019 Andreas Blunk, MaibornWolff GmbH
+Copyright 2017-2022 Andreas Blunk, MaibornWolff GmbH

@@ -168,4 +168,4 @@ How sub-system information is to be extracted from a nodes payload must be speci
 
 [Apache License, Version 2.0](LICENSE)
 
-Copyright 2017-2020 Andreas Blunk, MaibornWolff GmbH
+Copyright 2017-2022 Andreas Blunk, MaibornWolff GmbH
